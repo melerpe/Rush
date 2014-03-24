@@ -4,5 +4,4 @@ import net.rush.packets.Packet;
 
 public interface ChatPacket extends Packet {
 	String getMessage();
-	String getPlainMessage();
 }
