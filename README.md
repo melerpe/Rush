@@ -1,6 +1,8 @@
 Rush
 ==========
 
+This is Rush for Minecraft 1.2.5. It is more stable, do not crash client on block place neither when another player joins.
+
 Introduction
 ------------
 
