@@ -2,7 +2,7 @@ package net.rush.model;
 
 import net.rush.packets.Packet;
 import net.rush.packets.packet.impl.EntityMetadataPacketImpl;
-import net.rush.packets.packet.impl.SpawnObjectPacketImpl;
+import net.rush.packets.packet.impl.SpawnDroppedItemPacketImpl;
 import net.rush.util.Parameter;
 import net.rush.world.World;
 
@@ -47,9 +47,9 @@ public final class ItemEntity extends Entity {
 		int z = position.getPixelZ();
 		int yaw = rotation.getIntYaw();
 		int pitch = rotation.getIntPitch();
-
-		return new SpawnObjectPacketImpl(id, (byte)2, new Position(x, y, z), (byte)yaw, (byte)pitch, (short)0, (short)0, (short)0);
-		//return new SpawnDroppedItemPacketImpl(id, (short)item.getId(), (byte)item.getCount(), (short)item.getDamage(), x, y, z, (byte)yaw, (byte)pitch, (byte)roll);
+		int roll = rotation.getIntRoll();
+		
+		return new SpawnDroppedItemPacketImpl(id, (short)item.getId(), (byte)item.getCount(), (short)item.getDamage(), x, y, z, (byte)yaw, (byte)pitch, (byte)roll);
 	}
 	
 	public Packet createMetadataMessage() {

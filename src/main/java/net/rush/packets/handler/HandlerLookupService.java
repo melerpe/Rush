@@ -11,6 +11,7 @@ import net.rush.packets.packet.EntityActionPacket;
 import net.rush.packets.packet.HandshakePacket;
 import net.rush.packets.packet.KeepAlivePacket;
 import net.rush.packets.packet.KickPacket;
+import net.rush.packets.packet.LoginPacket;
 import net.rush.packets.packet.PlayerBlockPlacementPacket;
 import net.rush.packets.packet.PlayerDiggingPacket;
 import net.rush.packets.packet.PlayerListItemPacket;
@@ -18,7 +19,6 @@ import net.rush.packets.packet.PlayerLookPacket;
 import net.rush.packets.packet.PlayerOnGroundPacket;
 import net.rush.packets.packet.PlayerPositionAndLookPacket;
 import net.rush.packets.packet.PlayerPositionPacket;
-import net.rush.packets.packet.PluginMessagePacket;
 import net.rush.packets.packet.ServerListPingPacket;
 
 /**
@@ -38,6 +38,7 @@ public final class HandlerLookupService {
 	static {
 		try {
 			bind(HandshakePacket.class, HandshakePacketHandler.class);
+			bind(LoginPacket.class, LoginPacketHandler.class);
 			bind(ChatPacket.class, ChatPacketHandler.class);
 			bind(PlayerPositionPacket.class, PositionPacketHandler.class);
 			bind(PlayerLookPacket.class, LookPacketHandler.class);
@@ -54,7 +55,7 @@ public final class HandlerLookupService {
 			// 1.3.x
 			bind(ClientStatusPacket.class, ClientStatusPacketHandler.class);
 			// 1.6.x
-			bind(PluginMessagePacket.class, PluginMessagePacketHandler.class);
+			//bind(PluginMessagePacket.class, PluginMessagePacketHandler.class);
 		} catch (Exception ex) {
 			throw new ExceptionInInitializerError(ex);
 		}

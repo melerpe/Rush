@@ -15,17 +15,14 @@ public class BlockActionPacketImpl extends AbstractPacket implements BlockAction
     private final byte byte1;
     @Serialize(type = Type.BYTE, order = 4)
     private final byte byte2;
-    @Serialize(type = Type.SHORT, order = 4)
-    private final short blockId;
 
-    public BlockActionPacketImpl(int x, short y, int z, byte byte1, byte byte2, short blockId) {
+    public BlockActionPacketImpl(int x, short y, int z, byte byte1, byte byte2) {
         super();
         this.x = x;
         this.y = y;
         this.z = z;
         this.byte1 = byte1;
         this.byte2 = byte2;
-        this.blockId = blockId;
     }
 
     @Override
@@ -57,14 +54,9 @@ public class BlockActionPacketImpl extends AbstractPacket implements BlockAction
     public byte getByte2() {
         return byte2;
     }
-    
-    @Override
-    public short getBlockId() {
-        return blockId;
-    }
 
     @Override
     public String getToStringDescription() {
-        return String.format("x=\"%d\",y=\"%d\",z=\"%d\",byte1=\"%d\",byte2=\"%d\", blockId=\"%d\"", x, y, z, byte1, byte2, blockId);
+        return String.format("x=\"%d\",y=\"%d\",z=\"%d\",byte1=\"%d\",byte2=\"%d\"", x, y, z, byte1, byte2);
     }
 }

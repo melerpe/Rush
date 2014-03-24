@@ -146,7 +146,7 @@ public class World {
 	public void setTime(long time) {
 		this.time = time % PULSES_PER_DAY;
 
-		TimeUpdatePacket msg = new TimeUpdatePacketImpl(0, time); // TODO Correct world age?
+		TimeUpdatePacket msg = new TimeUpdatePacketImpl(time);
 		for (Player player : getRushPlayers())
 			player.getSession().send(msg);
 	}

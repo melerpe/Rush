@@ -8,5 +8,4 @@ public interface BlockActionPacket extends Packet {
     int getZ();
     byte getByte1();
     byte getByte2();
-    short getBlockId();
 }

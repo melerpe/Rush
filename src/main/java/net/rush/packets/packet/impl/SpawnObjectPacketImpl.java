@@ -1,6 +1,5 @@
 package net.rush.packets.packet.impl;
 
-import net.rush.model.Position;
 import net.rush.packets.packet.SpawnObjectPacket;
 import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
@@ -16,29 +15,26 @@ public class SpawnObjectPacketImpl extends AbstractPacket implements SpawnObject
     private final int y;
     @Serialize(type = Type.INT, order = 4)
     private final int z;
-    @Serialize(type = Type.BYTE, order = 5)
-    private final byte pitch;
-    @Serialize(type = Type.BYTE, order = 6)
-    private final byte yaw;
+    @Serialize(type = Type.INT, order = 5)
+    private final int fireballThrower;
+    @Serialize(type = Type.CONDITIONAL_SHORT, order = 6, moreInfo = 5)
+    private final short fireballSpeedX;
     @Serialize(type = Type.CONDITIONAL_SHORT, order = 7, moreInfo = 5)
-    private final short speedX;
+    private final short fireballSpeedY;
     @Serialize(type = Type.CONDITIONAL_SHORT, order = 8, moreInfo = 5)
-    private final short speedY;
-    @Serialize(type = Type.CONDITIONAL_SHORT, order = 9, moreInfo = 5)
-    private final short speedZ;
+    private final short fireballSpeedZ;
 
-    public SpawnObjectPacketImpl(int entityId, byte type, Position pos, byte pitch, byte yaw, short speedX, short speedY, short speedZ) {
+    public SpawnObjectPacketImpl(int entityId, byte type, int x, int y, int z, int fireballThrower, short fireballSpeedX, short fireballSpeedY, short fireballSpeedZ) {
         super();
         this.entityId = entityId;
         this.type = type;
-        this.x = (int)pos.getX();
-        this.y = (int)pos.getY();
-        this.z = (int)pos.getZ();
-        this.pitch = pitch;
-        this.yaw = yaw;
-        this.speedX = speedX;
-        this.speedY = speedY;
-        this.speedZ = speedZ;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.fireballThrower = fireballThrower;
+        this.fireballSpeedX = fireballSpeedX;
+        this.fireballSpeedY = fireballSpeedY;
+        this.fireballSpeedZ = fireballSpeedZ;
     }
 
     @Override
@@ -72,34 +68,29 @@ public class SpawnObjectPacketImpl extends AbstractPacket implements SpawnObject
     }
 
     @Override
-    public byte getPitch() {
-        return pitch;
-    }
-    
-    @Override
-    public byte getYaw() {
-        return yaw;
-    }
-    
-    @Override
-    public short getSpeedX() {
-        return speedX;
+    public int getFireballThrower() {
+        return fireballThrower;
     }
 
     @Override
-    public short getSpeedY() {
-        return speedY;
+    public short getFireballSpeedX() {
+        return fireballSpeedX;
     }
 
     @Override
-    public short getSpeedZ() {
-        return speedZ;
+    public short getFireballSpeedY() {
+        return fireballSpeedY;
+    }
+
+    @Override
+    public short getFireballSpeedZ() {
+        return fireballSpeedZ;
     }
 
     @Override
     public String getToStringDescription() {
         return String.format("entityId=\"%d\",type=\"%d\",x=\"%d\",y=\"%d\",z=\"%d\",fireballThrower=\"%d\","
                         + "fireballSpeedX=\"%d\",fireballSpeedY=\"%d\",fireballSpeedZ=\"%d\"",
-                        entityId, type, x, y, z, speedX, speedY, speedZ);
+                        entityId, type, x, y, z, fireballThrower, fireballSpeedX, fireballSpeedY, fireballSpeedZ);
     }
 }

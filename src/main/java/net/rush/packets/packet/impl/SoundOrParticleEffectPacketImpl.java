@@ -16,17 +16,14 @@ public class SoundOrParticleEffectPacketImpl extends AbstractPacket implements
     private final int z;
     @Serialize(type = Type.INT, order = 4)
     private final int data;
-    @Serialize(type = Type.BOOL, order = 5)
-    private final boolean relativeVolume;
 
-    public SoundOrParticleEffectPacketImpl(int effectId, int x, byte y, int z, int data, boolean relativeVolume) {
+    public SoundOrParticleEffectPacketImpl(int effectId, int x, byte y, int z, int data) {
         super();
         this.effectId = effectId;
         this.x = x;
         this.y = y;
         this.z = z;
         this.data = data;
-        this.relativeVolume = relativeVolume;
     }
 
     @Override
@@ -57,11 +54,6 @@ public class SoundOrParticleEffectPacketImpl extends AbstractPacket implements
     @Override
     public int getData() {
         return data;
-    }
-    
-    @Override
-    public boolean getRelativeVolume() {
-        return relativeVolume;
     }
 
     @Override

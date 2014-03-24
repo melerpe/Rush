@@ -5,50 +5,26 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class HandshakePacketImpl extends AbstractPacket implements HandshakePacket {
-    @Serialize(type = Type.BYTE, order = 0)
-    private final byte protocolVer;
-    @Serialize(type = Type.STRING, order = 1)
-    private final String username;
-    @Serialize(type = Type.STRING, order = 2)
-    private final String host;
-    @Serialize(type = Type.INT, order = 3)
-    private final int port;
+    @Serialize(type = Type.STRING, order = 0)
+    private final String messageOrUsername;
 
-    public HandshakePacketImpl(byte protocolVer, String username, String host, int port) {
+    public HandshakePacketImpl(String messageOrName) {
         super();
-        this.protocolVer = protocolVer;
-        this.username = username;
-        this.host = host;
-        this.port = port;
-    }
-    
-    @Override
-    public byte getProtocolVer() {
-        return protocolVer;
+        this.messageOrUsername = messageOrName;
     }
 
     @Override
-    public String getUsername() {
-        return username;
-    }
-    
-    @Override
-    public String getHost() {
-        return host;
-    }
-    
-    @Override
-    public int getPort() {
-        return port;
+    public String getMessageOrUsername() {
+        return messageOrUsername;
     }
 
     @Override
     public int getOpcode() {
-        return 0x02;
+        return 2;
     }
 
     @Override
     public String getToStringDescription() {
-        return "message=\"protocol:" + protocolVer + ",nick:"+ username + ",host:"+ host + ",port:" + port + "\"";
+        return String.format("message=\"%s\"", messageOrUsername);
     }
 }

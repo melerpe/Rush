@@ -14,10 +14,10 @@ public final class EntityActionPacketHandler extends PacketHandler<EntityActionP
 	@Override
 	public void handle(Session session, Player player, EntityActionPacket message) {
 		switch (message.getActionId()) {
-		case EntityActionPacket.ACTION_CROUCH:
+		case EntityActionPacket.CROUCH:
 			player.setCrouching(true);
 			break;
-		case EntityActionPacket.ACTION_UNCROUCH:
+		case EntityActionPacket.UNCROUCH:
 			player.setCrouching(false);
 			break;
 		case EntityActionPacket.START_SPRINTING:

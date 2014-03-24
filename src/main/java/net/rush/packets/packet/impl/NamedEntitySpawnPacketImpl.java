@@ -1,6 +1,5 @@
 package net.rush.packets.packet.impl;
 
-import net.rush.model.Position;
 import net.rush.packets.packet.NamedEntitySpawnPacket;
 import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
@@ -23,13 +22,13 @@ public class NamedEntitySpawnPacketImpl extends AbstractPacket implements NamedE
     @Serialize(type = Type.SHORT, order = 7)
     private final short currentItem;
 
-    public NamedEntitySpawnPacketImpl(int entityId, String playerName, Position pos, byte yaw, byte pitch, short currentItem) {
+    public NamedEntitySpawnPacketImpl(int entityId, String playerName, int x, int y, int z, byte yaw, byte pitch, short currentItem) {
         super();
         this.entityId = entityId;
         this.entityName = playerName;
-        this.x = (int)pos.getX();
-        this.y = (int)pos.getY();
-        this.z = (int)pos.getZ();
+        this.x = x;
+        this.y = y;
+        this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
         this.currentItem = currentItem;

@@ -9,14 +9,11 @@ public class EntityActionPacketImpl extends AbstractPacket implements EntityActi
     private final int entityId;
     @Serialize(type = Type.BYTE, order = 1)
     private final byte actionId;
-    @Serialize(type = Type.INT, order = 2)
-    private final int horseJumpBoost;
 
-    public EntityActionPacketImpl(int entityId, byte actionId, int horseJumpBoost) {
+    public EntityActionPacketImpl(int entityId, byte actionId) {
         super();
         this.entityId = entityId;
         this.actionId = actionId;
-        this.horseJumpBoost = horseJumpBoost;
     }
 
     @Override
@@ -34,11 +31,6 @@ public class EntityActionPacketImpl extends AbstractPacket implements EntityActi
         return actionId;
     }
 
-    @Override
-    public int getHorseJumpBoost() {
-        return horseJumpBoost;
-    }
-    
     @Override
     public String getToStringDescription() {
         return String.format("entityId=\"%d\",actionId=\"%d\"", entityId, actionId);

@@ -8,9 +8,8 @@ public interface SpawnObjectPacket extends Packet {
     int getX();
     int getY();
     int getZ();
-    byte getPitch();
-    byte getYaw();
-    short getSpeedX();
-    short getSpeedY();
-    short getSpeedZ();
+    int getFireballThrower();
+    short getFireballSpeedX();
+    short getFireballSpeedY();
+    short getFireballSpeedZ();
 }

@@ -9,7 +9,4 @@ public interface PlayerBlockPlacementPacket extends Packet {
     int getZ();
     byte getDirection();
     ItemStack getHeldItem();
-    byte getCursorX();
-    byte getCursorY();
-    byte getCursorZ();
 }

@@ -12,8 +12,5 @@ public interface SpawnMobPacket extends Packet {
     byte getYaw();
     byte getPitch();
     byte getHeadYaw();
-    short getVelocityX();
-    short getVelocityY();
-    short getVelocityZ();
     Parameter<?>[] getMetadata();
 }

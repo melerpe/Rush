@@ -11,12 +11,12 @@ public class BlockChangePacketImpl extends AbstractPacket implements BlockChange
     private final byte y;
     @Serialize(type = Type.INT, order = 2)
     private final int z;
-    @Serialize(type = Type.SHORT, order = 3)
-    private final short blockType;
+    @Serialize(type = Type.BYTE, order = 3)
+    private final byte blockType;
     @Serialize(type = Type.BYTE, order = 4)
     private final byte blockMetadata;
 
-    public BlockChangePacketImpl(int x, byte y, int z, short blockType, byte blockMetadata) {
+    public BlockChangePacketImpl(int x, byte y, int z, byte blockType, byte blockMetadata) {
         super();
         this.x = x;
         this.y = y;
@@ -46,7 +46,7 @@ public class BlockChangePacketImpl extends AbstractPacket implements BlockChange
     }
 
     @Override
-    public short getBlockType() {
+    public byte getBlockType() {
         return blockType;
     }
 

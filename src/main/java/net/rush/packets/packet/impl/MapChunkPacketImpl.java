@@ -17,14 +17,20 @@ public class MapChunkPacketImpl extends AbstractPacket implements MapChunkPacket
     private final int addBitMap;
     @Serialize(type = Type.INT, order = 5)
     private final int compressedSize;
-    @Serialize(type = Type.BYTE_ARRAY, order = 6, moreInfo = 5)
+    @Serialize(type = Type.INT, order = 6)
+    private final int unused_int_0;
+    @Serialize(type = Type.BYTE_ARRAY, order = 7, moreInfo = 5)
     private final byte[] compressedChunkData;
 
     public MapChunkPacketImpl(int x, int z, boolean groundUpContinuous, int primaryBitMap, int addBitMap, byte[] chunkData) {
-        this(x, z, groundUpContinuous, primaryBitMap, addBitMap, chunkData.length, chunkData);
+        this(x, z, groundUpContinuous, primaryBitMap, addBitMap, 0, chunkData);
     }
 
-    public MapChunkPacketImpl(int x, int z, boolean groundUpContinuous, int primaryBitMap, int addBitMap, int compressedSize, byte[] chunkData) {
+    public MapChunkPacketImpl(int x, int z, boolean groundUpContinuous, int primaryBitMap, int addBitMap, int unused_int_0, byte[] chunkData) {
+        this(x, z, groundUpContinuous, primaryBitMap, addBitMap, chunkData.length, unused_int_0, chunkData);
+    }
+
+    public MapChunkPacketImpl(int x, int z, boolean groundUpContinuous, int primaryBitMap, int addBitMap, int compressedSize, int unused_int_0, byte[] chunkData) {
         super();
         this.x = x;
         this.z = z;
@@ -32,6 +38,7 @@ public class MapChunkPacketImpl extends AbstractPacket implements MapChunkPacket
         this.primaryBitMap = primaryBitMap;
         this.addBitMap = addBitMap;
         this.compressedSize = compressedSize;
+        this.unused_int_0 = unused_int_0;
         this.compressedChunkData = chunkData;
     }
 
@@ -71,6 +78,11 @@ public class MapChunkPacketImpl extends AbstractPacket implements MapChunkPacket
     }
 
     @Override
+    public int getUnused_int_0() {
+        return unused_int_0;
+    }
+
+    @Override
     public byte[] getCompressedChunkData() {
         return compressedChunkData;
     }
@@ -78,7 +90,7 @@ public class MapChunkPacketImpl extends AbstractPacket implements MapChunkPacket
     @Override
     public String getToStringDescription() {
         return String.format(
-                "x=\"%d\",z=\"%d\",groundUpContinuous=\"%b\",primaryBitMap=\"%d\",addBitMap=\"%d\",compressedSize=\"%d\",chunkData=byte[%d]",
-                        x, z, groundUpContinuous, primaryBitMap, addBitMap, compressedSize, compressedChunkData.length);
+                "x=\"%d\",z=\"%d\",groundUpContinuous=\"%b\",primaryBitMap=\"%d\",addBitMap=\"%d\",compressedSize=\"%d\",unused_int_0=\"%d\",chunkData=byte[%d]",
+                        x, z, groundUpContinuous, primaryBitMap, addBitMap, compressedSize, unused_int_0, compressedChunkData.length);
     }
 }

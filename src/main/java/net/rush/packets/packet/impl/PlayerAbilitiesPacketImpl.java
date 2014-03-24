@@ -5,18 +5,21 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class PlayerAbilitiesPacketImpl extends AbstractPacket implements PlayerAbilitiesPacket {
-    @Serialize(type = Type.BYTE, order = 0)
-    private final byte flags;
-    @Serialize(type = Type.FLOAT, order = 1)
-    private final float flySpeed;
-    @Serialize(type = Type.FLOAT, order = 2)
-    private final float walkSpeed;
+    @Serialize(type = Type.BOOL, order = 0)
+    private final boolean invulnerability;
+    @Serialize(type = Type.BOOL, order = 1)
+    private final boolean isFlying;
+    @Serialize(type = Type.BOOL, order = 2)
+    private final boolean canFly;
+    @Serialize(type = Type.BOOL, order = 3)
+    private final boolean instantDestroy;
 
-    public PlayerAbilitiesPacketImpl(byte flags, float flySpeed, float walkSpeed) {
+    public PlayerAbilitiesPacketImpl(boolean invulnerability, boolean isFlying, boolean canFly, boolean instantDestroy) {
         super();
-        this.flags = flags;
-        this.flySpeed = flySpeed;
-        this.walkSpeed = walkSpeed;
+        this.invulnerability = invulnerability;
+        this.isFlying = isFlying;
+        this.canFly = canFly;
+        this.instantDestroy = instantDestroy;
     }
 
     @Override
@@ -25,23 +28,28 @@ public class PlayerAbilitiesPacketImpl extends AbstractPacket implements PlayerA
     }
 
     @Override
-    public byte getFlags() {
-        return flags;
-    }
-    
-    @Override
-    public float getFlySpeed() {
-        return flySpeed;
-    }
-    
-    @Override
-    public float getWalkSpeed() {
-        return walkSpeed;
+    public boolean getInvulnerability() {
+        return invulnerability;
     }
 
+    @Override
+    public boolean getIsFlying() {
+        return isFlying;
+    }
+
+    @Override
+    public boolean getCanFly() {
+        return canFly;
+    }
+
+    @Override
+    public boolean getInstantDestroy() {
+        return instantDestroy;
+    }
 
     @Override
     public String getToStringDescription() {
-        return String.format("flags=\"%b\",flySpeed=\"%b\",walkSpeed=\"%b\"",flags,flySpeed,walkSpeed);
+        return String.format("invulnerability=\"%b\",isFlying=\"%b\",canFly=\"%b\",instantDestory=\"%b\"",
+                invulnerability, isFlying, canFly, instantDestroy);
     }
 }

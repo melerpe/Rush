@@ -5,14 +5,14 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class UpdateHealthPacketImpl extends AbstractPacket implements UpdateHealthPacket {
-    @Serialize(type = Type.FLOAT, order = 0)
-    private final float health;
+    @Serialize(type = Type.SHORT, order = 0)
+    private final short health;
     @Serialize(type = Type.SHORT, order = 1)
     private final short food;
     @Serialize(type = Type.FLOAT, order = 2)
     private final float saturation;
 
-    public UpdateHealthPacketImpl(float health, short food, float saturation) {
+    public UpdateHealthPacketImpl(short health, short food, float saturation) {
         super();
         this.health = health;
         this.food = food;
@@ -25,7 +25,7 @@ public class UpdateHealthPacketImpl extends AbstractPacket implements UpdateHeal
     }
 
     @Override
-    public float getHealth() {
+    public short getHealth() {
         return health;
     }
 

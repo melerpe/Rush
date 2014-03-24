@@ -9,7 +9,7 @@ public class ItemDataPacketImpl extends AbstractPacket implements ItemDataPacket
     private final short itemType;
     @Serialize(type = Type.SHORT, order = 1)
     private final short itemId;
-    @Serialize(type = Type.SHORT, order = 2)
+    @Serialize(type = Type.UNSIGNED_BYTE, order = 2)
     private final byte dataLength;
     @Serialize(type = Type.BYTE_ARRAY, order = 3, moreInfo = 2)
     private final byte[] data;

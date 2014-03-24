@@ -34,7 +34,7 @@ public class LivingEntity extends Mob {
 		int yaw = rotation.getIntYaw();
 		int pitch = rotation.getIntPitch();	// FIXME byte headYaw?
 		
-		return new SpawnMobPacketImpl(id, (byte)getType().getTypeId(), new Position(x, y, z), (byte)yaw, (byte)pitch, (byte)yaw, new Position(0, 0, 0), metadata.clone());
+		return new SpawnMobPacketImpl(id, (byte)getType().getTypeId(), x, y, z, (byte)yaw, (byte)pitch, (byte)yaw, metadata.clone());
 	}
 
 

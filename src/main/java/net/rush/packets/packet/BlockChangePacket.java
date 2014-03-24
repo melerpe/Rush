@@ -6,6 +6,6 @@ public interface BlockChangePacket extends Packet {
     int getX();
     byte getY();
     int getZ();
-    short getBlockType();
+    byte getBlockType();
     byte getBlockMetadata();
 }

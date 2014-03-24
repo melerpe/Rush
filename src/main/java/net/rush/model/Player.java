@@ -17,6 +17,7 @@ import net.rush.packets.packet.impl.DestroyEntityPacketImpl;
 import net.rush.packets.packet.impl.NamedEntitySpawnPacketImpl;
 import net.rush.packets.packet.impl.PlayerListItemPacketImpl;
 import net.rush.packets.packet.impl.PlayerPositionAndLookPacketImpl;
+import net.rush.packets.packet.impl.PreChunkPacketImpl;
 import net.rush.packets.packet.impl.SetWindowItemsPacketImpl;
 import net.rush.packets.packet.impl.SpawnPositionPacketImpl;
 import net.rush.util.Parameter;
@@ -125,7 +126,7 @@ public final class Player extends LivingEntity implements CommandSender {
 				if (msg != null)
 					session.send(msg);
 			} else {
-				session.send(new DestroyEntityPacketImpl(new int[]{entity.getId()} ));
+				session.send(new DestroyEntityPacketImpl(entity.getId()));
 				it.remove();
 			}
 		}
@@ -156,7 +157,7 @@ public final class Player extends LivingEntity implements CommandSender {
 				ChunkCoords key = new ChunkCoords(x, z);
 				if (!knownChunks.contains(key)) {
 					knownChunks.add(key);
-					//session.send(new PreChunkPacketImpl(x, z, true));
+					session.send(new PreChunkPacketImpl(x, z, true));
 					session.send(world.getChunks().getChunk(x, z).toMessage());
 				}
 				previousChunks.remove(key);
@@ -164,7 +165,7 @@ public final class Player extends LivingEntity implements CommandSender {
 		}
 
 		for (ChunkCoords key : previousChunks) {
-			//session.send(new PreChunkPacketImpl(key.x, key.z, false));
+			session.send(new PreChunkPacketImpl(key.x, key.z, false));
 			knownChunks.remove(key);
 		}
 
@@ -186,7 +187,7 @@ public final class Player extends LivingEntity implements CommandSender {
 		int z = position.getPixelZ();
 		int yaw = rotation.getIntYaw();
 		int pitch = rotation.getIntPitch();
-		return new NamedEntitySpawnPacketImpl(id, name, new Position(x, y, z), (byte)yaw, (byte)pitch, (byte)0);
+		return new NamedEntitySpawnPacketImpl(id, name, x, y, z, (byte)yaw, (byte)pitch, (byte)0);
 	}
 
 	/**

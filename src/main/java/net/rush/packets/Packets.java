@@ -6,20 +6,15 @@ import java.util.Map;
 import net.rush.packets.packet.AnimationPacket;
 import net.rush.packets.packet.AttachEntityPacket;
 import net.rush.packets.packet.BlockActionPacket;
-import net.rush.packets.packet.BlockBreakAnimationPacket;
 import net.rush.packets.packet.BlockChangePacket;
 import net.rush.packets.packet.ChangeGameStatePacket;
 import net.rush.packets.packet.ChatPacket;
 import net.rush.packets.packet.ClickWindowPacket;
-import net.rush.packets.packet.ClientSettingsPacket;
-import net.rush.packets.packet.ClientStatusPacket;
 import net.rush.packets.packet.CloseWindowPacket;
 import net.rush.packets.packet.ConfirmTransactionPacket;
 import net.rush.packets.packet.CreativeInventoryActionPacket;
 import net.rush.packets.packet.DestroyEntityPacket;
 import net.rush.packets.packet.EnchantItemPacket;
-import net.rush.packets.packet.EncryptionKeyRequestPacket;
-import net.rush.packets.packet.EncryptionKeyResponsePacket;
 import net.rush.packets.packet.EntityActionPacket;
 import net.rush.packets.packet.EntityEffectPacket;
 import net.rush.packets.packet.EntityEquipmentPacket;
@@ -44,7 +39,6 @@ import net.rush.packets.packet.LoginPacket;
 import net.rush.packets.packet.MapChunkPacket;
 import net.rush.packets.packet.MultiBlockChangePacket;
 import net.rush.packets.packet.NamedEntitySpawnPacket;
-import net.rush.packets.packet.NamedSoundEffectPacket;
 import net.rush.packets.packet.OpenWindowPacket;
 import net.rush.packets.packet.PlayerAbilitiesPacket;
 import net.rush.packets.packet.PlayerBlockPlacementPacket;
@@ -63,13 +57,12 @@ import net.rush.packets.packet.SetExperiencePacket;
 import net.rush.packets.packet.SetSlotPacket;
 import net.rush.packets.packet.SetWindowItemsPacket;
 import net.rush.packets.packet.SoundOrParticleEffectPacket;
+import net.rush.packets.packet.SpawnDroppedItemPacket;
 import net.rush.packets.packet.SpawnExperienceOrbPacket;
 import net.rush.packets.packet.SpawnMobPacket;
 import net.rush.packets.packet.SpawnObjectPacket;
 import net.rush.packets.packet.SpawnPaintingPacket;
 import net.rush.packets.packet.SpawnPositionPacket;
-import net.rush.packets.packet.SteerVehiclePacket;
-import net.rush.packets.packet.TabCompletePacket;
 import net.rush.packets.packet.ThunderboltPacket;
 import net.rush.packets.packet.TimeUpdatePacket;
 import net.rush.packets.packet.UpdateHealthPacket;
@@ -106,6 +99,7 @@ public final class Packets {
         registerPacket(0x12, AnimationPacket.class);
         registerPacket(0x13, EntityActionPacket.class);
         registerPacket(0x14, NamedEntitySpawnPacket.class);
+        registerPacket(0x15, SpawnDroppedItemPacket.class);
         registerPacket(0x16, ItemCollectPacket.class);
         registerPacket(0x17, SpawnObjectPacket.class);
         registerPacket(0x18, SpawnMobPacket.class);
@@ -125,7 +119,7 @@ public final class Packets {
         registerPacket(0x29, EntityEffectPacket.class);
         registerPacket(0x2A, RemoveEntityEffectPacket.class);
         registerPacket(0x2B, SetExperiencePacket.class);
-        registerPacket(0x38, PreChunkPacket.class);
+        registerPacket(0x32, PreChunkPacket.class);
         registerPacket(0x33, MapChunkPacket.class);
         registerPacket(0x34, MultiBlockChangePacket.class);
         registerPacket(0x35, BlockChangePacket.class);
@@ -153,17 +147,17 @@ public final class Packets {
         registerPacket(0xFE, ServerListPingPacket.class);
         registerPacket(0xFF, KickPacket.class);
         // 1.3.2
-        registerPacket(0xFC, EncryptionKeyResponsePacket.class);
-        registerPacket(0xFD, EncryptionKeyRequestPacket.class);
-        registerPacket(0xCD, ClientStatusPacket.class);
-        registerPacket(0x37, BlockBreakAnimationPacket.class);
-        registerPacket(0x14, NamedEntitySpawnPacket.class);
-        registerPacket(0xCB, TabCompletePacket.class);
-        registerPacket(0xCC, ClientSettingsPacket.class);
-        registerPacket(0x3E, NamedSoundEffectPacket.class);
+        //registerPacket(0xFC, EncryptionKeyResponsePacket.class);
+        //registerPacket(0xFD, EncryptionKeyRequestPacket.class);
+        //registerPacket(0xCD, ClientStatusPacket.class);
+        //registerPacket(0x37, BlockBreakAnimationPacket.class);
+        //registerPacket(0x14, NamedEntitySpawnPacket.class);
+        //registerPacket(0xCB, TabCompletePacket.class);
+        //registerPacket(0xCC, ClientSettingsPacket.class);
+        //registerPacket(0x3E, NamedSoundEffectPacket.class);
         // 1.5.1
-        registerPacket(0x1B, SteerVehiclePacket.class);
-        // TODO EntityProperties, Scoreboard stuff
+        //registerPacket(0x1B, SteerVehiclePacket.class);
+        //EntityProperties, Scoreboard stuff
         
     }
 

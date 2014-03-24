@@ -15,5 +15,7 @@ public interface MapChunkPacket extends Packet {
 
     int getCompressedSize();
 
+    int getUnused_int_0();
+
     byte[] getCompressedChunkData();
 }

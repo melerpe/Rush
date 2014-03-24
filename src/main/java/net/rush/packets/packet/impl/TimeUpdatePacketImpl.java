@@ -6,13 +6,10 @@ import net.rush.packets.serialization.Type;
 
 public class TimeUpdatePacketImpl extends AbstractPacket implements TimeUpdatePacket {
     @Serialize(type = Type.LONG, order = 0)
-    private final long worldAge;
-    @Serialize(type = Type.LONG, order = 1)
     private final long time;
 
-    public TimeUpdatePacketImpl(long worldAge, long time) {
+    public TimeUpdatePacketImpl(long time) {
         super();
-        this.worldAge = worldAge;
         this.time = time;
     }
 
@@ -21,11 +18,6 @@ public class TimeUpdatePacketImpl extends AbstractPacket implements TimeUpdatePa
         return 0x04;
     }
 
-    @Override
-    public long getWorldAge() {
-        return worldAge;
-    }
-    
     @Override
     public long getTime() {
         return time;
