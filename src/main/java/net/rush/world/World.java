@@ -520,4 +520,14 @@ public class World {
 			}*/
 		}
 	}
+	
+    public int getHighestBlockAt(int x, int z ) {
+    	for (int y = maxHeight - 1; y > 0; --y) {
+    		int blockType = getTypeId(x, y, z);
+    		
+    		if (blockType != Block.AIR)
+    			return y;
+    	}
+    	return 0;
+    }
 }
