@@ -13,7 +13,6 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Random;
@@ -257,8 +256,8 @@ public final class Server {
 		if (saveEnabled) {
 			logger.info("Saving chunks...");
 			try {
-				world.getChunks().saveAll();
-			} catch (IOException e) {
+				world.save();
+			} catch (Exception e) {
 				logger.log(Level.WARNING, "Failed to save some chunks.", e);
 			}
 			logger.info("Finished!");

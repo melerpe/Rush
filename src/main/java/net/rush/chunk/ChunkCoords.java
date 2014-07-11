@@ -1,9 +1,6 @@
 package net.rush.chunk;
 
-import java.io.Serializable;
-
-public class ChunkCoords implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class ChunkCoords {
 
     public final int x;
     public final int z;

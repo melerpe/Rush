@@ -1,5 +1,6 @@
 package net.rush.util.nbt;
 
+
 /**
  * Represents a single NBT tag.
 
@@ -9,7 +10,7 @@ public abstract class Tag {
 	/**
 	 * The name of this tag.
 	 */
-	private final String name;
+	private String name;
 
 	/**
 	 * Creates the tag with no name.
@@ -33,12 +34,15 @@ public abstract class Tag {
 	public final String getName() {
 		return name;
 	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * Gets the value of this tag.
 	 * @return The value of this tag.
 	 */
 	public abstract Object getValue();
-
 }
 

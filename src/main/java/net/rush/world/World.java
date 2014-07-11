@@ -1,15 +1,22 @@
 package net.rush.world;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
+import net.rush.Server;
 import net.rush.chunk.Chunk;
 import net.rush.chunk.ChunkCoords;
 import net.rush.chunk.ChunkManager;
@@ -27,6 +34,9 @@ import net.rush.model.misc.NextTickEntry;
 import net.rush.model.misc.Vec3Pool;
 import net.rush.packets.packet.BlockChangePacket;
 import net.rush.packets.packet.TimeUpdatePacket;
+import net.rush.util.nbt.CompoundTag;
+import net.rush.util.nbt.NBTOutputStream;
+import net.rush.util.nbt.Tag;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Difficulty;
@@ -230,17 +240,17 @@ public class World {
 	public boolean isAir(int x, int y, int z) {
 		return getTypeId(x, y, z) == 0;
 	}
-	
+
 	public void setAir(int x, int y, int z) {
 		setTypeId(x, y, z, 0, true);
 		setBlockData(x, y, z, 0, false);
-		
+
 		callNeighborChange(x, y, z, 0);
 	}
 
 	private void neighborChange(int x, int y, int z, int data) {
 		Block block = Block.byId[getTypeId(x, y, z)];
-		
+
 		if (block != null)
 			block.onNeighborBlockChange(this, x, y, z, data);
 	}
@@ -253,22 +263,22 @@ public class World {
 		neighborChange(x, y, z - 1, data);
 		neighborChange(x, y, z + 1, data);
 	}
-	
+
 	public void setDataWithNotify(int x, int y, int z, int data, boolean notifyPlayers) {
 		setBlockData(x, y, z, data, notifyPlayers);
 		callNeighborChange(x, y, z, data);
 	}
-	
+
 	public void setTypeWithNotify(int x, int y, int z, int type, boolean notifyPlayers) {
 		setTypeId(x, y, z, type, notifyPlayers);
 		callNeighborChange(x, y, z, getBlockData(x, y, z));
 	}
-	
+
 	public void setTypeAndDataWithNotify(int x, int y, int z, int type, int data, boolean notifyPlayers) {
 		setTypeAndData(x, y, z, type, data, notifyPlayers);
 		callNeighborChange(x, y, z, data);
 	}
-	
+
 	////////////
 	public void setTypeAndData(int x, int y, int z, int type, int data, boolean notifyPlayers) {
 		setTypeId(x, y, z, type, notifyPlayers);
@@ -306,7 +316,7 @@ public class World {
 
 	public void sendBlockChangePacket(int x, int y, int z) {
 		BlockChangePacket packet = new BlockChangePacket(x, y, z, this);
-		
+
 		for(Player pl : getPlayers())
 			pl.getSession().send(packet);
 	}
@@ -317,7 +327,7 @@ public class World {
 				return 0;
 			if (y >= 256)
 				return 0;
-		
+
 			return getChunkFromBlockCoords(x, z).getType(x & 15, z & 15, y);
 		}
 		return 0;
@@ -367,7 +377,7 @@ public class World {
 	public int spawnEntity(Entity en) {
 		return getEntities().allocate(en);
 	}
-	
+
 	// //
 
 	public Difficulty getDifficulty() {
@@ -393,6 +403,8 @@ public class World {
 	public void save() {
 		try {
 			this.chunks.saveAll();
+			this.saveWorldInfo();
+			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -410,7 +422,7 @@ public class World {
 		for (Player pl : getPlayers())
 			pl.playSound(sound, x, y, z, volume, pitch);
 	}
-	
+
 	public void playSound(double x, double y, double z, Sound sound, float volume, float pitch) {
 		for (Player pl : getPlayers())
 			pl.playSound(sound, x, y, z, volume, pitch);
@@ -520,14 +532,89 @@ public class World {
 			}*/
 		}
 	}
+
+	public int getHighestBlockAt(int x, int z ) {
+		for (int y = maxHeight - 1; y > 0; --y) {
+			int blockType = getTypeId(x, y, z);
+
+			if (blockType != Block.AIR)
+				return y;
+		}
+		return 0;
+	}
+
+	// TODO "Should" be compatible with notchian server, need some more work.
+	public CompoundTag getWorldNbtTag() {
+		CompoundTag tag = new CompoundTag("", new HashMap<String, Tag>());
+		tag.setLong("RandomSeed", 0);
+		tag.setInteger("GameType", Server.getServer().getProperties().gamemode);
+		tag.setBoolean("MapFeatures", false);
+		tag.setInteger("SpawnX", (int)spawnPosition.x);
+		tag.setInteger("SpawnY", (int)spawnPosition.y);
+		tag.setInteger("SpawnZ", (int)spawnPosition.z);
+		tag.setLong("Time", time);
+		tag.setLong("SizeOnDisk", 0);
+		tag.setLong("LastPlayed", System.currentTimeMillis());
+		tag.setString("LevelName", Server.getServer().getProperties().levelName);
+		tag.setInteger("version", 19132);
+		tag.setInteger("rainTime", 0);
+		tag.setBoolean("raining", false);
+		tag.setInteger("thunderTime", 0);
+		tag.setBoolean("thundering", false);
+		tag.setBoolean("hardcore", Server.getServer().getProperties().hardcore);
+
+		return tag;
+	}
 	
-    public int getHighestBlockAt(int x, int z ) {
-    	for (int y = maxHeight - 1; y > 0; --y) {
-    		int blockType = getTypeId(x, y, z);
-    		
-    		if (blockType != Block.AIR)
-    			return y;
-    	}
-    	return 0;
-    }
+	private void saveWorldInfo() {
+		setSessionLock();
+
+		CompoundTag worldInfoTag = getWorldNbtTag();
+		CompoundTag dataTag = new CompoundTag();
+
+		dataTag.setTag("Data", worldInfoTag);
+		try {
+			File file = new File(Server.getServer().getProperties().levelName, "level.dat");
+
+			if (file.exists())
+				file.delete();
+
+			writeGzippedCompound(dataTag, new FileOutputStream(file));
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private void setSessionLock() {
+		try {
+			File file = new File(Server.getServer().getProperties().levelName, "session.lock");
+			DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
+			try {
+				dos.writeLong(System.currentTimeMillis());
+			} finally {
+				dos.close();
+			}
+		} catch (IOException ex) {
+			throw new RuntimeException("Failed to check session lock, aborting", ex);
+		}
+	}
+
+	private void writeGzippedCompound(CompoundTag tag, OutputStream os) throws IOException {
+		try {
+			NBTOutputStream nbtOutput = null;
+			try {
+				nbtOutput = new NBTOutputStream(new GZIPOutputStream(os));
+				nbtOutput.writeTag(tag);
+				nbtOutput.close();
+				nbtOutput = null;
+			} finally {
+				if (nbtOutput != null)
+					nbtOutput.close();
+			}
+
+		} finally {
+			os.close();
+		}
+	}
 }
