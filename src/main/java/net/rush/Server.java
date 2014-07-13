@@ -54,6 +54,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 public final class Server {
 
 	public final String serverId;
+	public boolean saveEnabled = true;
+	
 	private static Server server;
 
 	private final Logger logger = Logger.getLogger("Minecraft");
@@ -74,8 +76,6 @@ public final class Server {
 
 	/** A list of all the active {@link Session}s. */
 	private final SessionRegistry sessions = new SessionRegistry();
-
-	private boolean saveEnabled = true; // TODO: Does this belong in a different class e.g. the chunk IO service or the chunk manager?
 	
 	/**
 	 * Creates a new server on TCP port 25565 and starts listening for
@@ -113,7 +113,7 @@ public final class Server {
 	 * Creates and initializes a new server.
 	 */
 	public Server() {
-		logger.info("Initializing Rush for Minecraft 1.6.4 - 1.7.9");
+		logger.info("Initializing Rush for Minecraft 1.6.4 - 1.7.10");
 		long initialTime = System.currentTimeMillis();
 
 		server = this;
@@ -125,7 +125,7 @@ public final class Server {
 		properties = new ServerProperties("server.properties");
 		properties.load();
 
-		world = new World(new McRegionChunkIoService(new File("world")), new ForestWorldGenerator());
+		world = new World(properties.levelName, new McRegionChunkIoService(new File(properties.levelName)), new ForestWorldGenerator());
 
 		logger.info("Generating server id");
 		serverId = Long.toString(new Random().nextLong(), 16);
@@ -133,10 +133,8 @@ public final class Server {
 		logger.info("Starting Minecraft server on " + (properties.serverIp.length() == 0 ? "*" : properties.serverIp) + ":" + properties.port);
 		new NettyNetworkThread().start();
 
-		/* add shutdown hook */
 		Runtime.getRuntime().addShutdownHook(new Thread(new ServerShutdownHandler()));
 
-		/* start scheduling */
 		scheduler.start();
 
 		gui = new RushGui();
@@ -185,14 +183,6 @@ public final class Server {
 	}
 
 	/**
-	 * Checks if saving is currently enabled.
-	 * @return {@code true} if so, {@code false} if not.
-	 */
-	public boolean isSaveEnabled() {
-		return saveEnabled;
-	}
-
-	/**
 	 * Broadcasts a message to every player.
 	 * 
 	 * @param text The message text.
@@ -200,14 +190,6 @@ public final class Server {
 	public void broadcastMessage(String text) {
 		for (Player player : getWorld().getPlayers())
 			player.sendMessage(text);
-	}
-
-	/**
-	 * Sets the saving enabled flag.
-	 * @param saveEnabled The saving enabled flag.
-	 */
-	public void setSaveEnabled(boolean saveEnabled) {
-		this.saveEnabled = saveEnabled;
 	}
 
 	public RushGui getGui() {
@@ -260,8 +242,8 @@ public final class Server {
 			} catch (Exception e) {
 				logger.log(Level.WARNING, "Failed to save some chunks.", e);
 			}
-			logger.info("Finished!");
 		}
+		logger.info("Shutdown complete.");
 	}
 
 	class NettyNetworkThread extends Thread {

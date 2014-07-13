@@ -32,8 +32,8 @@ public class ServerGUI extends JComponent {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		final ServerGUI servergui = new ServerGUI();
-		final JFrame mainFrame = new JFrame("Rush Server v0.0.1-SNAPSHOT");
-		
+		final JFrame mainFrame = new JFrame("Rush Server ${project.version}");
+
 		mainFrame.add(servergui);
 		mainFrame.pack();
 		mainFrame.setLocationRelativeTo(null);
@@ -42,7 +42,7 @@ public class ServerGUI extends JComponent {
 		mainFrame.addWindowListener(new WindowAdapter() {
 
 			@Override
-			public void windowClosing(WindowEvent e) {			
+			public void windowClosing(WindowEvent e) {
 				try {
 					Server.getServer().stopServer();
 					Thread.sleep(100L);
@@ -55,6 +55,7 @@ public class ServerGUI extends JComponent {
 		});
 
 		mainFrame.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent e) {
 				servergui.posX = e.getX();
 				servergui.posY = e.getY();
@@ -62,6 +63,7 @@ public class ServerGUI extends JComponent {
 		});
 
 		mainFrame.addMouseMotionListener(new MouseAdapter() {
+			@Override
 			public void mouseDragged(MouseEvent evt) {
 				mainFrame.setLocation(evt.getXOnScreen() - servergui.posX, evt.getYOnScreen() - servergui.posY);
 			}
@@ -72,11 +74,11 @@ public class ServerGUI extends JComponent {
 	private int posY = 0;
 
 	public ServerGUI() {
-		
+
 		setBorder(null);
 		setPreferredSize(new Dimension(840, 480));
 		setLayout(new BorderLayout());
-		
+
 		JTextArea logAndCmd = new JTextArea();
 
 		logger.addHandler(new LogHandler(logAndCmd));
@@ -90,19 +92,21 @@ public class ServerGUI extends JComponent {
 
 		final JTextField commandField = new JTextField();
 
-		commandField.addActionListener(new ActionListener() {			
+		commandField.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				String command = commandField.getText().trim();
 
-				if (command.length() > 0)
+				if (command.length() > 0) {
 					Server.getServer().getCommandManager().execute(Server.getServer().getConsoleSender(), "/" + command);
+				}
 
 				commandField.setText("");
 			}
 		});
 
 		Font font = new Font("Consolas", Font.PLAIN, 15);
-		logAndCmd.setFont(font);		
+		logAndCmd.setFont(font);
 		logAndCmd.setBackground(Color.BLACK);
 		logAndCmd.setForeground(Color.LIGHT_GRAY);
 

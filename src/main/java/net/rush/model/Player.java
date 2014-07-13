@@ -115,7 +115,7 @@ public final class Player extends LivingEntity implements CommandSender {
 
 		getServer().getLogger().info(name + " [" + session.getIp() + "] logged in with entity id " + id + " at ([" + world.getName() + "] " + (int)position.x + ", " + (int)position.y + ", " + (int)position.z + ")");
 		getServer().broadcastMessage("&e" + name + " has joined the game.");
-		this.sendMessage("&3Rush // &fWelcome to Rush, " + name);
+		this.sendMessage("%Rush Welcome to Rush, " + name);
 	}
 
 	/**

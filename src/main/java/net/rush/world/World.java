@@ -71,14 +71,12 @@ public class World {
 	 * The entity manager.
 	 */
 	private final EntityManager entities = new EntityManager();
-
-
 	private Queue<NextTickEntry> tickQueue = new LinkedList<NextTickEntry>();
-
-	public Set<ChunkCoords> activeChunks = new HashSet<ChunkCoords>();
-
 	private long time = 0;
 	private int maxHeight = 256;
+	private String name;
+	
+	public Set<ChunkCoords> activeChunks = new HashSet<ChunkCoords>();
 	public final Vec3Pool vectorPool = new Vec3Pool(300, 2000);
 	public Random rand = new Random();
 
@@ -93,8 +91,9 @@ public class World {
 	 * @param generator
 	 *            The world generator.
 	 */
-	public World(ChunkIoService service, WorldGenerator generator) {
+	public World(String name, ChunkIoService service, WorldGenerator generator) {
 		chunks = new ChunkManager(service, generator);
+		this.name = name;
 	}
 
 	/**
@@ -393,7 +392,7 @@ public class World {
 	}
 
 	public String getName() {
-		return "world";
+		return name;
 	}
 
 	public WorldType getWorldType() {

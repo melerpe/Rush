@@ -19,7 +19,7 @@ public final class SaveAllCommand extends Command {
 	public void execute(CommandSender player, String[] args) {
 		// Should this start a separate thread instead?
 		player.getServer().getWorld().save();
-		player.sendMessage("&3Rush // &fChunks were successfully saved.");
+		player.sendMessage("%Rush Chunks were successfully saved.");
 	}
 
 }

@@ -17,7 +17,8 @@ public final class SaveOffCommand extends Command {
 
 	@Override
 	public void execute(CommandSender player, String[] args) {
-		player.getServer().setSaveEnabled(false);
+		player.getServer().saveEnabled = false;
+		player.sendMessage("%Rush Auto saving disabled.");
 	}
 
 }
