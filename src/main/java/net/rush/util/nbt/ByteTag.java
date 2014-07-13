@@ -1,21 +1,9 @@
 package net.rush.util.nbt;
 
-/**
- * The {@code TAG_Byte} tag.
+public class ByteTag extends Tag {
 
- */
-public final class ByteTag extends Tag {
+	private byte value;
 
-	/**
-	 * The value.
-	 */
-	private final byte value;
-
-	/**
-	 * Creates the tag.
-	 * @param name The name.
-	 * @param value The value.
-	 */
 	public ByteTag(String name, byte value) {
 		super(name);
 		this.value = value;
@@ -31,10 +19,8 @@ public final class ByteTag extends Tag {
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
 		return "TAG_Byte" + append + ": " + value;
 	}
-
 }
-

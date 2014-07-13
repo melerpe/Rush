@@ -1,27 +1,20 @@
 package net.rush.util.nbt;
 
-/**
- * The {@code TAG_End} tag.
+public class EndTag extends Tag {
 
- */
-public final class EndTag extends Tag {
+	private Object value = null;
 
-	/**
-	 * Creates the tag.
-	 */
 	public EndTag() {
-		super();
+		super("");
 	}
 
 	@Override
 	public Object getValue() {
-		return null;
+		return value;
 	}
 
 	@Override
 	public String toString() {
 		return "TAG_End";
 	}
-
 }
-

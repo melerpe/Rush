@@ -3,28 +3,26 @@ package net.rush.util.nbt;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The {@code TAG_Compound} tag.
+public class CompoundTag extends Tag {
 
- */
-public final class CompoundTag extends Tag {
+	private Map<String, Tag> valueMap;
 
-	/**
-	 * The value in tag.
-	 */
-	private final Map<String, Tag> valueMap;
-
-	public CompoundTag(String name, Map<String, Tag> value) {
-		super(name);
-		this.valueMap = value;
+	public CompoundTag() {
+		this("");
 	}
 	
 	public CompoundTag(String name) {
 		this(name, new HashMap<String, Tag>());
 	}
 	
-	public CompoundTag() {
-		this("");
+	public CompoundTag(String name, Map<String, Tag> valueMap) {
+		super(name);
+		this.valueMap = valueMap;
+	}
+
+	@Override
+	public Map<String, Tag> getValue() {
+		return valueMap;
 	}
 	
 	public void setBoolean(String name, boolean value) {
@@ -38,7 +36,7 @@ public final class CompoundTag extends Tag {
 	public void setByteArray(String name, byte values[]) {
 		valueMap.put(name, new ByteArrayTag(name, values));
 	}
-
+	
 	public void setCompoundTag(String name, CompoundTag tag) {
 		tag.setName(name);
 		valueMap.put(name, tag);
@@ -74,18 +72,12 @@ public final class CompoundTag extends Tag {
 	}
 	
 	@Override
-	public Map<String, Tag> getValue() {
-		return valueMap;
-	}
-
-	@Override
 	public String toString() {
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
-
 		StringBuilder bldr = new StringBuilder();
 		bldr.append("TAG_Compound" + append + ": " + valueMap.size() + " entries\r\n{\r\n");
 		for (Map.Entry<String, Tag> entry : valueMap.entrySet()) {
@@ -94,6 +86,4 @@ public final class CompoundTag extends Tag {
 		bldr.append("}");
 		return bldr.toString();
 	}
-
 }
-

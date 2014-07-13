@@ -155,34 +155,58 @@ public final class McRegionChunkIoService implements ChunkIoService {
 			}
 		}
 
-		Map<String, Tag> levelTags = new HashMap<String, Tag>();
-		levelTags.put("Blocks", new ByteArrayTag("Blocks", chunk.types));
-		levelTags.put("Data", new ByteArrayTag("Data", metaData));
-		levelTags.put("SkyLight", new ByteArrayTag("SkyLight", skyLightData));
-		levelTags.put("BlockLight", new ByteArrayTag("BlockLight", blockLightData));
+		Map<String, Tag> _old_levelTags = new HashMap<String, Tag>();
+		_old_levelTags.put("Blocks", new ByteArrayTag("Blocks", chunk.types));
+		_old_levelTags.put("Data", new ByteArrayTag("Data", metaData));
+		_old_levelTags.put("SkyLight", new ByteArrayTag("SkyLight", skyLightData));
+		_old_levelTags.put("BlockLight", new ByteArrayTag("BlockLight", blockLightData));
 		// TODO: Heightmap, entities, tileentities, lastupdate
-		levelTags.put("HeightMap", new ByteArrayTag("HeightMap", heightMapData));
-		levelTags.put("Entities", chunkEntitiesToTag(chunk));
-		levelTags.put("TileEntities", chunkTileEntitiesToTag(chunk));
-		levelTags.put("LastUpdate", new LongTag("LastUpdate", 0));
+		_old_levelTags.put("HeightMap", new ByteArrayTag("HeightMap", heightMapData));
+		_old_levelTags.put("Entities", chunkEntitiesToTag(chunk));
+		_old_levelTags.put("TileEntities", chunkTileEntitiesToTag(chunk));
+		_old_levelTags.put("LastUpdate", new LongTag("LastUpdate", 0));
 
-		levelTags.put("xPos", new IntTag("xPos", chunk.getX()));
-		levelTags.put("zPos", new IntTag("zPos", chunk.getZ()));
+		_old_levelTags.put("xPos", new IntTag("xPos", chunk.getX()));
+		_old_levelTags.put("zPos", new IntTag("zPos", chunk.getZ()));
 		// TODO: terrainpopulated
-		levelTags.put("TerrainPopulated", new ByteTag("TerrainPopulated", (byte) 0));
-		return new CompoundTag("Level", levelTags);
+		_old_levelTags.put("TerrainPopulated", new ByteTag("TerrainPopulated", (byte) 0));
+		
+		// begin new
+		CompoundTag tag = new CompoundTag("Level");
+		tag.setBoolean("TerrainPopulated", true);
+		tag.setInteger("xPos", chunk.getX());
+		tag.setInteger("zPos", chunk.getZ());
+		tag.setLong("LastUpdate", 0);
+		tag.setByteArray("Biomes", new byte[256]);
+		tag.setTag("Entities", chunkEntitiesToTag(chunk));
+		
+		ListTag sections = new ListTag("Sections", CompoundTag.class);
+		
+		CompoundTag section = new CompoundTag("");
+		section.setByte("Y", (byte)0);
+		section.setByteArray("Blocks", chunk.types);
+		section.setByteArray("Data", metaData);
+		section.setByteArray("BlockLight", blockLightData);
+		section.setByteArray("SkyLight", blockLightData);
+		
+		sections.add(section);
+		
+		tag.setTag("Sections", sections);
+		// end new
+		
+		return new CompoundTag("Level", _old_levelTags);
 	}
 
 	// TODO
-	private ListTag<CompoundTag> chunkEntitiesToTag(Chunk chunk) {
+	private ListTag chunkEntitiesToTag(Chunk chunk) {
 		List<CompoundTag> entityTags = new ArrayList<CompoundTag>();
-		return new ListTag<CompoundTag>("Entities", CompoundTag.class, entityTags);
+		return new ListTag("Entities", CompoundTag.class, entityTags);
 	}
 
 	// TODO
-	private ListTag<CompoundTag> chunkTileEntitiesToTag(Chunk chunk) {
+	private ListTag chunkTileEntitiesToTag(Chunk chunk) {
 		List<CompoundTag> entityTags = new ArrayList<CompoundTag>();
-		return new ListTag<CompoundTag>("TileEntities", CompoundTag.class, entityTags);
+		return new ListTag("TileEntities", CompoundTag.class, entityTags);
 	}
 
 }

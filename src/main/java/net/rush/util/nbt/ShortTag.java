@@ -1,21 +1,9 @@
 package net.rush.util.nbt;
 
-/**
- * The {@code TAG_Short} tag.
+public class ShortTag extends Tag {
 
- */
-public final class ShortTag extends Tag {
+	private short value;
 
-	/**
-	 * The value.
-	 */
-	private final short value;
-
-	/**
-	 * Creates the tag.
-	 * @param name The name.
-	 * @param value The value.
-	 */
 	public ShortTag(String name, short value) {
 		super(name);
 		this.value = value;
@@ -31,10 +19,8 @@ public final class ShortTag extends Tag {
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
 		return "TAG_Short" + append + ": " + value;
 	}
-
 }
-

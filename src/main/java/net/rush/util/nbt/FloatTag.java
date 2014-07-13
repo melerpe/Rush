@@ -1,21 +1,9 @@
 package net.rush.util.nbt;
 
-/**
- * The {@code TAG_Float} tag.
+public class FloatTag extends Tag {
 
- */
-public final class FloatTag extends Tag {
+	private float value;
 
-	/**
-	 * The value.
-	 */
-	private final float value;
-
-	/**
-	 * Creates the tag.
-	 * @param name The name.
-	 * @param value The value.
-	 */
 	public FloatTag(String name, float value) {
 		super(name);
 		this.value = value;
@@ -31,10 +19,8 @@ public final class FloatTag extends Tag {
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
 		return "TAG_Float" + append + ": " + value;
 	}
-
 }
-

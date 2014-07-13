@@ -1,47 +1,37 @@
 package net.rush.util.nbt;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The {@code TAG_List} tag.
+public class ListTag extends Tag {
 
- */
-public final class ListTag<T extends Tag> extends Tag {
+	private Class<? extends Tag> type;
 
-	/**
-	 * The type of entries within this list.
-	 */
-	private final Class<T> type;
+	private List<Tag> value;
 
-	/**
-	 * The value.
-	 */
-	private final List<T> value;
-
-	/**
-	 * Creates the tag.
-	 * @param name The name.
-	 * @param type The type of item in the list.
-	 * @param value The value.
-	 */
-	public ListTag(String name, Class<T> type, List<T> value) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ListTag(String name, Class<? extends Tag> type) {
+		this(name, type, new ArrayList());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ListTag(String name, Class<? extends Tag> type, List<? extends Tag> value) {
 		super(name);
 		this.type = type;
-		this.value = Collections.unmodifiableList(value);
+		this.value = (List<Tag>) value;
 	}
 
-	/**
-	 * Gets the type of item in this list.
-	 * @return The type of item in this list.
-	 */
-	public Class<T> getType() {
+	public Class<? extends Tag> getType() {
 		return type;
 	}
 
 	@Override
-	public List<T> getValue() {
+	public List<Tag> getValue() {
 		return value;
+	}
+	
+	public void add(Tag tag) {
+		value.add(tag);
 	}
 
 	@Override
@@ -49,9 +39,8 @@ public final class ListTag<T extends Tag> extends Tag {
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
-
 		StringBuilder bldr = new StringBuilder();
 		bldr.append("TAG_List" + append + ": " + value.size() + " entries of type " + NBTUtils.getTypeName(type) + "\r\n{\r\n");
 		for (Tag t : value) {
@@ -60,6 +49,4 @@ public final class ListTag<T extends Tag> extends Tag {
 		bldr.append("}");
 		return bldr.toString();
 	}
-
 }
-

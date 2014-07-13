@@ -7,14 +7,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
-import java.util.zip.GZIPOutputStream;
 
 import net.rush.Server;
 import net.rush.chunk.Chunk;
@@ -36,7 +34,6 @@ import net.rush.packets.packet.BlockChangePacket;
 import net.rush.packets.packet.TimeUpdatePacket;
 import net.rush.util.nbt.CompoundTag;
 import net.rush.util.nbt.NBTOutputStream;
-import net.rush.util.nbt.Tag;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Difficulty;
@@ -544,41 +541,42 @@ public class World {
 
 	// TODO "Should" be compatible with notchian server, need some more work.
 	public CompoundTag getWorldNbtTag() {
-		CompoundTag tag = new CompoundTag("", new HashMap<String, Tag>());
-		tag.setLong("RandomSeed", 0);
-		tag.setInteger("GameType", Server.getServer().getProperties().gamemode);
-		tag.setBoolean("MapFeatures", false);
+		CompoundTag tag = new CompoundTag();
+		tag.setBoolean("hardcore", false);
+		tag.setBoolean("MapFeatures", true);
+		tag.setBoolean("raining", false);
+		tag.setBoolean("thundering", false);
+		tag.setInteger("GameType", 0);
+		tag.setInteger("generatorVersion", 0);
+		tag.setInteger("rainTime", 0);
 		tag.setInteger("SpawnX", (int)spawnPosition.x);
 		tag.setInteger("SpawnY", (int)spawnPosition.y);
 		tag.setInteger("SpawnZ", (int)spawnPosition.z);
-		tag.setLong("Time", time);
-		tag.setLong("SizeOnDisk", 0);
-		tag.setLong("LastPlayed", System.currentTimeMillis());
-		tag.setString("LevelName", Server.getServer().getProperties().levelName);
-		tag.setInteger("version", 19132);
-		tag.setInteger("rainTime", 0);
-		tag.setBoolean("raining", false);
 		tag.setInteger("thunderTime", 0);
-		tag.setBoolean("thundering", false);
-		tag.setBoolean("hardcore", Server.getServer().getProperties().hardcore);
-
+		tag.setInteger("version", 19113);
+		tag.setLong("LastPlayed", 0);
+		tag.setLong("RandomSeed", 0);
+		tag.setLong("SizeOnDisk", 0);
+		tag.setLong("time", 0);
+		tag.setString("LevelName", "world");
+		
 		return tag;
 	}
 	
 	private void saveWorldInfo() {
 		setSessionLock();
 
-		CompoundTag worldInfoTag = getWorldNbtTag();
-		CompoundTag dataTag = new CompoundTag();
+		CompoundTag worldNbt = getWorldNbtTag();
+		CompoundTag mainNbt = new CompoundTag();
 
-		dataTag.setTag("Data", worldInfoTag);
+		mainNbt.setTag("Data", worldNbt);
 		try {
 			File file = new File(Server.getServer().getProperties().levelName, "level.dat");
 
 			if (file.exists())
 				file.delete();
 
-			writeGzippedCompound(dataTag, new FileOutputStream(file));
+			writeGzippedCompound(mainNbt, new FileOutputStream(file));
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -599,21 +597,21 @@ public class World {
 		}
 	}
 
-	private void writeGzippedCompound(CompoundTag tag, OutputStream os) throws IOException {
+	private void writeGzippedCompound(CompoundTag tag, OutputStream out) throws IOException {
 		try {
-			NBTOutputStream nbtOutput = null;
+			NBTOutputStream nbtOut = null;
 			try {
-				nbtOutput = new NBTOutputStream(new GZIPOutputStream(os));
-				nbtOutput.writeTag(tag);
-				nbtOutput.close();
-				nbtOutput = null;
+				nbtOut = new NBTOutputStream(out);
+				nbtOut.writeTag(tag);
+				nbtOut.close();
+				nbtOut = null;
 			} finally {
-				if (nbtOutput != null)
-					nbtOutput.close();
+				if (nbtOut != null)
+					nbtOut.close();
 			}
 
 		} finally {
-			os.close();
+			out.close();
 		}
 	}
 }

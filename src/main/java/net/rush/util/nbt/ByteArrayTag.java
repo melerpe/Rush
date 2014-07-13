@@ -1,21 +1,10 @@
 package net.rush.util.nbt;
 
-/**
- * The {@code TAG_Byte_Array} tag.
 
- */
-public final class ByteArrayTag extends Tag {
+public class ByteArrayTag extends Tag {
 
-	/**
-	 * The value.
-	 */
-	private final byte[] value;
+	private byte[] value;
 
-	/**
-	 * Creates the tag.
-	 * @param name The name.
-	 * @param value The value.
-	 */
 	public ByteArrayTag(String name, byte[] value) {
 		super(name);
 		this.value = value;
@@ -36,14 +25,11 @@ public final class ByteArrayTag extends Tag {
 			}
 			hex.append(hexDigits).append(" ");
 		}
-
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
 		return "TAG_Byte_Array" + append + ": " + hex.toString();
 	}
-
 }
-

@@ -1,21 +1,9 @@
 package net.rush.util.nbt;
 
-/**
- * The {@code TAG_Double} tag.
+public class DoubleTag extends Tag {
 
- */
-public final class DoubleTag extends Tag {
+	private double value;
 
-	/**
-	 * The value.
-	 */
-	private final double value;
-
-	/**
-	 * Creates the tag.
-	 * @param name The name.
-	 * @param value The value.
-	 */
 	public DoubleTag(String name, double value) {
 		super(name);
 		this.value = value;
@@ -31,10 +19,8 @@ public final class DoubleTag extends Tag {
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
 		return "TAG_Double" + append + ": " + value;
 	}
-
 }
-

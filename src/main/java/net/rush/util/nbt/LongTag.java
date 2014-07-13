@@ -1,21 +1,9 @@
 package net.rush.util.nbt;
 
-/**
- * The {@code TAG_Long} tag.
+public class LongTag extends Tag {
 
- */
-public final class LongTag extends Tag {
+	private long value;
 
-	/**
-	 * The value.
-	 */
-	private final long value;
-
-	/**
-	 * Creates the tag.
-	 * @param name The name.
-	 * @param value The value.
-	 */
 	public LongTag(String name, long value) {
 		super(name);
 		this.value = value;
@@ -31,10 +19,8 @@ public final class LongTag extends Tag {
 		String name = getName();
 		String append = "";
 		if (name != null && !name.equals("")) {
-			append = "(\"" + this.getName() + "\")";
+			append = "(\"" + getName() + "\")";
 		}
 		return "TAG_Long" + append + ": " + value;
 	}
-
 }
-
