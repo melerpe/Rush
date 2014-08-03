@@ -169,7 +169,6 @@ public final class Packets {
         // 1.5.1
         registerPacket(0x1B, SteerVehiclePacket.class);
         // TODO EntityProperties, Scoreboard stuff
-        
     }
 
     public static Class<? extends Packet> lookupPacket(int opcode) throws UnknownPacketException {

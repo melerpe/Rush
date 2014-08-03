@@ -130,7 +130,7 @@ public final class BlockPlacementPacketHandler extends PacketHandler<PlayerBlock
 		Block block = Block.byId[id];
 
 		if(block == null)
-			return false;		
+			return false;
 		
 		if (y == 255 && block.material.isSolid())
 			return false;
@@ -138,7 +138,7 @@ public final class BlockPlacementPacketHandler extends PacketHandler<PlayerBlock
 		//else if (world.canPlaceEntityOnSide(id, x, y, z, false, direction, player, item)) {
 
 		int metadata = block.onBlockPlaced(world, x, y, z, direction, xOffset, yOffset, zOffset, item.getDamage());
-		block.onPostBlockPlaced(world, x, y, z, metadata);
+		//block.onPostBlockPlaced(world, x, y, z, metadata);
 		
 		world.setTypeAndDataWithNotify(x, y, z, id, metadata, false);
 

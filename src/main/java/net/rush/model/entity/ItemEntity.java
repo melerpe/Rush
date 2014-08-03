@@ -130,6 +130,7 @@ public final class ItemEntity extends Entity {
 	}
 
 	public Packet createSpawnMessage() {
+		metadataChanged = true;
 		return new SpawnObjectPacket(this, SpawnObjectPacket.ITEM, throwerId, motionX, motionY, motionZ);
 	}
 

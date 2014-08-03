@@ -23,7 +23,6 @@ import net.rush.model.Block;
 import net.rush.model.Entity;
 import net.rush.model.EntityManager;
 import net.rush.model.ItemStack;
-import net.rush.model.LivingEntity;
 import net.rush.model.Player;
 import net.rush.model.Position;
 import net.rush.model.entity.EntityRegistry;
@@ -205,8 +204,7 @@ public class World {
 	/**
 	 * Sets the current time.
 	 * 
-	 * @param time
-	 *            The current time.
+	 * @param time The current time.
 	 */
 	public void setTime(long time) {
 		this.time = time % PULSES_PER_DAY;
@@ -356,10 +354,10 @@ public class World {
 		dropItem(x, y, z, type, 1, 0);
 	}
 
-	public LivingEntity spawnEntity(Position pos, EntityType type) {
+	public Entity spawnEntity(Position pos, EntityType type) {
 		try {
-			Class<? extends LivingEntity> clazz = EntityRegistry.entityLookup(type);
-			LivingEntity entity = clazz.getDeclaredConstructor(World.class).newInstance(this);
+			Class<? extends Entity> clazz = EntityRegistry.entityLookup(type);
+			Entity entity = clazz.getDeclaredConstructor(World.class).newInstance(this);
 			entity.setPosition(pos);
 
 			return entity;
@@ -539,8 +537,42 @@ public class World {
 		return 0;
 	}
 
+	public void saveWorldInfo() {
+		setSessionLock();
+
+		CompoundTag worldNbt = getWorldNbtTag();
+		CompoundTag mainNbt = new CompoundTag();
+
+		mainNbt.setTag("Data", worldNbt);
+		try {
+			File file = new File(Server.getServer().getProperties().levelName, "level.dat");
+
+			if (file.exists())
+				file.delete();
+
+			writeGzippedCompound(mainNbt, new FileOutputStream(file));
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private void setSessionLock() {
+		try {
+			File file = new File(Server.getServer().getProperties().levelName, "session.lock");
+			DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
+			try {
+				dos.writeLong(System.currentTimeMillis());
+			} finally {
+				dos.close();
+			}
+		} catch (IOException ex) {
+			throw new RuntimeException("Failed to check session lock, aborting", ex);
+		}
+	}
+	
 	// TODO "Should" be compatible with notchian server, need some more work.
-	public CompoundTag getWorldNbtTag() {
+	private CompoundTag getWorldNbtTag() {
 		CompoundTag tag = new CompoundTag();
 		tag.setBoolean("hardcore", false);
 		tag.setBoolean("MapFeatures", true);
@@ -561,40 +593,6 @@ public class World {
 		tag.setString("LevelName", "world");
 		
 		return tag;
-	}
-	
-	private void saveWorldInfo() {
-		setSessionLock();
-
-		CompoundTag worldNbt = getWorldNbtTag();
-		CompoundTag mainNbt = new CompoundTag();
-
-		mainNbt.setTag("Data", worldNbt);
-		try {
-			File file = new File(Server.getServer().getProperties().levelName, "level.dat");
-
-			if (file.exists())
-				file.delete();
-
-			writeGzippedCompound(mainNbt, new FileOutputStream(file));
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private void setSessionLock() {
-		try {
-			File file = new File(Server.getServer().getProperties().levelName, "session.lock");
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
-			try {
-				dos.writeLong(System.currentTimeMillis());
-			} finally {
-				dos.close();
-			}
-		} catch (IOException ex) {
-			throw new RuntimeException("Failed to check session lock, aborting", ex);
-		}
 	}
 
 	private void writeGzippedCompound(CompoundTag tag, OutputStream out) throws IOException {

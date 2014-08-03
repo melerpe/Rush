@@ -115,7 +115,7 @@ public final class TaskScheduler {
 	}
 
 	/**
-	 * Runs specified task once.
+	 * Runs specified task once asynchronously.
 	 */
 	public void runTaskAsync(Runnable task) {
 		asyncExecutor.submit(task);

@@ -2,13 +2,10 @@ package net.rush.packets.misc;
 
 public class ServerPing {
 
-	private Protocol version;
-	private String description;
-	private String favicon;
-	private Players players;
-
-	public ServerPing() {
-	}
+	private final Protocol version;
+	private final String description;
+	private final String favicon;
+	private final Players players;
 
 	public ServerPing(Protocol version, Players players, String description, String favicon) {
 		this.version = version;
@@ -34,13 +31,14 @@ public class ServerPing {
 	}
 	
 	public static class Protocol {
+		
+		private final String name;
+		private final int protocol;
+		
 		public Protocol(String name, int protocol) {
 			this.name = name;
 			this.protocol = protocol;
 		}
-
-		private String name;
-		private int protocol;
 		
 		public String getName() {
 			return name;
@@ -53,13 +51,13 @@ public class ServerPing {
 
 	public static class Players {
 		
+		private final int max;
+		private final int online;
+		
 		public Players(int max, int online) {
 			this.max = max;
 			this.online = online;
 		}
-
-		private int max;
-		private int online;
 
 		public int getMax() {
 			return max;

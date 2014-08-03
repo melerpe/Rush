@@ -48,12 +48,12 @@ public class BlockCrops extends BlockFlower {
 		if(world.getTypeId(x, y - 1, z) == Block.SOIL.id && world.getBlockData(x, y - 1, z) == 1) {
 			int stage = world.getBlockData(x, y, z);
 
-			System.out.println("Ticking crops, its stage is: " + stage);
+			//System.out.println("Ticking crops, its stage is: " + stage);
 
 			if(stage < 7)
 				world.setTypeAndData(x, y, z, id, stage + 1, true);
-		} else
-			System.out.println("Crops wont grow because soil is not watered!");
+		}// else
+		//	System.out.println("Crops wont grow because soil is not watered!");
 	}
 
 	@Override

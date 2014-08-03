@@ -5,6 +5,7 @@ import java.util.Random;
 
 import net.rush.model.block.BlockCraftingTable;
 import net.rush.model.block.BlockCrops;
+import net.rush.model.block.BlockFallable;
 import net.rush.model.block.BlockFlower;
 import net.rush.model.block.BlockGrass;
 import net.rush.model.block.BlockLog;
@@ -79,9 +80,9 @@ public class Block {
 	public static final Block STATIONARY_WATER = (new BlockStationary(9, Material.water)).setHardness(100.0F).setLightOpacity(3).setName("water").aliases("water_still");
 	public static final BlockFluid LAVA = (BlockFluid) (new BlockFlowing(10, Material.lava)).setHardness(0.0F).setLightValue(1.0F).setName("lava").aliases("lava_flow");
 	public static final Block STATIONARY_LAVA = (new BlockStationary(11, Material.lava)).setHardness(100.0F).setLightValue(1.0F).setName("lava").aliases("lava_still");
-	public static final Block SAND = (new BlockSand(12)).setHardness(0.5F).setStepSound(soundSandFootstep).setName("sand").aliases("sand");
-	public static final Block GRAVEL = (new BlockGravel(13)).setHardness(0.6F).setStepSound(soundGravelFootstep).setName("gravel").aliases("gravel");
-	public static final Block GOLD_ORE = (new BlockOre(14)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setName("oreGold").aliases("gold_ore");
+	*/public static final Block SAND = new BlockFallable(12, Material.SAND).setHardness(0.5F).setStepSound(Sound.SAND).setName("sand").aliases("sand");
+	public static final Block GRAVEL = new BlockFallable(13, Material.SAND).setHardness(0.6F).setStepSound(Sound.GRAVEL).setName("gravel").aliases("gravel");
+	/*public static final Block GOLD_ORE = (new BlockOre(14)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setName("oreGold").aliases("gold_ore");
 	public static final Block IRON_ORE = (new BlockOre(15)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setName("oreIron").aliases("iron_ore");
 	public static final Block COAL_ORE = (new BlockOre(16)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setName("oreCoal").aliases("coal_ore");
 	*/
