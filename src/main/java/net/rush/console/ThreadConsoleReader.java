@@ -14,15 +14,15 @@ public class ThreadConsoleReader extends Thread {
 	private final ConsoleReader reader;
 
 	public ThreadConsoleReader(Server server, boolean jline) throws IOException {
+		System.setOut(new PrintStream(new LoggerOutputStream(server.getLogger(), Level.INFO), true));
+		System.setErr(new PrintStream(new LoggerOutputStream(server.getLogger(), Level.SEVERE), true));
+		
 		this.server = server;
 		this.jline = jline;
 		this.reader = new ConsoleReader(System.in, System.out);
 		this.reader.setExpandEvents(false);
 		this.setDaemon(true);
 		this.setName("Console Reader Thread");
-
-		System.setOut(new PrintStream(new LoggerOutputStream(server.getLogger(), Level.INFO), true));
-		System.setErr(new PrintStream(new LoggerOutputStream(server.getLogger(), Level.SEVERE), true));
 	}
 
 	public void run() {
@@ -35,12 +35,12 @@ public class ThreadConsoleReader extends Thread {
 				else
 					msg = reader.readLine();
 				
-				if (msg != null && msg.length() > 0) {
+				if (msg != null && msg.length() > 0)
 					server.getCommandManager().execute(server.getConsoleSender(), "/" + msg);
-				}
+				
 			}
-		} catch (IOException ioexception) {
-			java.util.logging.Logger.getLogger("").log(java.util.logging.Level.SEVERE, "Error logging message", ioexception);
+		} catch (IOException ex) {
+			java.util.logging.Logger.getLogger("").log(java.util.logging.Level.SEVERE, "Error logging message", ex);
 		}
 	}
 }

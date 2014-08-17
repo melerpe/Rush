@@ -9,7 +9,6 @@ import net.rush.chunk.Chunk;
  * way of performing chunk I/O e.g. the {@link McRegionChunkIoService}. This
  * interface is abstracted away from the implementation because several
  * formats are available.
-
  */
 public interface ChunkIoService {
 

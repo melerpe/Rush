@@ -1,9 +1,8 @@
 package net.rush.net;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Queue;
 
 /**
@@ -21,7 +20,7 @@ public final class SessionRegistry {
 	/**
 	 * A list of the sessions.
 	 */
-	private final List<Session> sessions = new ArrayList<Session>();
+	private final HashSet<Session> sessions = new HashSet<Session>();
 
 	/**
 	 * Pulses all the sessions.

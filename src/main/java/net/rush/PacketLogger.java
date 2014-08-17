@@ -2,6 +2,7 @@ package net.rush;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -24,14 +25,14 @@ public class PacketLogger {
 			public void run() {
 				try {
 					write(packet, protocol, read);
-				} catch (Exception e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
 
-	private static void write(Packet packet, int protocol, boolean read) throws Exception {
+	private static void write(Packet packet, int protocol, boolean read) throws IOException {
 		if(ignored.contains(packet.getPacketType().getSimpleName()))
 			return;
 		// Prevent too big file

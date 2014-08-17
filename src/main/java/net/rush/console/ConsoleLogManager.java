@@ -4,6 +4,8 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
+import org.fusesource.jansi.AnsiConsole;
+
 public class ConsoleLogManager {
 
 	private static Logger logger = Logger.getLogger("Minecraft");
@@ -22,6 +24,8 @@ public class ConsoleLogManager {
 		for (java.util.logging.Handler handler : global.getHandlers()) {
 			global.removeHandler(handler);
 		}
+		
+		AnsiConsole.systemInstall();
 		
 		ConsoleLogFormatter formatter = new ConsoleLogFormatter();
 

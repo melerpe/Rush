@@ -58,7 +58,7 @@ public class MathHelper {
 	public static float abs(float param) {
 		return param >= 0.0F ? param : -param;
 	}
-
+	
 	/**
 	 * Returns the unsigned value of an int.
 	 */

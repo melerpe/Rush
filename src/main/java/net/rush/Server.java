@@ -10,6 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.ResourceLeakDetector;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.io.File;
@@ -43,10 +44,8 @@ import net.rush.packets.legacy.LegacyEncoder;
 import net.rush.packets.misc.Protocol;
 import net.rush.task.TaskScheduler;
 import net.rush.util.NumberUtils;
-import net.rush.world.ForestWorldGenerator;
+import net.rush.world.AlphaWorldGenerator;
 import net.rush.world.World;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
  * The core class of the Rush server.
@@ -72,7 +71,7 @@ public final class Server {
 	/** A group containing all of the channels. */
 	private final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-	private final EventLoopGroup eventGroup = new NioEventLoopGroup(3, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread - %1$d").build()); // TODO configurable
+	private final EventLoopGroup eventGroup = new NioEventLoopGroup(3/*, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread - %1$d").build()*/); // TODO configurable
 
 	/** A list of all the active {@link Session}s. */
 	private final SessionRegistry sessions = new SessionRegistry();
@@ -95,6 +94,9 @@ public final class Server {
 					gui = false;
 			}
 			
+	        System.setProperty( "java.net.preferIPv4Stack", "true" );
+	        ResourceLeakDetector.setLevel(io.netty.util.ResourceLeakDetector.Level.DISABLED);
+			
 			ConsoleLogManager.register();
 			
 			if(gui)
@@ -113,10 +115,10 @@ public final class Server {
 	 * Creates and initializes a new server.
 	 */
 	public Server() {
+		server = this;
+		
 		logger.info("Initializing Rush for Minecraft 1.6.4 - 1.7.10");
 		long initialTime = System.currentTimeMillis();
-
-		server = this;
 
 		if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
 			logger.warning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar project-rush.jar\"");
@@ -125,7 +127,8 @@ public final class Server {
 		properties = new ServerProperties("server.properties");
 		properties.load();
 
-		world = new World(properties.levelName, new McRegionChunkIoService(new File(properties.levelName)), new ForestWorldGenerator());
+		world = new World(properties.levelName);
+		world.setChunkManager(new McRegionChunkIoService(new File(properties.levelName)), new AlphaWorldGenerator(world, world.seed));
 
 		logger.info("Generating server id");
 		serverId = Long.toString(new Random().nextLong(), 16);
@@ -133,7 +136,7 @@ public final class Server {
 		logger.info("Starting Minecraft server on " + (properties.serverIp.length() == 0 ? "*" : properties.serverIp) + ":" + properties.port);
 		new NettyNetworkThread().start();
 
-		Runtime.getRuntime().addShutdownHook(new Thread(new ServerShutdownHandler()));
+		Runtime.getRuntime().addShutdownHook(new ServerShutdownHandler());
 
 		scheduler.start();
 
@@ -224,7 +227,7 @@ public final class Server {
 	/**
 	 * A {@link Runnable} which saves chunks on shutdown.
 	 */
-	private class ServerShutdownHandler implements Runnable {
+	private class ServerShutdownHandler extends Thread {
 
 		@Override
 		public void run() {
@@ -239,14 +242,14 @@ public final class Server {
 			logger.info("Saving chunks...");
 			try {
 				world.save();
-			} catch (Exception e) {
-				logger.log(Level.WARNING, "Failed to save some chunks.", e);
+			} catch (Exception ex) {
+				logger.log(Level.WARNING, "Failed to save some chunks.", ex);
 			}
 		}
 		logger.info("Shutdown complete.");
 	}
 
-	class NettyNetworkThread extends Thread {
+	private class NettyNetworkThread extends Thread {
 
 		@Override
 		public void run() {

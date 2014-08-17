@@ -10,7 +10,7 @@ import net.rush.chunk.ChunkCoords;
 public class FlatGrassWorldGenerator implements WorldGenerator {
 	
 	@Override
-	public Chunk generate(int chunkX, int chunkZ) {
+	public Chunk generate(World world, int chunkX, int chunkZ) {
 		Chunk chunk = new Chunk(new ChunkCoords(chunkX, chunkZ));
 		for (int x = 0; x < Chunk.WIDTH; x++) {
 			for (int z = 0; z < Chunk.HEIGHT; z++) {

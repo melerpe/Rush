@@ -22,8 +22,8 @@ public final class ForestWorldGenerator extends FlatGrassWorldGenerator {
 	private Random random = new Random();
 
 	@Override
-	public Chunk generate(int chunkX, int chunkZ) {
-		Chunk chunk = super.generate(chunkX, chunkZ);
+	public Chunk generate(World world, int chunkX, int chunkZ) {
+		Chunk chunk = super.generate(world, chunkX, chunkZ);
 
 		int numTrees = random.nextInt(MAX_TREES + 1);
 		for (int i = 0; i < numTrees; i++) {

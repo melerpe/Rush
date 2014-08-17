@@ -15,7 +15,6 @@ public interface WorldGenerator {
 	 * @param z The Z coordinate.
 	 * @return The chunk.
 	 */
-	public Chunk generate(int x, int z);
-
+	public Chunk generate(World world, int x, int z);
 }
 

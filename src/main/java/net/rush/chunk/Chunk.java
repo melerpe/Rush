@@ -30,24 +30,29 @@ public final class Chunk {
 	/**
 	 * The data in this chunk representing all of the blocks and their state.
 	 */
-	public final byte[] types;
-	private final byte[] metaData, skyLight, blockLight;
-	
+	public final byte[] types, metaData, skyLight, blockLight;
+
 	//@SuppressWarnings("unchecked")
 	//private Set<Entity>[] entities = new TreeSet[DEPTH / 16];
+
+	public Chunk(ChunkCoords coords) {
+		this(coords, new byte[SIZE]);
+	}
+
+	public boolean terrainPopulated = false;
 
 	/**
 	 * Creates a new chunk with a specified X and Z coordinate.
 	 * @param x The X coordinate.
 	 * @param z The Z coordinate.
 	 */
-	public Chunk(ChunkCoords coords) {
+	public Chunk(ChunkCoords coords, byte[] types) {
 		this.coords = coords;
-		this.types = new byte[SIZE];
+		this.types = types;
 		this.metaData = new byte[SIZE];
 		this.skyLight = new byte[SIZE];
 		this.blockLight = new byte[SIZE];
-		
+
 		//for (int i = 0; i < entities.length; i++)
 		//	entities[i] = new TreeSet<Entity>();
 	}
@@ -214,7 +219,7 @@ public final class Chunk {
 	}
 
 	Set<Position> tickedBlocks = new HashSet<Position>();
-	
+
 	public void tickAllBlocks(World world, Random rand) {
 		tickedBlocks.clear();
 
@@ -225,14 +230,14 @@ public final class Chunk {
 
 					if(type == 0)
 						continue;
-					
+
 					Block block = Block.byId[type];
 
 					if(block != null)
 						if(!tickedBlocks.contains(block)) {
 							tickedBlocks.add(new Position(x, y, z));
 							//if(block.getTickRandomly())
-								block.tick(world, x * 16, y, z * 16, rand);
+							block.tick(world, x * 16, y, z * 16, rand);
 						}
 				}
 			}
@@ -264,15 +269,15 @@ public final class Chunk {
 
 		// skylight
 		for (int i = 0; i < skyLight.length; i += 2) {
-			byte light1 = skyLight[i];
-			byte light2 = skyLight[i + 1];
+			byte light1 = 15;//skyLight[i];
+			byte light2 = 15;//skyLight[i + 1];
 			data[pos++] = (byte) ((light2 << 4) | light1);
 		}
 
 		// blocklight
 		for (int i = 0; i < blockLight.length; i += 2) {
-			byte light1 = blockLight[i];
-			byte light2 = blockLight[i + 1];
+			byte light1 = 15;//blockLight[i];
+			byte light2 = 15;//blockLight[i + 1];
 			data[pos++] = (byte) ((light2 << 4) | light1);
 		}
 
@@ -300,24 +305,24 @@ public final class Chunk {
 
 		return realCompressed;
 	}
-	
+
 	/*public void addEntity(Entity en) {
 		int posX = MathHelper.floor_double(en.getPosition().getX() / 16D);
 		int posZ = MathHelper.floor_double(en.getPosition().getZ() / 16D);
-		
+
 		if (posX != getX() || posZ != getZ()) {
 			System.out.println("Wrong location! " + en.getPosition());
 			Thread.dumpStack();
 		}
-		
+
 		int posY = MathHelper.floor_double(en.getPosition().getY() / 16D);
-		
+
 		if (posY < 0)
 			posY = 0;
-		
+
 		if (posY >= entities.length)
 			posY = entities.length - 1;
-		
+
 		en.chunkPosition = new Position(getX(), posY, getZ());
 		entities[posY].add(en);
 	}*/

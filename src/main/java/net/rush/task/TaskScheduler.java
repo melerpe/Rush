@@ -77,6 +77,9 @@ public final class TaskScheduler {
 				try {
 					time = System.currentTimeMillis();
 					lags = pulse();
+				} catch (StackOverflowError err) {
+					logger.log(Level.SEVERE, "Stack overflow error in task scheduler, server shutting down.", err);
+					System.exit(0);
 				} catch (Throwable t) {
 					logger.log(Level.SEVERE, "Uncaught exception in task scheduler.", t);
 					// TODO in the future consider shutting down the server at this point?

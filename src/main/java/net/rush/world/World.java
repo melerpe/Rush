@@ -23,6 +23,7 @@ import net.rush.model.Block;
 import net.rush.model.Entity;
 import net.rush.model.EntityManager;
 import net.rush.model.ItemStack;
+import net.rush.model.Material;
 import net.rush.model.Player;
 import net.rush.model.Position;
 import net.rush.model.entity.EntityRegistry;
@@ -56,12 +57,12 @@ public class World {
 	/**
 	 * The spawn position.
 	 */
-	private Position spawnPosition = new Position(0, 65, 0);
+	private Position spawnPosition = new Position(0, 110, 0);
 
 	/**
 	 * The chunk manager.
 	 */
-	private final ChunkManager chunks;
+	private ChunkManager chunks;
 
 	/**
 	 * The entity manager.
@@ -71,12 +72,17 @@ public class World {
 	private long time = 0;
 	private int maxHeight = 256;
 	private String name;
-	
+
 	public Set<ChunkCoords> activeChunks = new HashSet<ChunkCoords>();
 	public final Vec3Pool vectorPool = new Vec3Pool(300, 2000);
 	public Random rand = new Random();
+	public final long seed = 123456;
+	
+	public final int worldYbits = 7;
+	public final int xShift = worldYbits + 4;
 
 	protected int randomBlockChooser = rand.nextInt();
+
 
 	/**
 	 * Creates a new world with the specified chunk I/O service and world
@@ -87,9 +93,12 @@ public class World {
 	 * @param generator
 	 *            The world generator.
 	 */
-	public World(String name, ChunkIoService service, WorldGenerator generator) {
-		chunks = new ChunkManager(service, generator);
+	public World(String name) {
 		this.name = name;
+	}
+	
+	public void setChunkManager(ChunkIoService service, WorldGenerator generator) {
+		chunks = new ChunkManager(this, service, generator);
 	}
 
 	/**
@@ -279,6 +288,13 @@ public class World {
 		setBlockData(x, y, z, data, notifyPlayers);
 	}
 
+	public Material getMaterial(int x, int y, int z) {
+		int blockId = getTypeId(x, y, z);
+
+		return blockId == 0 ? Material.AIR : Block.byId[blockId].material;
+
+	}
+
 	/** @param notifyPlayers - should we send BlockChangePacket to all players in the world? */
 	public void setTypeId(int x, int y, int z, int type, boolean notifyPlayers) {
 		int chunkX = x / Chunk.WIDTH + ((x < 0 && x % Chunk.WIDTH != 0) ? -1 : 0);
@@ -398,7 +414,7 @@ public class World {
 		try {
 			this.chunks.saveAll();
 			this.saveWorldInfo();
-			
+
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -453,7 +469,7 @@ public class World {
 
 		NextTickEntry nextTick = tickQueue.poll();
 
-		if (chunks.chunkExist(nextTick.posX, nextTick.posZ)) {
+		if (chunks.chunkExists(nextTick.posX, nextTick.posZ)) {
 			int id = getTypeId(nextTick.posX, nextTick.posY, nextTick.posZ);
 
 			if (id > 0 && Block.isAssociatedWith(id, nextTick.blockId)) 
@@ -466,7 +482,7 @@ public class World {
 		NextTickEntry tickEntry = new NextTickEntry(x, y, z, blockID);
 		byte radius = 0; // FIXME
 
-		if (chunks.chunkExist(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius)) {
+		if (chunks.chunkExists(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius)) {
 			if (blockID > 0) {
 				tickEntry.setScheduledTime(getTime());
 				tickEntry.setPriority(priority);
@@ -484,7 +500,7 @@ public class World {
 		while(it.hasNext()) {
 			ChunkCoords coords = it.next();
 			Chunk chunk = getChunkFromChunkCoords(coords.x, coords.z);
-
+			
 			int chunkX = coords.x * Chunk.WIDTH;
 			int chunkZ = coords.z * Chunk.HEIGHT;
 
@@ -500,6 +516,9 @@ public class World {
 
 				int type = chunk.getType(x, z, y);
 
+				if(Block.byId[type] == null)
+					throw new NullPointerException("Block " + org.bukkit.Material.getMaterial(type) + " missing!");
+				
 				if(type != 0)
 					if(Block.byId[type].getTickRandomly())
 						Block.byId[type].tick(this, x + chunkX, y, z + chunkZ, rand);
@@ -527,16 +546,26 @@ public class World {
 		}
 	}
 
-	public int getHighestBlockAt(int x, int z ) {
+	public Block getHighestBlockAt(int x, int z ) {
 		for (int y = maxHeight - 1; y > 0; --y) {
-			int blockType = getTypeId(x, y, z);
+			int blockId = getTypeId(x, y, z);
 
-			if (blockType != Block.AIR)
-				return y;
+			if (blockId != Block.AIR.id)
+				return Block.byId[blockId];
+		}
+		return null;
+	}
+
+	public int getHeightValue(int x, int z) {
+		for (int y = maxHeight - 1; y > 0; --y) {
+			int blockId = getTypeId(x, y, z);
+
+			if (blockId != Block.AIR.id)
+				return y + 1;
 		}
 		return 0;
 	}
-
+	
 	public void saveWorldInfo() {
 		setSessionLock();
 
@@ -556,7 +585,7 @@ public class World {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	private void setSessionLock() {
 		try {
 			File file = new File(Server.getServer().getProperties().levelName, "session.lock");
@@ -570,7 +599,7 @@ public class World {
 			throw new RuntimeException("Failed to check session lock, aborting", ex);
 		}
 	}
-	
+
 	// TODO "Should" be compatible with notchian server, need some more work.
 	private CompoundTag getWorldNbtTag() {
 		CompoundTag tag = new CompoundTag();
@@ -591,7 +620,7 @@ public class World {
 		tag.setLong("SizeOnDisk", 0);
 		tag.setLong("time", 0);
 		tag.setString("LevelName", "world");
-		
+
 		return tag;
 	}
 

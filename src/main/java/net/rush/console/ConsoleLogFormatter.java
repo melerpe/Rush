@@ -1,42 +1,23 @@
 package net.rush.console;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
-import org.fusesource.jansi.AnsiConsole;
 
 public class ConsoleLogFormatter extends Formatter {
 
-	private final SimpleDateFormat date;
-
-	public ConsoleLogFormatter() {
-		SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");
-		this.date = date;
-
-		AnsiConsole.systemInstall();
-	}
+	private final SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");
 
 	public String format(LogRecord record) {
-		StringBuilder builder = new StringBuilder();
 		Throwable ex = record.getThrown();
 
-		builder.append(date.format(record.getMillis()));
-		builder.append(" [" + record.getLevel().getLocalizedName().toUpperCase() + "] ");
-		builder.append(formatMessage(record));
-		builder.append("&r\n");
+		if (ex != null)
+			ex.printStackTrace();		
 
-		if (ex != null) {
-			StringWriter writer = new StringWriter();
-			ex.printStackTrace(new PrintWriter(writer));
-			builder.append(writer);
-		}
-
-		return toAnsiColors(builder.toString());
+		return toAnsiColors(date.format(record.getMillis()) + " [" + record.getLevel().getLocalizedName().toUpperCase() + "] " + formatMessage(record) + "&r\n");
 	}
 
 	private String toAnsiColors(String str) {

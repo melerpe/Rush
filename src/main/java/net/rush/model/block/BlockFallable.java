@@ -22,7 +22,7 @@ public class BlockFallable extends Block {
 	
 	@Override
 	public boolean canPlaceBlockAt(World world, int x, int y, int z) {
-		return world.getTypeId(x, y, z) != Block.AIR;
+		return world.getTypeId(x, y, z) != Block.AIR.id;
 	}
 
 	@Override
