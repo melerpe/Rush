@@ -1,7 +1,6 @@
 package net.rush.world;
 
 import imported.BlockArrayConverter;
-import imported.MapGenBase;
 import imported.MapGenCaves;
 import imported.world.gen.NoiseGeneratorOctaves;
 import imported.world.gen.WorldGenBigTree;
@@ -23,14 +22,14 @@ import net.rush.model.Block;
 
 public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
-	private Random random;	
+	private Random random;
 	private NoiseGeneratorOctaves noise1, noise2, noise3, sandAndGravelNoise, stoneNoise, noise6, noise7, decorationNoise;
 	private World world;
 	private double[] blocks;
 	private double[] sandNoiseCache = new double[256];
 	private double[] gravelNoiseCache = new double[256];
 	private double[] topStoneNoiseCache = new double[256];
-	private MapGenBase mapGenBase = new MapGenCaves();
+	private MapGenCaves mapGenCaves = new MapGenCaves();
 
 	double[] noise3D, noise1D, noise2D, heightNoise, heightNoise2;
 
@@ -55,15 +54,15 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
 		this.generateHeights(x, z, blocksArray);
 		this.generateTerrain(x, z, blocksArray);
-		mapGenBase.initDecoration(this, world, x, z, blocksArray);
-		//chunk.b();
-		
+		mapGenCaves.initDecoration(world, x, z, blocksArray);
+		// chunk.b();
+
 		Chunk chunk = new Chunk(new ChunkCoords(x, z), BlockArrayConverter.convertBlockArray(blocksArray));
 		populate(chunk, x, z);
-		
+
 		return chunk;
 	}
-	
+
 	private void generateHeights(int x, int z, byte[] blockArray) {
 		byte b0 = 4;
 		byte oceanHeight = 64;
@@ -105,7 +104,6 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
 								if (liquidHeight * 8 + tries1 < oceanHeight)
 									blockId = Block.STATIONARY_WATER.id;
-
 
 								if (d15 > 0.0D)
 									blockId = Block.STONE.id;
@@ -278,7 +276,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
 						theHeight = theHeight * (1.0D - d11) + -10.0D * d11;
 					}
-					
+
 					blockArray[index] = theHeight;
 					++index;
 				}
@@ -287,11 +285,10 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		return blockArray;
 	}
 
-	public void populate(Chunk chunk, int chunkX, int chunkZ) {
-		world.getChunks().decorating = true;
-		world.getChunks().decorated = chunk;		
-		
-		//BlockSand.fallInstantly = true;
+	private void populate(Chunk chunk, int chunkX, int chunkZ) {
+		world.getChunks().decorated = chunk;
+
+		// BlockSand.fallInstantly = true;
 		int blockX = chunkX * 16;
 		int blockZ = chunkZ * 16;
 
@@ -384,12 +381,12 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			treeGenerator = new WorldGenBigTree();
 
 		int randZ;
-		
+
 		for (YorIndex = 0; YorIndex < tries; ++YorIndex) {
 			xOrZ = blockX + random.nextInt(16) + 8;
 			randZ = blockZ + random.nextInt(16) + 8;
 			treeGenerator.a(1.0D, 1.0D, 1.0D);
-			treeGenerator.generate(world, random, xOrZ, world.getHeightValue(xOrZ, randZ), randZ);
+			treeGenerator.generate(world, random, xOrZ, world.getTerrainHeight(xOrZ, randZ), randZ);
 		}
 
 		int l2;
@@ -450,8 +447,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			new WorldGenLiquids(Block.LAVA.id).generate(world, random, xOrZ, randZ, l2);
 		}
 
-		//BlockSand.fallInstantly = false;
-		world.getChunks().decorating = false;
+		// BlockSand.fallInstantly = false;
 		world.getChunks().decorated = null;
 	}
 }

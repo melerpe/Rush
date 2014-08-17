@@ -4,7 +4,6 @@ import java.util.Random;
 
 import net.rush.model.Block;
 import net.rush.model.Material;
-import net.rush.util.RushException;
 import net.rush.world.World;
 
 public class BlockGrass extends Block {
@@ -17,11 +16,9 @@ public class BlockGrass extends Block {
 	public void tick(World world, int x, int y, int z, Random rand) {
 		//if (world.getBlockLightValue(x, y + 1, z) < 4 /*&& Block.lightOpacity[world.getTypeId(x, y + 1, z)] > 2*/) {
 		
-		if(world.getTypeId(x, y, z) != this.id)
-			throw new RushException("Illegal block found instead of " + this.getName() + " when ticking! ID:" + world.getTypeId(x, y, z));
-		
-		world.setTypeId(x, y, z, Block.DIRT.id, true);
-			//System.out.println("dirt @ " + x + ", " + y + ", " + z);
+		if(world.getMaterial(x, y + 1, z).isSolid())
+			world.setTypeId(x, y, z, Block.DIRT.id, true);
+
 		/*} else if (world.getBlockLightValue(x, y + 1, z) >= 9) {
 			for (int i = 0; i < 4; ++i) {
 				

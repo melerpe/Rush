@@ -23,7 +23,7 @@ public class MapGenCaves extends MapGenBase {
 		Random random = new Random(rand.nextLong());
 
 		if (l <= 0) {
-			int i1 = a * 16 - 16;
+			int i1 = radius * 16 - 16;
 
 			l = i1 - random.nextInt(i1 / 4);
 		}

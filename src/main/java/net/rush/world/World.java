@@ -232,8 +232,8 @@ public class World {
 		// players to keep things in sync
 	}
 
-	public Chunk getChunkFromBlockCoords(int i, int j) {
-		return getChunkFromChunkCoords(i >> 4, j >> 4);
+	public Chunk getChunkFromBlockCoords(int x, int z) {
+		return getChunkFromChunkCoords(x >> 4, z >> 4);
 	}
 
 	public Chunk getChunkFromChunkCoords(int x, int z) {
@@ -556,7 +556,7 @@ public class World {
 		return null;
 	}
 
-	public int getHeightValue(int x, int z) {
+	public int getTerrainHeight(int x, int z) {
 		for (int y = maxHeight - 1; y > 0; --y) {
 			int blockId = getTypeId(x, y, z);
 

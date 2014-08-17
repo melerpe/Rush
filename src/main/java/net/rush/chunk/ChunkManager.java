@@ -44,7 +44,6 @@ public final class ChunkManager {
 		this.generator = generator;
 	}
 
-	public boolean decorating = false;
 	public Chunk decorated = null;
 
 	/**
@@ -58,11 +57,8 @@ public final class ChunkManager {
 		ChunkCoords key = new ChunkCoords(x, z);
 		Chunk chunk = chunks.get(key);
 
-		if(decorating)
-			if(decorated == null)
-				throw new IllegalStateException("decorated is null");
-			else
-				return decorated;
+		if(chunk == null && decorated != null)
+			return decorated;
 
 		if (chunk == null) {
 			try {
@@ -71,9 +67,8 @@ public final class ChunkManager {
 				chunk = null;
 			}
 
-			if (chunk == null) {
+			if (chunk == null) 
 				chunk = generator.generate(world, x, z);
-			}
 
 			chunks.put(key, chunk);
 		}
@@ -84,18 +79,18 @@ public final class ChunkManager {
 	public boolean chunkExists(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 		if (maxY >= 0 && minY < 256) {
 			minX >>= 4;
-			minZ >>= 4;
-			maxX >>= 4;
-			maxZ >>= 4;
-	
-			for (int x = minX; x <= maxX; ++x) {
-				for (int z = minZ; z <= maxZ; ++z) {
-					if (!chunkExists(x, z))
-						return false;
-				}
+		minZ >>= 4;
+		maxX >>= 4;
+		maxZ >>= 4;
+
+		for (int x = minX; x <= maxX; ++x) {
+			for (int z = minZ; z <= maxZ; ++z) {
+				if (!chunkExists(x, z))
+					return false;
 			}
-	
-			return true;
+		}
+
+		return true;
 		}
 		return false;
 	}

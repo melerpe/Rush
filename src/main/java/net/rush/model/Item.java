@@ -2,10 +2,11 @@ package net.rush.model;
 
 import java.util.Random;
 
+import net.rush.model.item.ItemCoal;
 import net.rush.model.item.ItemDye;
 import net.rush.model.item.ItemHoe;
+import net.rush.model.item.ItemPlaceable;
 import net.rush.model.item.ItemRecord;
-import net.rush.model.item.ItemSeeds;
 import net.rush.util.enums.EnumToolMaterial;
 import net.rush.world.World;
 
@@ -24,7 +25,7 @@ public class Item {
 	public static Item APPLE = new ItemFood(4, 4, 0.3F, false).setName("apple");
 	public static ItemBow BOW = (ItemBow) new ItemBow(5).setName("bow");
 	*/public static Item ARROW = new Item(6).setName("arrow");
-	//public static Item COAL = new ItemCoal(7).setName("coal");
+	public static Item COAL = new ItemCoal(7).setName("coal");
 	public static Item DIAMOND = new Item(8).setName("diamond");
 	public static Item IRON_INGOT = new Item(9).setName("ingotIron");
 	public static Item GOLD_INGOT = new Item(10).setName("ingotGold");
@@ -56,7 +57,7 @@ public class Item {
 	public static Item IRON_HOE = new ItemHoe(36, EnumToolMaterial.IRON).setName("hoeIron");
 	public static Item DIAMOND_HOE = new ItemHoe(37, EnumToolMaterial.DIAMOND).setName("hoeDiamond");
 	public static Item GOLDEN_HOE = new ItemHoe(38, EnumToolMaterial.GOLD).setName("hoeGold");
-	public static Item SEEDS = new ItemSeeds(39, Block.CROPS.id).setName("seeds");
+	public static Item SEEDS = new ItemPlaceable(39, Block.CROPS.id).setName("seeds");
 	public static Item WHEAT = new Item(40).setName("wheat");
 	/*public static Item BREAD = new ItemFood(41, 5, 0.6F, false).setName("bread");
 	public static ItemArmor LEATHER_HELMET = (ItemArmor) new ItemArmor(42, EnumArmorMaterial.CLOTH, 0, 0).setName("helmetCloth");
@@ -98,8 +99,8 @@ public class Item {
 	*/public static Item LEATHER = new Item(78).setName("leather");
 	//public static Item MILK_BUCKET = new ItemBucketMilk(79).setName("milk").setContainerItem(EMPTY_BUCKET);
 	public static Item BRICK = new Item(80).setName("brick");
-	public static Item CLAY = new Item(81).setName("clay");
-	//public static Item SUGAR_CANE = new ItemReed(82, Block.reed).setName("reeds");
+	public static Item CLAY_BALL = new Item(81).setName("clay");
+	public static Item SUGAR_CANE = new ItemPlaceable(82, Block.SUGAR_CANE_BLOCK.id).setName("reeds");
 	public static Item PAPER = new Item(83).setName("paper");
 	//public static Item BOOK = new ItemBook(84).setName("book");
 	public static Item SLIMEBALL = new Item(85).setName("slimeball");

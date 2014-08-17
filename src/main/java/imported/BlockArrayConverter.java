@@ -20,8 +20,9 @@ public class BlockArrayConverter {
 
 					while (true) {
 						if (zPos < 16) {
-							int flatBlockPos = xPos << 11 | zPos << 7 | count + (byteY << 4);
-							byte blockId = mcRegionBlocks[flatBlockPos];
+							// Converts X Y Z position into two dimensional array.
+							int blockPos = xPos << 11 | zPos << 7 | count + (byteY << 4);
+							byte blockId = mcRegionBlocks[blockPos];
 
 							if (blockId == 0) {
 								++zPos;
@@ -43,8 +44,9 @@ public class BlockArrayConverter {
 				for (int x = 0; x < Chunk.WIDTH; ++x) {
 					for (int y = 0; y < (Chunk.DEPTH / 2); ++y) { // 256 : 2 = 128 -> McRegion height
 						for (int z = 0; z < Chunk.HEIGHT; ++z) {
-							int flatBlockPos = x << 11 | z << 7 | y + (byteY << 4);
-							byte blockId = mcRegionBlocks[flatBlockPos];
+							// Converts X Y Z position into two dimensional array.
+							int blockPos = x << 11 | z << 7 | y + (byteY << 4);
+							byte blockId = mcRegionBlocks[blockPos];
 
 							anvilBlocks[y << 8 | z << 4 | x] = (byte) (blockId & 255);								
 						}
