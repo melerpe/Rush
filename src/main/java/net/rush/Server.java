@@ -77,8 +77,11 @@ public final class Server {
 	private final SessionRegistry sessions = new SessionRegistry();
 	
 	/**
+	 * @deprecated Old javadocs. Reading following is deprecated. De-pre-ca-ted. (Following Bukkit- policy compliant terms)
 	 * Creates a new server on TCP port 25565 and starts listening for
 	 * connections.
+	 * 
+	 * Creates a new server, parses arguments set up console log formatter and reader.
 	 * @param args The command-line arguments.
 	 */
 	public static void main(String[] args) {
@@ -137,6 +140,16 @@ public final class Server {
 		new NettyNetworkThread().start();
 
 		Runtime.getRuntime().addShutdownHook(new ServerShutdownHandler());
+		
+		byte radius = 7;
+
+		for (int x = -radius; x <= radius; ++x) {
+			logger.info("Preparing spawn area: " + (x + radius) * 100 / (radius + radius + 1) + "%");
+
+			for (int z = -radius; z <= radius; ++z) {
+				world.getChunks().getChunk(((int)world.getSpawnPosition().x >> 4) + x, ((int)world.getSpawnPosition().z >> 4) + z);
+			}
+		}
 
 		scheduler.start();
 
