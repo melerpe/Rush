@@ -10,7 +10,7 @@ public class WorldGenBigTree extends WorldGenerator {
 	static final byte[] a = new byte[] { (byte) 2, (byte) 0, (byte) 0, (byte) 1, (byte) 2, (byte) 1 };
 	Random rand = new Random();
 	World world;
-	int[] d = new int[] { 0, 0, 0 };
+	int[] defaultPos = new int[] { 0, 0, 0 };
 	int e = 0;
 	int f;
 	double g = 0.618D;
@@ -34,14 +34,14 @@ public class WorldGenBigTree extends WorldGenerator {
 			i = 1;
 
 		int[][] aint = new int[i * e][4];
-		int j = d[1] + e - n;
+		int j = defaultPos[1] + e - n;
 		int k = 1;
-		int l = d[1] + f;
-		int i1 = j - d[1];
+		int l = defaultPos[1] + f;
+		int i1 = j - defaultPos[1];
 
-		aint[0][0] = d[0];
+		aint[0][0] = defaultPos[0];
 		aint[0][1] = j;
-		aint[0][2] = d[2];
+		aint[0][2] = defaultPos[2];
 		aint[0][3] = l;
 		--j;
 
@@ -56,14 +56,14 @@ public class WorldGenBigTree extends WorldGenerator {
 				for (double d0 = 0.5D; j1 < i; ++j1) {
 					double d1 = this.j * f * (rand.nextFloat() + 0.328D);
 					double d2 = rand.nextFloat() * 2.0D * 3.14159D;
-					int k1 = (int) (d1 * Math.sin(d2) + d[0] + d0);
-					int l1 = (int) (d1 * Math.cos(d2) + d[2] + d0);
+					int k1 = (int) (d1 * Math.sin(d2) + defaultPos[0] + d0);
+					int l1 = (int) (d1 * Math.cos(d2) + defaultPos[2] + d0);
 					int[] aint1 = new int[] { k1, j, l1 };
 					int[] aint2 = new int[] { k1, j + n, l1 };
 
 					if (this.a(aint1, aint2) == -1) {
-						int[] aint3 = new int[] { d[0], d[1], d[2] };
-						double d3 = Math.sqrt(Math.pow(Math.abs(d[0] - aint1[0]), 2.0D) + Math.pow(Math.abs(d[2] - aint1[2]), 2.0D));
+						int[] aint3 = new int[] { defaultPos[0], defaultPos[1], defaultPos[2] };
+						double d3 = Math.sqrt(Math.pow(Math.abs(defaultPos[0] - aint1[0]), 2.0D) + Math.pow(Math.abs(defaultPos[2] - aint1[2]), 2.0D));
 						double d4 = d3 * this.i;
 
 						if (aint1[1] - d4 > l)
@@ -110,12 +110,12 @@ public class WorldGenBigTree extends WorldGenerator {
 					++k1;
 				else {
 					aint1[b2] = aint[b2] + k1;
-					int l1 = world.getTypeId(aint1[0], aint1[1], aint1[2]);
+					int l1 = world.getType(aint1[0], aint1[1], aint1[2]);
 
 					if (l1 != 0 && l1 != 18)
 						++k1;
 					else {
-						world.setTypeId(aint1[0], aint1[1], aint1[2], l, false);
+						world.setType(aint1[0], aint1[1], aint1[2], l, false);
 						++k1;
 					}
 				}
@@ -188,7 +188,7 @@ public class WorldGenBigTree extends WorldGenerator {
 				aint3[b1] = MathHelper.ceiling_double_int(aint[b1] + j + 0.5D);
 				aint3[b2] = MathHelper.ceiling_double_int(aint[b2] + j * d0 + 0.5D);
 				aint3[b3] = MathHelper.ceiling_double_int(aint[b3] + j * d1 + 0.5D);
-				world.setTypeId(aint3[0], aint3[1], aint3[2], i, false);
+				world.setType(aint3[0], aint3[1], aint3[2], i, false);
 			}
 		}
 	}
@@ -210,10 +210,10 @@ public class WorldGenBigTree extends WorldGenerator {
 	}
 
 	void c() {
-		int i = d[0];
-		int j = d[1];
-		int k = d[1] + f;
-		int l = d[2];
+		int i = defaultPos[0];
+		int j = defaultPos[1];
+		int k = defaultPos[1] + f;
+		int l = defaultPos[2];
 		int[] aint = new int[] { i, j, l };
 		int[] aint1 = new int[] { i, k, l };
 
@@ -235,12 +235,12 @@ public class WorldGenBigTree extends WorldGenerator {
 		int i = 0;
 		int j = o.length;
 
-		for (int[] aint = new int[] { d[0], d[1], d[2] }; i < j; ++i) {
+		for (int[] aint = new int[] { defaultPos[0], defaultPos[1], defaultPos[2] }; i < j; ++i) {
 			int[] aint1 = o[i];
 			int[] aint2 = new int[] { aint1[0], aint1[1], aint1[2] };
 
 			aint[1] = aint1[3];
-			int k = aint[1] - d[1];
+			int k = aint[1] - defaultPos[1];
 
 			if (this.c(k))
 				this.a(aint, aint2, 17);
@@ -282,7 +282,7 @@ public class WorldGenBigTree extends WorldGenerator {
 				aint3[b1] = aint[b1] + i;
 				aint3[b2] = (int) (aint[b2] + i * d0);
 				aint3[b3] = (int) (aint[b3] + i * d1);
-				int k = world.getTypeId(aint3[0], aint3[1], aint3[2]);
+				int k = world.getType(aint3[0], aint3[1], aint3[2]);
 
 				if (k != 0 && k != 18)
 					break;
@@ -293,9 +293,9 @@ public class WorldGenBigTree extends WorldGenerator {
 	}
 
 	boolean e() {
-		int[] aint = new int[] { d[0], d[1], d[2] };
-		int[] aint1 = new int[] { d[0], d[1] + e - 1, d[2] };
-		int i = world.getTypeId(d[0], d[1] - 1, d[2]);
+		int[] aint = new int[] { defaultPos[0], defaultPos[1], defaultPos[2] };
+		int[] aint1 = new int[] { defaultPos[0], defaultPos[1] + e - 1, defaultPos[2] };
+		int i = world.getType(defaultPos[0], defaultPos[1] - 1, defaultPos[2]);
 
 		if (i != 2 && i != 3)
 			return false;
@@ -329,15 +329,16 @@ public class WorldGenBigTree extends WorldGenerator {
 		long l = random.nextLong();
 
 		rand.setSeed(l);
-		d[0] = i;
-		d[1] = j;
-		d[2] = k;
+		defaultPos[0] = i;
+		defaultPos[1] = j;
+		defaultPos[2] = k;
 		if (e == 0)
 			e = 5 + rand.nextInt(m);
 
 		if (!e())
 			return false;
 		else {
+			defaultPos[1]--;
 			this.a();
 			this.b();
 			this.c();

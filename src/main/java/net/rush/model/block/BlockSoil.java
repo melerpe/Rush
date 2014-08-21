@@ -17,7 +17,7 @@ public class BlockSoil extends Block {
 	
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int neighborBlockId) {
-		Block block = Block.byId[world.getTypeId(x, y + 1, z)];
+		Block block = Block.byId[world.getType(x, y + 1, z)];
 		
 		if(block == null)
 			return;
@@ -31,8 +31,8 @@ public class BlockSoil extends Block {
 	
 	@Override
 	public void tick(World world, int x, int y, int z, Random rand) {
-		if(world.getTypeId(x, y, z) != this.id)
-			throw new RushException("Illegal block found instead of " + this.getName() + " when ticking! ID:" + world.getTypeId(x, y, z));
+		if(world.getType(x, y, z) != this.id)
+			throw new RushException("Illegal block found instead of " + this.getName() + " when ticking! ID:" + world.getType(x, y, z));
 		
 		boolean watered = world.getBlockData(x, y, z) == 1;
 		

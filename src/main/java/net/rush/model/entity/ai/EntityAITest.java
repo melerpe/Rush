@@ -33,7 +33,7 @@ public class EntityAITest extends EntityAI {
 				nameVisibleTicks++;
 		}
 
-		if(entity.getWorld().getTypeId((int)entity.getPosition().x, (int)entity.getPosition().y, (int)entity.getPosition().z) != 0) {
+		if(entity.getWorld().getType((int)entity.getPosition().x, (int)entity.getPosition().y, (int)entity.getPosition().z) != 0) {
 			if(!hasName && !was) {
 				hasName = true;
 				entity.setNameVisible(true);
@@ -50,7 +50,7 @@ public class EntityAITest extends EntityAI {
 			was = false;
 		}
 
-		if(entity.getWorld().getTypeId((int)entity.getPosition().x, (int)entity.getPosition().y - 1, (int)entity.getPosition().z) == 0) {
+		if(entity.getWorld().getType((int)entity.getPosition().x, (int)entity.getPosition().y - 1, (int)entity.getPosition().z) == 0) {
 			System.out.println("entity falling from " + entity.getPosition().y);
 			
 			entity.setY(entity.getPosition().y - 0.5);

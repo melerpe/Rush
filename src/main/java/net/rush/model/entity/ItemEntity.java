@@ -52,11 +52,11 @@ public final class ItemEntity extends Entity {
 	}
 
 	private boolean onGround() {
-		return world.getTypeId((int) (getPosition().x + motionX), (int) (getPosition().y + motionY), (int) (getPosition().z + motionZ)) != 0;
+		return world.getType((int) (getPosition().x + motionX), (int) (getPosition().y + motionY), (int) (getPosition().z + motionZ)) != 0;
 	}
 	
 	private boolean inBlock() {
-		return world.getTypeId((int) (getPosition().x + motionX), (int) getPosition().y, (int) (getPosition().z + motionZ)) != 0;
+		return world.getType((int) (getPosition().x + motionX), (int) getPosition().y, (int) (getPosition().z + motionZ)) != 0;
 	}
 	
 	// had to copy the loong double from the notchian server to make it accurate with the client

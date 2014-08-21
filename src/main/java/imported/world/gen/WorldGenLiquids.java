@@ -15,43 +15,43 @@ public class WorldGenLiquids extends WorldGenerator {
 
 	@Override
 	public boolean generate(World world, Random random, int x, int y, int z) {
-		if (world.getTypeId(x, y + 1, z) != Block.STONE.id)
+		if (world.getType(x, y + 1, z) != Block.STONE.id)
 			return false;
-		else if (world.getTypeId(x, y - 1, z) != Block.STONE.id)
+		else if (world.getType(x, y - 1, z) != Block.STONE.id)
 			return false;
-		else if (world.getTypeId(x, y, z) != 0 && world.getTypeId(x, y, z) != Block.STONE.id)
+		else if (world.getType(x, y, z) != 0 && world.getType(x, y, z) != Block.STONE.id)
 			return false;
 
 		int stoneProb = 0;
 
-		if (world.getTypeId(x - 1, y, z) == Block.STONE.id)
+		if (world.getType(x - 1, y, z) == Block.STONE.id)
 			++stoneProb;
 
-		if (world.getTypeId(x + 1, y, z) == Block.STONE.id)
+		if (world.getType(x + 1, y, z) == Block.STONE.id)
 			++stoneProb;
 
-		if (world.getTypeId(x, y, z - 1) == Block.STONE.id)
+		if (world.getType(x, y, z - 1) == Block.STONE.id)
 			++stoneProb;
 
-		if (world.getTypeId(x, y, z + 1) == Block.STONE.id)
+		if (world.getType(x, y, z + 1) == Block.STONE.id)
 			++stoneProb;
 
 		int nearProb = 0;
 
-		if (world.getTypeId(x - 1, y, z) == 0)
+		if (world.getType(x - 1, y, z) == 0)
 			++nearProb;
 
-		if (world.getTypeId(x + 1, y, z) == 0)
+		if (world.getType(x + 1, y, z) == 0)
 			++nearProb;
 
-		if (world.getTypeId(x, y, z - 1) == 0)
+		if (world.getType(x, y, z - 1) == 0)
 			++nearProb;
 
-		if (world.getTypeId(x, y, z + 1) == 0)
+		if (world.getType(x, y, z + 1) == 0)
 			++nearProb;
 
 		if (stoneProb == 3 && nearProb == 1)
-			world.setTypeId(x, y, z, liquidId, false);
+			world.setType(x, y, z, liquidId, false);
 
 		return true;
 	}

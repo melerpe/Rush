@@ -16,7 +16,7 @@ public class BlockSugarCane extends Block {
 
 	@Override
 	public boolean canPlaceBlockAt(World w, int x, int y, int z) {
-		int rootBlock = w.getTypeId(x, y - 1, z);
+		int rootBlock = w.getType(x, y - 1, z);
 		if(rootBlock == Block.SUGAR_CANE_BLOCK.id)
 			return true;		
 		if(rootBlock == Block.GRASS.id || rootBlock == Block.DIRT.id || rootBlock == Block.SAND.id)
@@ -24,6 +24,10 @@ public class BlockSugarCane extends Block {
 		return false;
 	}
 
+	public boolean canReedStay(World w, int x, int y, int z) {
+		return canPlaceBlockAt(w, x, y, z);
+	}
+	
 	@Override
 	public void tick(World world, int x, int y, int z, Random rand) {
 		checkIfCanStay(world, x, y, z);
@@ -35,7 +39,7 @@ public class BlockSugarCane extends Block {
 	}
 
 	private void checkIfCanStay(World world, int x, int y, int z) {
-		if (!canPlaceBlockAt(world, x, y - 1, z)) {
+		if (!canReedStay(world, x, y - 1, z)) {
 			dropBlock(world, x, y, z, world.getBlockData(x, y, z), 0);
 			world.setAir(x, y, z);
 		}

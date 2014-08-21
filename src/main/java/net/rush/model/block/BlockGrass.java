@@ -17,7 +17,7 @@ public class BlockGrass extends Block {
 		//if (world.getBlockLightValue(x, y + 1, z) < 4 /*&& Block.lightOpacity[world.getTypeId(x, y + 1, z)] > 2*/) {
 		
 		if(world.getMaterial(x, y + 1, z).isSolid())
-			world.setTypeId(x, y, z, Block.DIRT.id, true);
+			world.setType(x, y, z, Block.DIRT.id, true);
 
 		/*} else if (world.getBlockLightValue(x, y + 1, z) >= 9) {
 			for (int i = 0; i < 4; ++i) {

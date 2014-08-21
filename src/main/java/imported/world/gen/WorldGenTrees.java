@@ -12,7 +12,7 @@ public class WorldGenTrees extends WorldGenerator {
 		int height = random.nextInt(3) + 4;
 		boolean canGrow = true;
 		
-		if(world.getTypeId(x, y - 1, z) != Block.GRASS.id && world.getTypeId(x, y - 1, z) != Block.DIRT.id)
+		if(world.getType(x, y - 1, z) != Block.GRASS.id && world.getType(x, y - 1, z) != Block.DIRT.id)
 			return false;
 
 		if (y >= 1 && y + height + 1 <= 128) {
@@ -33,7 +33,7 @@ public class WorldGenTrees extends WorldGenerator {
 				for (trunkX = x - length; trunkX <= x + length && canGrow; ++trunkX)
 					for (trunkZ = z - length; trunkZ <= z + length && canGrow; ++trunkZ)
 						if (trunkY >= 0 && trunkY < 128) {
-							idOrPos = world.getTypeId(trunkX, trunkY, trunkZ);
+							idOrPos = world.getType(trunkX, trunkY, trunkZ);
 							if (idOrPos != 0 && idOrPos != Block.LEAVES.id)
 								canGrow = false;
 						} else
@@ -43,9 +43,9 @@ public class WorldGenTrees extends WorldGenerator {
 			if (!canGrow)
 				return false;
 
-			trunkY = world.getTypeId(x, y - 1, z);
+			trunkY = world.getType(x, y - 1, z);
 			if ((trunkY == Block.GRASS.id || trunkY == Block.DIRT.id) && y < 128 - height - 1) {
-				world.setTypeId(x, y - 1, z, Block.DIRT.id, false);
+				world.setType(x, y - 1, z, Block.DIRT.id, false);
 
 				int yPos;
 
@@ -59,16 +59,16 @@ public class WorldGenTrees extends WorldGenerator {
 						for (int zPos = z - trunkZ; zPos <= z + trunkZ; ++zPos) {
 							int l2 = zPos - z;
 
-							if ((Math.abs(j2) != trunkZ || Math.abs(l2) != trunkZ || random.nextInt(2) != 0 && trunkX != 0) && !Block.opaqueCubeLookup[world.getTypeId(idOrPos, yPos, zPos)])
-								world.setTypeId(idOrPos, yPos, zPos, Block.LEAVES.id, false);
+							if ((Math.abs(j2) != trunkZ || Math.abs(l2) != trunkZ || random.nextInt(2) != 0 && trunkX != 0) /*&& !Block.opaqueCubeLookup[world.getType(idOrPos, yPos, zPos)]*/)
+								world.setType(idOrPos, yPos, zPos, Block.LEAVES.id, false);
 						}
 					}
 				}
 
 				for (yPos = 0; yPos < height; ++yPos) {
-					trunkX = world.getTypeId(x, y + yPos, z);
+					trunkX = world.getType(x, y + yPos, z);
 					if (trunkX == 0 || trunkX == Block.LEAVES.id)
-						world.setTypeId(x, y + yPos, z, Block.LOG.id, false);
+						world.setType(x, y + yPos, z, Block.LOG.id, false);
 				}
 
 				return true;

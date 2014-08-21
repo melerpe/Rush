@@ -41,8 +41,8 @@ public class WorldGenMinable extends WorldGenerator {
 						double sizeY = (posY + 0.5D - yVeinWidth) / (veinSizeZ / 2.0D);
 						double sizeZ = (posZ + 0.5D - zVeinWidth) / (veinSizeX / 2.0D);
 
-						if (sizeX * sizeX + sizeY * sizeY + sizeZ * sizeZ < 1.0D && world.getTypeId(posX, posY, posZ) == Block.STONE.id)
-							world.setTypeId(posX, posY, posZ, blockId, false);
+						if (sizeX * sizeX + sizeY * sizeY + sizeZ * sizeZ < 1.0D && world.getType(posX, posY, posZ) == Block.STONE.id)
+							world.setType(posX, posY, posZ, blockId, false);
 					}
 		}
 

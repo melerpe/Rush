@@ -33,7 +33,7 @@ public class ItemDye extends Item {
 			
 			boolean success = false;
 			
-			int id = world.getTypeId(x, y, z);
+			int id = world.getType(x, y, z);
 			
 			if (id == Block.SAPLING.id //|| id == Block.BROWN_MUSHROOM.id || id == Block.RED_MUSHROOM.id 
 					/*|| id == Block.MELON_STEM.id || id == Block.PUMPKIN_STEM.id*/ || id == Block.CROPS.id) {
@@ -53,11 +53,11 @@ public class ItemDye extends Item {
 						posY += (rand.nextInt(3) - 1) * rand.nextInt(3) / 2;
 						posZ += rand.nextInt(3) - 1;
 						
-						if (world.getTypeId(posX, posY - 1, posZ) != Block.GRASS.id)
+						if (world.getType(posX, posY - 1, posZ) != Block.GRASS.id)
 							continue mainLoop;
 					}
 
-					if (world.getTypeId(posX, posY, posZ) != 0)
+					if (world.getType(posX, posY, posZ) != 0)
 						continue;
 
 					// grass
@@ -68,11 +68,11 @@ public class ItemDye extends Item {
 
 					// dandelion
 					if (rand.nextInt(3) != 0)
-						world.setTypeId(posX, posY, posZ, Block.YELLOW_FLOWER.id, true);
+						world.setType(posX, posY, posZ, Block.YELLOW_FLOWER.id, true);
 
 					// rose
 					else
-						world.setTypeId(posX, posY, posZ, Block.RED_ROSE.id, true);
+						world.setType(posX, posY, posZ, Block.RED_ROSE.id, true);
 				}
 				success = true;
 			}

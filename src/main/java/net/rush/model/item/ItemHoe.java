@@ -14,13 +14,13 @@ public class ItemHoe extends ItemTool {
 
 	@Override
 	public boolean onItemUse(ItemStack item, Player player, World world, int x, int y, int z, int direction, float xOffset, float yOffset, float zOffset) {		
-		int groundBlock = world.getTypeId(x, y, z);
-		int upperBlock = world.getTypeId(x, y + 1, z);
+		int groundBlock = world.getType(x, y, z);
+		int upperBlock = world.getType(x, y + 1, z);
 
 		if (direction != 0 && upperBlock == 0 && (groundBlock == Block.GRASS.id || groundBlock == Block.DIRT.id)) {
 			Block soil = Block.SOIL;
 
-			world.setTypeId(x, y, z, soil.id, true);
+			world.setType(x, y, z, soil.id, true);
 			world.playSound(x + 0.5F, y + 0.5F, z + 0.5F, soil.sound.getStepSound(), (soil.sound.getVolume() + 1.0F) / 2.0F, soil.sound.getPitch() * 0.8F);
 			
 			return true;

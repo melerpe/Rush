@@ -26,7 +26,7 @@ public class BlockChangePacket extends Packet {
 	private byte blockMetadata;
 
 	public BlockChangePacket(int x, int y, int z, World world) {
-		this(x, y, z, world.getTypeId(x, y, z), world.getBlockData(x, y, z));
+		this(x, y, z, world.getType(x, y, z), world.getBlockData(x, y, z));
 	}
 
 	public BlockChangePacket(int x, int y, int z, int typeId, int data) {

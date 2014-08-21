@@ -20,8 +20,8 @@ public class WorldGenFlowers extends WorldGenerator {
 			int xPos = x + random.nextInt(8) - random.nextInt(8);
 			int yPos = y + random.nextInt(4) - random.nextInt(4);
 			int zPos = z + random.nextInt(8) - random.nextInt(8);
-			if (world.getTypeId(xPos, yPos, zPos) == 0 && ((BlockFlower) Block.byId[flowerId]).canPlaceBlockAt(world, xPos, yPos - 1, zPos))
-				world.setTypeId(xPos, yPos, zPos, flowerId, false);
+			if (world.getType(xPos, yPos, zPos) == 0 && ((BlockFlower) Block.byId[flowerId]).canPlaceBlockAt(world, xPos, yPos - 1, zPos))
+				world.setType(xPos, yPos, zPos, flowerId, false);
 		}
 
 		return true;

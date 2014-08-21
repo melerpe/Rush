@@ -32,7 +32,7 @@ public class EntityFallingBlock extends Entity {
 	}
 
 	private boolean onGround(int x, int y, int z) {
-		return world.getTypeId(MathHelper.floor_double(x + motionX), MathHelper.floor_double(y + motionY), MathHelper.floor_double(z + motionZ)) != 0;
+		return world.getType(MathHelper.floor_double(x + motionX), MathHelper.floor_double(y + motionY), MathHelper.floor_double(z + motionZ)) != 0;
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class EntityFallingBlock extends Entity {
 		int z = MathHelper.floor_double(getPosition().z);
 		
 		// This removes the block in place of the falling block.
-		if (fallTime == 1 && world.getTypeId(x, y, z) == blockId)
+		if (fallTime == 1 && world.getType(x, y, z) == blockId)
 			world.setAir(x, y, z);
 		
 		if (onGround(x, y, z)) {
@@ -64,7 +64,7 @@ public class EntityFallingBlock extends Entity {
 			motionY *= -0.5D;
 			
 			// TODO Drop when fall on torches, etc.
-			world.setTypeId(x, y, z, blockId, true);
+			world.setType(x, y, z, blockId, true);
 			destroy();
 		} else if (fallTime > 100) {
 			world.dropItem(getPosition().x, getPosition().y, getPosition().z, blockId, 1, 0);

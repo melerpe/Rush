@@ -241,18 +241,18 @@ public class World {
 	}
 
 	public boolean isAir(int x, int y, int z) {
-		return getTypeId(x, y, z) == 0;
+		return getType(x, y, z) == 0;
 	}
 
 	public void setAir(int x, int y, int z) {
-		setTypeId(x, y, z, 0, true);
+		setType(x, y, z, 0, true);
 		setBlockData(x, y, z, 0, false);
 
 		callNeighborChange(x, y, z, 0);
 	}
 
 	private void neighborChange(int x, int y, int z, int data) {
-		Block block = Block.byId[getTypeId(x, y, z)];
+		Block block = Block.byId[getType(x, y, z)];
 
 		if (block != null)
 			block.onNeighborBlockChange(this, x, y, z, data);
@@ -273,7 +273,7 @@ public class World {
 	}
 
 	public void setTypeWithNotify(int x, int y, int z, int type, boolean notifyPlayers) {
-		setTypeId(x, y, z, type, notifyPlayers);
+		setType(x, y, z, type, notifyPlayers);
 		callNeighborChange(x, y, z, getBlockData(x, y, z));
 	}
 
@@ -284,19 +284,19 @@ public class World {
 
 	////////////
 	public void setTypeAndData(int x, int y, int z, int type, int data, boolean notifyPlayers) {
-		setTypeId(x, y, z, type, notifyPlayers);
+		setType(x, y, z, type, notifyPlayers);
 		setBlockData(x, y, z, data, notifyPlayers);
 	}
 
 	public Material getMaterial(int x, int y, int z) {
-		int blockId = getTypeId(x, y, z);
+		int blockId = getType(x, y, z);
 
 		return blockId == 0 ? Material.AIR : Block.byId[blockId].material;
 
 	}
 
 	/** @param notifyPlayers - should we send BlockChangePacket to all players in the world? */
-	public void setTypeId(int x, int y, int z, int type, boolean notifyPlayers) {
+	public void setType(int x, int y, int z, int type, boolean notifyPlayers) {
 		int chunkX = x / Chunk.WIDTH + ((x < 0 && x % Chunk.WIDTH != 0) ? -1 : 0);
 		int chunkZ = z / Chunk.HEIGHT + ((z < 0 && z % Chunk.HEIGHT != 0) ? -1 : 0);
 
@@ -304,7 +304,7 @@ public class World {
 		int localZ = (z - chunkZ * Chunk.HEIGHT) % Chunk.HEIGHT;
 
 		Chunk chunk = chunks.getChunk(chunkX, chunkZ);
-		chunk.setType(localX, localZ, y, type);
+		chunk.setType(localX, y, localZ, type);
 
 		if(notifyPlayers) 
 			sendBlockChangePacket(x, y, z);
@@ -318,7 +318,7 @@ public class World {
 		int localZ = (z - chunkZ * Chunk.HEIGHT) % Chunk.HEIGHT;
 
 		Chunk chunk = chunks.getChunk(chunkX, chunkZ);
-		chunk.setMetaData(localX, localZ, y, data);
+		chunk.setMetaData(localX, y, localZ, data);
 
 		if(notifyPlayers) 
 			sendBlockChangePacket(x, y, z);
@@ -331,14 +331,14 @@ public class World {
 			pl.getSession().send(packet);
 	}
 
-	public int getTypeId(int x, int y, int z) {
+	public int getType(int x, int y, int z) {
 		if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000) {
 			if (y < 0)
 				return 0;
 			if (y >= 256)
 				return 0;
 
-			return getChunkFromBlockCoords(x, z).getType(x & 15, z & 15, y);
+			return getChunkFromBlockCoords(x, z).getType(x & 15, y, z & 15);
 		}
 		return 0;
 	}
@@ -351,7 +351,7 @@ public class World {
 		int localZ = (z - chunkZ * Chunk.HEIGHT) % Chunk.HEIGHT;
 
 		Chunk chunk = chunks.getChunk(chunkX, chunkZ);
-		return chunk.getMetaData(localX, localZ, y);
+		return chunk.getMetaData(localX, y, localZ);
 	}
 
 	public void dropItem(double x, double y, double z, int type, int count, int data) {
@@ -469,8 +469,8 @@ public class World {
 
 		NextTickEntry nextTick = tickQueue.poll();
 
-		if (chunks.chunkExists(nextTick.posX, nextTick.posZ)) {
-			int id = getTypeId(nextTick.posX, nextTick.posY, nextTick.posZ);
+		if (chunks.chunkExist(nextTick.posX, nextTick.posZ)) {
+			int id = getType(nextTick.posX, nextTick.posY, nextTick.posZ);
 
 			if (id > 0 && Block.isAssociatedWith(id, nextTick.blockId)) 
 				Block.byId[id].tick(this, nextTick.posX, nextTick.posY, nextTick.posZ, rand);
@@ -514,7 +514,7 @@ public class World {
 				int y = rand.nextInt(maxHeight);
 				int z = rand.nextInt(16);
 
-				int type = chunk.getType(x, z, y);
+				int type = chunk.getType(x, y, z);
 
 				if(Block.byId[type] == null)
 					throw new NullPointerException("Block " + org.bukkit.Material.getMaterial(type) + " missing!");
@@ -548,7 +548,7 @@ public class World {
 
 	public Block getHighestBlockAt(int x, int z ) {
 		for (int y = maxHeight - 1; y > 0; --y) {
-			int blockId = getTypeId(x, y, z);
+			int blockId = getType(x, y, z);
 
 			if (blockId != Block.AIR.id)
 				return Block.byId[blockId];
@@ -558,7 +558,7 @@ public class World {
 
 	public int getTerrainHeight(int x, int z) {
 		for (int y = maxHeight - 1; y > 0; --y) {
-			int blockId = getTypeId(x, y, z);
+			int blockId = getType(x, y, z);
 
 			if (blockId != Block.AIR.id)
 				return y + 1;

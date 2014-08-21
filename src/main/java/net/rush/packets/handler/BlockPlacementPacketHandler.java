@@ -77,7 +77,7 @@ public final class BlockPlacementPacketHandler extends PacketHandler<PlayerBlock
 	public boolean placeOrActivate(Player player, World world, ItemStack item, int x, int y, int z, int direction, float xOffset, float yOffset, float zOffset) {
 		
 		if (!player.isCrouching() || item == ItemStack.NULL_ITEMSTACK) {
-			int blockId = world.getTypeId(x, y, z);
+			int blockId = world.getType(x, y, z);
 
 			if (blockId > 0 && Block.byId[blockId] != null && Block.byId[blockId].onBlockActivated(world, x, y, z, player, direction, xOffset, yOffset, zOffset)) {
 				return true;
@@ -99,7 +99,7 @@ public final class BlockPlacementPacketHandler extends PacketHandler<PlayerBlock
 	public boolean tryPlace(ItemStack item, Player player, World world, int x, int y, int z, int direction, float xOffset, float yOffset, float zOffset) {
 		int id = item.getId();
 
-		if(world.getTypeId(x, y, z) == item.getId() && (id == Block.VINE.id || id == Block.TALL_GRASS.id || id == Block.DEAD_BUSH.id))
+		if(world.getType(x, y, z) == item.getId() && (id == Block.VINE.id || id == Block.TALL_GRASS.id || id == Block.DEAD_BUSH.id))
 			return false;
 		
 		if (id == Block.SNOW.id && (world.getBlockData(x, y, z) & 7) < 1) {

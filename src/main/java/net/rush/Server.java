@@ -131,7 +131,7 @@ public final class Server {
 		properties.load();
 
 		world = new World(properties.levelName);
-		world.setChunkManager(new McRegionChunkIoService(new File(properties.levelName)), new AlphaWorldGenerator(world, world.seed));
+		world.setChunkManager(new McRegionChunkIoService(new File(properties.levelName)), new AlphaWorldGenerator(world));
 
 		logger.info("Generating server id");
 		serverId = Long.toString(new Random().nextLong(), 16);

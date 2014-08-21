@@ -46,10 +46,10 @@ public class WorldGenClay extends WorldGenerator {
 						double d14 = (zPos + 0.5D - d8) / (d10 / 2.0D);
 
 						if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D) {
-							int blockId = world.getTypeId(xPos, yPos, zPos);
+							int blockId = world.getType(xPos, yPos, zPos);
 
 							if (blockId == Block.SAND.id)
-								world.setTypeId(xPos, yPos, zPos, clayId, false);
+								world.setType(xPos, yPos, zPos, clayId, false);
 						}
 					}
 		}

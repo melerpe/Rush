@@ -705,7 +705,7 @@ public class Block {
 	 * Checks to see if its valid to put this block at the specified coordinates. Args: world, x, y, z
 	 */
 	public boolean canPlaceBlockAt(World world, int x, int y, int z) {
-		int id = world.getTypeId(x, y, z);
+		int id = world.getType(x, y, z);
 		return id == 0 || byId[id].material.isReplaceable();
 	}
 

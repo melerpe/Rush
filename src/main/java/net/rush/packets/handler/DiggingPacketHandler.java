@@ -28,10 +28,10 @@ public final class DiggingPacketHandler extends PacketHandler<PlayerDiggingPacke
 		int z = message.getZ();
 		int y = message.getY();
 
-		Block block = Block.byId[world.getTypeId(x, y, z)];
+		Block block = Block.byId[world.getType(x, y, z)];
 
 		if(block == null) {
-			player.sendMessage("&cUnknown broken block: " + Material.getMaterial(world.getTypeId(x, y, z)));
+			player.sendMessage("&cUnknown broken block: " + Material.getMaterial(world.getType(x, y, z)));
 			return;
 		}
 

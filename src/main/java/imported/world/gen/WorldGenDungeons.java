@@ -30,7 +30,7 @@ public class WorldGenDungeons extends WorldGenerator {
 					if (yPos == y + b0 + 1 && !material.isSolid())
 						return false;
 
-					if ((k1 == x - l - 1 || k1 == x + l + 1 || xPos == z - i1 - 1 || xPos == z + i1 + 1) && yPos == y && world.getTypeId(k1, yPos, xPos) == 0 && world.getTypeId(k1, yPos + 1, xPos) == 0)
+					if ((k1 == x - l - 1 || k1 == x + l + 1 || xPos == z - i1 - 1 || xPos == z + i1 + 1) && yPos == y && world.getType(k1, yPos, xPos) == 0 && world.getType(k1, yPos + 1, xPos) == 0)
 						++j1;
 				}
 
@@ -39,14 +39,14 @@ public class WorldGenDungeons extends WorldGenerator {
 				for (yPos = y + b0; yPos >= y - 1; --yPos)
 					for (xPos = z - i1 - 1; xPos <= z + i1 + 1; ++xPos)
 						if (k1 != x - l - 1 && yPos != y - 1 && xPos != z - i1 - 1 && k1 != x + l + 1 && yPos != y + b0 + 1 && xPos != z + i1 + 1)
-							world.setTypeId(k1, yPos, xPos, 0, false);
+							world.setType(k1, yPos, xPos, 0, false);
 						else if (yPos >= 0 && !world.getMaterial(k1, yPos - 1, xPos).isSolid())
-							world.setTypeId(k1, yPos, xPos, 0, false);
+							world.setType(k1, yPos, xPos, 0, false);
 						else if (world.getMaterial(k1, yPos, xPos).isSolid())
 							if (yPos == y - 1 && random.nextInt(4) != 0)
-								world.setTypeId(k1, yPos, xPos, Block.MOSSY_STONE.id, false);
+								world.setType(k1, yPos, xPos, Block.MOSSY_STONE.id, false);
 							else
-								world.setTypeId(k1, yPos, xPos, Block.COBBLESTONE.id, false);
+								world.setType(k1, yPos, xPos, Block.COBBLESTONE.id, false);
 
 			k1 = 0;
 
@@ -59,7 +59,7 @@ public class WorldGenDungeons extends WorldGenerator {
 							xPos = x + random.nextInt(l * 2 + 1) - l;
 							int zPos = z + random.nextInt(i1 * 2 + 1) - i1;
 
-							if (world.getTypeId(xPos, y, zPos) == 0) {
+							if (world.getType(xPos, y, zPos) == 0) {
 								int chestLocation = 0;
 
 								if (world.getMaterial(xPos - 1, y, zPos).isSolid())

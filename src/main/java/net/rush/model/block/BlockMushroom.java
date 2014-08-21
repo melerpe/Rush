@@ -19,7 +19,7 @@ public class BlockMushroom extends BlockFlower {
 		if (y < 0 || y >= world.getMaxHeight())
 			return false;
 		else {
-			int supportingBlock = world.getTypeId(x, y - 1, z);
+			int supportingBlock = world.getType(x, y - 1, z);
 			return supportingBlock == Block.MYCEL.id/* || world.getBlockLight(x, y, z) < 13*/;
 		}
 	}
@@ -50,7 +50,7 @@ public class BlockMushroom extends BlockFlower {
 		for (int i = x - radius; i <= x + radius; i++)
 			for (int j = z - radius; j <= z + radius; j++)
 				for (int k = y - 1; k <= y + 1; k++)
-					if (world.getTypeId(i, k, j) == id && --maxMushrooms <= 0)
+					if (world.getType(i, k, j) == id && --maxMushrooms <= 0)
 						return;
 
 		int xPos = x + rand.nextInt(3) - 1;

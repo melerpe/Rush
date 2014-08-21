@@ -14,7 +14,7 @@ public class BlockCacti extends Block {
 
 	@Override
 	public boolean canPlaceBlockAt(World w, int x, int y, int z) {
-		return (w.getTypeId(x, y - 1, z) == Block.SAND.id || w.getTypeId(x, y - 1, z) == Block.CACTUS.id) && w.isAir(x - 1, y, z) && w.isAir(x + 1, y, z) && w.isAir(x, y, z - 1) && w.isAir(x, y, z + 1);
+		return (w.getType(x, y - 1, z) == Block.SAND.id || w.getType(x, y - 1, z) == Block.CACTUS.id) && w.isAir(x - 1, y, z) && w.isAir(x + 1, y, z) && w.isAir(x, y, z - 1) && w.isAir(x, y, z + 1);
 	}
 
 	@Override

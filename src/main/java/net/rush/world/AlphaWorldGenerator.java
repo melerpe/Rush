@@ -22,7 +22,7 @@ import net.rush.model.Block;
 
 public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
-	private Random random;
+	private Random rand;
 	private NoiseGeneratorOctaves noise1, noise2, noise3, sandAndGravelNoise, stoneNoise, noise6, noise7, decorationNoise;
 	private World world;
 	private double[] blocks;
@@ -33,22 +33,22 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
 	double[] noise3D, noise1D, noise2D, heightNoise, heightNoise2;
 
-	public AlphaWorldGenerator(World world, long seed) {
+	public AlphaWorldGenerator(World world) {
 		this.world = world;
-		random = new Random(seed);
-		noise1 = new NoiseGeneratorOctaves(random, 16);
-		noise2 = new NoiseGeneratorOctaves(random, 16);
-		noise3 = new NoiseGeneratorOctaves(random, 8);
-		sandAndGravelNoise = new NoiseGeneratorOctaves(random, 4);
-		stoneNoise = new NoiseGeneratorOctaves(random, 4);
-		noise6 = new NoiseGeneratorOctaves(random, 10);
-		noise7 = new NoiseGeneratorOctaves(random, 16);
-		decorationNoise = new NoiseGeneratorOctaves(random, 8);
+		rand = new Random(world.seed);
+		noise1 = new NoiseGeneratorOctaves(rand, 16);
+		noise2 = new NoiseGeneratorOctaves(rand, 16);
+		noise3 = new NoiseGeneratorOctaves(rand, 8);
+		sandAndGravelNoise = new NoiseGeneratorOctaves(rand, 4);
+		stoneNoise = new NoiseGeneratorOctaves(rand, 4);
+		noise6 = new NoiseGeneratorOctaves(rand, 10);
+		noise7 = new NoiseGeneratorOctaves(rand, 16);
+		decorationNoise = new NoiseGeneratorOctaves(rand, 8);
 	}
 
 	@Override
 	public Chunk generate(World world, int x, int z) {
-		random.setSeed(x * 341873128712L + z * 132897987541L);
+		rand.setSeed(x * 341873128712L + z * 132897987541L);
 
 		byte[] blocksArray = new byte[16 * 16 * 128];
 
@@ -57,10 +57,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		mapGenCaves.initDecoration(world, x, z, blocksArray);
 		// chunk.b();
 
-		Chunk chunk = new Chunk(new ChunkCoords(x, z), BlockArrayConverter.convertBlockArray(blocksArray));
-		populate(chunk, x, z);
-
-		return chunk;
+		return new Chunk(new ChunkCoords(x, z), BlockArrayConverter.convertBlockArray(blocksArray));
 	}
 
 	private void generateHeights(int x, int z, byte[] blockArray) {
@@ -135,9 +132,9 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
 		for (int blockX = 0; blockX < 16; ++blockX)
 			for (int blockZ = 0; blockZ < 16; ++blockZ) {
-				boolean sand = sandNoiseCache[blockX + blockZ * 16] + random.nextDouble() * 0.2D > 0.0D;
-				boolean gravel = gravelNoiseCache[blockX + blockZ * 16] + random.nextDouble() * 0.2D > 3.0D;
-				int topStoneDeterminer = (int) (topStoneNoiseCache[blockX + blockZ * 16] / 3.0D + 3.0D + random.nextDouble() * 0.25D);
+				boolean sand = sandNoiseCache[blockX + blockZ * 16] + rand.nextDouble() * 0.2D > 0.0D;
+				boolean gravel = gravelNoiseCache[blockX + blockZ * 16] + rand.nextDouble() * 0.2D > 3.0D;
+				int topStoneDeterminer = (int) (topStoneNoiseCache[blockX + blockZ * 16] / 3.0D + 3.0D + rand.nextDouble() * 0.25D);
 				int counter = -1;
 				byte topBlockId = (byte) Block.GRASS.id;
 				byte blockId = (byte) Block.DIRT.id;
@@ -145,7 +142,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 				for (int blockY = 127; blockY >= 0; --blockY) {
 					int index = (blockX * 16 + blockZ) * 128 + blockY;
 
-					if (blockY <= 0 + random.nextInt(6) - 1)
+					if (blockY <= 0 + rand.nextInt(6) - 1)
 						blockArray[index] = (byte) Block.BEDROCK.id;
 					else {
 						byte b3 = blockArray[index];
@@ -285,18 +282,17 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		return blockArray;
 	}
 
-	private void populate(Chunk chunk, int chunkX, int chunkZ) {
-		world.getChunks().decorated = chunk;
-
+	@Override
+	public void populate(int chunkX, int chunkZ) {
 		// BlockSand.fallInstantly = true;
 		int blockX = chunkX * 16;
 		int blockZ = chunkZ * 16;
 
-		random.setSeed(world.seed);
-		long xRandom = random.nextLong() / 2L * 2L + 1L;
-		long zRandom = random.nextLong() / 2L * 2L + 1L;
+		rand.setSeed(world.seed);
+		long xRandom = rand.nextLong() / 2L * 2L + 1L;
+		long zRandom = rand.nextLong() / 2L * 2L + 1L;
 
-		random.setSeed(chunkX * xRandom + chunkZ * zRandom ^ world.seed);
+		rand.setSeed(chunkX * xRandom + chunkZ * zRandom ^ world.seed);
 		double d0 = 0.25D;
 
 		int tries;
@@ -305,149 +301,148 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		int xOrZ;
 
 		for (tries = 0; tries < 8; ++tries) {
-			maybeX = blockX + random.nextInt(16) + 8;
-			YorIndex = random.nextInt(128);
-			xOrZ = blockZ + random.nextInt(16) + 8;
-			new WorldGenDungeons().generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16) + 8;
+			YorIndex = rand.nextInt(128);
+			xOrZ = blockZ + rand.nextInt(16) + 8;
+			new WorldGenDungeons().generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 10; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(128);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenClay(32).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(128);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenClay(32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
-
+		
 		for (tries = 0; tries < 20; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(128);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenMinable(Block.DIRT.id, 32).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(128);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenMinable(Block.DIRT.id, 32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 10; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(128);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenMinable(Block.GRAVEL.id, 32).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(128);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenMinable(Block.GRAVEL.id, 32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 20; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(128);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenMinable(Block.COAL_ORE.id, 16).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(128);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenMinable(Block.COAL_ORE.id, 16).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 20; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(64);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenMinable(Block.IRON_ORE.id, 8).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(64);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenMinable(Block.IRON_ORE.id, 8).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 2; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(32);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenMinable(Block.GOLD_ORE.id, 8).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(32);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenMinable(Block.GOLD_ORE.id, 8).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 8; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(16);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenMinable(Block.REDSTONE_ORE.id, 7).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(16);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenMinable(Block.REDSTONE_ORE.id, 7).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 1; ++tries) {
-			maybeX = blockX + random.nextInt(16);
-			YorIndex = random.nextInt(16);
-			xOrZ = blockZ + random.nextInt(16);
-			new WorldGenMinable(Block.DIAMOND_ORE.id, 7).generate(world, random, maybeX, YorIndex, xOrZ);
+			maybeX = blockX + rand.nextInt(16);
+			YorIndex = rand.nextInt(16);
+			xOrZ = blockZ + rand.nextInt(16);
+			new WorldGenMinable(Block.DIAMOND_ORE.id, 7).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		d0 = 0.5D;
-		tries = (int) ((decorationNoise.a(blockX * d0, blockZ * d0) / 8.0D + random.nextDouble() * 4.0D + 4.0D) / 3.0D);
+		tries = (int) ((decorationNoise.a(blockX * d0, blockZ * d0) / 8.0D + rand.nextDouble() * 4.0D + 4.0D) / 3.0D);
 		if (tries < 0)
 			tries = 0;
 
-		if (random.nextInt(10) == 0)
+		if (rand.nextInt(10) == 0)
 			++tries;
 
 		WorldGenerator treeGenerator = new WorldGenTrees();
 
-		if (random.nextInt(10) == 0)
-			treeGenerator = new WorldGenBigTree();
+		//if (rand.nextInt(10) == 0)
+		//	treeGenerator = new WorldGenBigTree();
 
 		int randZ;
-
+		
 		for (YorIndex = 0; YorIndex < tries; ++YorIndex) {
-			xOrZ = blockX + random.nextInt(16) + 8;
-			randZ = blockZ + random.nextInt(16) + 8;
+			xOrZ = blockX + 3 + rand.nextInt(10);//+ rand.nextInt(16) + 8;
+			randZ = blockZ + 3 + rand.nextInt(10);//+ rand.nextInt(16) + 8;
 			treeGenerator.a(1.0D, 1.0D, 1.0D);
-			treeGenerator.generate(world, random, xOrZ, world.getTerrainHeight(xOrZ, randZ), randZ);
+			treeGenerator.generate(world, rand, xOrZ, world.getTerrainHeight(xOrZ, randZ), randZ);
 		}
-
+		
 		int l2;
 
 		for (YorIndex = 0; YorIndex < 2; ++YorIndex) {
-			xOrZ = blockX + random.nextInt(16) + 8;
-			randZ = random.nextInt(128);
-			l2 = blockZ + random.nextInt(16) + 8;
-			new WorldGenFlowers(Block.YELLOW_FLOWER.id).generate(world, random, xOrZ, randZ, l2);
+			xOrZ = blockX + rand.nextInt(16) + 8;
+			randZ = rand.nextInt(128);
+			l2 = blockZ + rand.nextInt(16) + 8;
+			new WorldGenFlowers(Block.YELLOW_FLOWER.id).generate(world, rand, xOrZ, randZ, l2);
 		}
 
-		if (random.nextInt(2) == 0) {
-			YorIndex = blockX + random.nextInt(16) + 8;
-			xOrZ = random.nextInt(128);
-			randZ = blockZ + random.nextInt(16) + 8;
-			new WorldGenFlowers(Block.RED_ROSE.id).generate(world, random, YorIndex, xOrZ, randZ);
+		if (rand.nextInt(2) == 0) {
+			YorIndex = blockX + rand.nextInt(16) + 8;
+			xOrZ = rand.nextInt(128);
+			randZ = blockZ + rand.nextInt(16) + 8;
+			new WorldGenFlowers(Block.RED_ROSE.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
 
-		if (random.nextInt(4) == 0) {
-			YorIndex = blockX + random.nextInt(16) + 8;
-			xOrZ = random.nextInt(128);
-			randZ = blockZ + random.nextInt(16) + 8;
-			new WorldGenFlowers(Block.BROWN_MUSHROOM.id).generate(world, random, YorIndex, xOrZ, randZ);
+		if (rand.nextInt(4) == 0) {
+			YorIndex = blockX + rand.nextInt(16) + 8;
+			xOrZ = rand.nextInt(128);
+			randZ = blockZ + rand.nextInt(16) + 8;
+			new WorldGenFlowers(Block.BROWN_MUSHROOM.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
 
-		if (random.nextInt(8) == 0) {
-			YorIndex = blockX + random.nextInt(16) + 8;
-			xOrZ = random.nextInt(128);
-			randZ = blockZ + random.nextInt(16) + 8;
-			new WorldGenFlowers(Block.RED_MUSHROOM.id).generate(world, random, YorIndex, xOrZ, randZ);
+		if (rand.nextInt(8) == 0) {
+			YorIndex = blockX + rand.nextInt(16) + 8;
+			xOrZ = rand.nextInt(128);
+			randZ = blockZ + rand.nextInt(16) + 8;
+			new WorldGenFlowers(Block.RED_MUSHROOM.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
 
 		for (YorIndex = 0; YorIndex < 10; ++YorIndex) {
-			xOrZ = blockX + random.nextInt(16) + 8;
-			randZ = random.nextInt(128);
-			l2 = blockZ + random.nextInt(16) + 8;
-			new WorldGenReed().generate(world, random, xOrZ, randZ, l2);
+			xOrZ = blockX + rand.nextInt(16) + 8;
+			randZ = rand.nextInt(128);
+			l2 = blockZ + rand.nextInt(16) + 8;
+			new WorldGenReed().generate(world, rand, xOrZ, randZ, l2);
 		}
 
 		for (YorIndex = 0; YorIndex < 1; ++YorIndex) {
-			xOrZ = blockX + random.nextInt(16) + 8;
-			randZ = random.nextInt(128);
-			l2 = blockZ + random.nextInt(16) + 8;
-			new WorldGenCactus().generate(world, random, xOrZ, randZ, l2);
+			xOrZ = blockX + rand.nextInt(16) + 8;
+			randZ = rand.nextInt(128);
+			l2 = blockZ + rand.nextInt(16) + 8;
+			new WorldGenCactus().generate(world, rand, xOrZ, randZ, l2);
 		}
 
 		for (YorIndex = 0; YorIndex < 50; ++YorIndex) {
-			xOrZ = blockX + random.nextInt(16) + 8;
-			randZ = random.nextInt(random.nextInt(120) + 8);
-			l2 = blockZ + random.nextInt(16) + 8;
-			new WorldGenLiquids(Block.WATER.id).generate(world, random, xOrZ, randZ, l2);
+			xOrZ = blockX + rand.nextInt(16) + 8;
+			randZ = rand.nextInt(rand.nextInt(120) + 8);
+			l2 = blockZ + rand.nextInt(16) + 8;
+			new WorldGenLiquids(Block.WATER.id).generate(world, rand, xOrZ, randZ, l2);
 		}
 
 		for (YorIndex = 0; YorIndex < 20; ++YorIndex) {
-			xOrZ = blockX + random.nextInt(16) + 8;
-			randZ = random.nextInt(random.nextInt(random.nextInt(112) + 8) + 8);
-			l2 = blockZ + random.nextInt(16) + 8;
-			new WorldGenLiquids(Block.LAVA.id).generate(world, random, xOrZ, randZ, l2);
+			xOrZ = blockX + rand.nextInt(16) + 8;
+			randZ = rand.nextInt(rand.nextInt(rand.nextInt(112) + 8) + 8);
+			l2 = blockZ + rand.nextInt(16) + 8;
+			new WorldGenLiquids(Block.LAVA.id).generate(world, rand, xOrZ, randZ, l2);
 		}
 
 		// BlockSand.fallInstantly = false;
-		world.getChunks().decorated = null;
 	}
 }

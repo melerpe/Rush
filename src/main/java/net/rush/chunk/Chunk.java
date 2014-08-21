@@ -5,7 +5,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.zip.Deflater;
 
+import net.rush.Server;
 import net.rush.model.Block;
+import net.rush.model.Material;
 import net.rush.model.Position;
 import net.rush.packets.Packet;
 import net.rush.packets.packet.MapChunkPacket;
@@ -80,10 +82,14 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @return The type.
 	 */
-	public int getType(int x, int z, int y) {
-		return types[coordToIndex(x, z, y)];
+	public int getType(int x, int y, int z) {
+		return types[coordToIndex(x, y, z)];
 	}
 
+	public World getWorld() {
+		return Server.getServer().getWorld();
+	}
+	
 	/**
 	 * Sets the types of all tiles within the chunk.
 	 * @param types The array of types.
@@ -102,11 +108,11 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @param type The type.
 	 */
-	public void setType(int x, int z, int y, int type) {
+	public void setType(int x, int y, int z, int type) {
 		if (type < 0)
 			throw new IllegalArgumentException();
 
-		types[coordToIndex(x, z, y)] = (byte) type;
+		types[coordToIndex(x, y, z)] = (byte) type;
 	}
 
 	/**
@@ -116,12 +122,8 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @return The metadata.
 	 */
-	public int getMetaData(int x, int z, int y) {
-		return metaData[coordToIndex(x, z, y)];
-	}
-
-	public boolean isBlockAir(int x, int z, int y) {
-		return getType(x, z, y) == 0;
+	public int getMetaData(int x, int y, int z) {
+		return metaData[coordToIndex(x, y, z)];
 	}
 
 	/**
@@ -131,22 +133,22 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @param metaData The metadata.
 	 */
-	public void setMetaData(int x, int z, int y, int metaData) {
+	public void setMetaData(int x, int y, int z, int metaData) {
 		if (metaData < 0 || metaData > 15)
 			throw new IllegalArgumentException("Metadata must be between 0 and 15");
 
-		this.metaData[coordToIndex(x, z, y)] = (byte) metaData;
+		this.metaData[coordToIndex(x, y, z)] = (byte) metaData;
 	}
 
 	/**
 	 * Gets the sky light level of a block within this chunk.
 	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
+	 * @param y The Z coordinate.
+	 * @param z The Y coordinate.
 	 * @return The sky light level.
 	 */
-	public int getSkyLight(int x, int z, int y) {
-		return skyLight[coordToIndex(x, z, y)];
+	public int getSkyLight(int x, int y, int z) {
+		return skyLight[coordToIndex(x, y, z)];
 	}
 
 	/**
@@ -156,11 +158,11 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @param skyLight The sky light level.
 	 */
-	public void setSkyLight(int x, int z, int y, int skyLight) {
+	public void setSkyLight(int x, int y, int z, int skyLight) {
 		if (skyLight < 0 || skyLight > 15)
 			throw new IllegalArgumentException("Skylight must be between 0 and 15");
 
-		this.skyLight[coordToIndex(x, z, y)] = (byte) skyLight;
+		this.skyLight[coordToIndex(x, y, z)] = (byte) skyLight;
 	}
 
 	/**
@@ -170,8 +172,8 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @return The block light level.
 	 */
-	public int getBlockLight(int x, int z, int y) {
-		return blockLight[coordToIndex(x, z, y)];
+	public int getBlockLight(int x, int y, int z) {
+		return blockLight[coordToIndex(x, y, z)];
 	}
 
 	/**
@@ -181,16 +183,16 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @param blockLight The block light level.
 	 */
-	public void setBlockLight(int x, int z, int y, int blockLight) {
+	public void setBlockLight(int x, int y, int z, int blockLight) {
 		if (blockLight < 0 || blockLight > 15)
 			throw new IllegalArgumentException("Blocklight must be between 0 and 15");
 
-		this.blockLight[coordToIndex(x, z, y)] = (byte) blockLight;
+		this.blockLight[coordToIndex(x, y, z)] = (byte) blockLight;
 	}
 
-	public void setTypeAndData(int x, int z, int y, int type, int data) {
-		setType(x, z, y, type);
-		setMetaData(x, z, y, data);
+	public void setTypeAndData(int x, int y, int z, int type, int data) {
+		setType(x, y, z, type);
+		setMetaData(x, y, z, data);
 	}
 
 	/**
@@ -211,7 +213,7 @@ public final class Chunk {
 	 * @param y The Y coordinate.
 	 * @return The index within the arrays.
 	 */
-	private int coordToIndex(int x, int z, int y) {
+	private int coordToIndex(int x, int y, int z) {
 		if (x < 0 || z < 0 || y < 0 || x >= WIDTH || z >= HEIGHT || y >= DEPTH)
 			throw new IndexOutOfBoundsException("Coords out of bound! x:" + x + ", z:" + z + ", y:" + y);
 
@@ -226,7 +228,7 @@ public final class Chunk {
 		for(int x = 0; x < WIDTH; x++) {
 			for (int y = 0; y < DEPTH; y++) {
 				for(int z = 0; z < HEIGHT; z++) {
-					int type = getType(x, z, y);
+					int type = getType(x, y, z);
 
 					if(type == 0)
 						continue;
@@ -326,5 +328,22 @@ public final class Chunk {
 		en.chunkPosition = new Position(getX(), posY, getZ());
 		entities[posY].add(en);
 	}*/
+	
+	public int getTerrainHeight(int x, int z) {
+		for (int y = DEPTH - 1; y > 0; --y) {
+			int blockId = getType(x, y, z);
+
+			if (blockId != Block.AIR.id)
+				return y + 1;
+		}
+		return 0;
+	}
+	
+	public Material getMaterial(int x, int y, int z) {
+		int blockId = getType(x, y, z);
+
+		return blockId == 0 ? Material.AIR : Block.byId[blockId].material;
+
+	}
 }
 

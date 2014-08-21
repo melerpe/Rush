@@ -14,7 +14,7 @@ public class BlockFlower extends Block {
 
 	@Override
 	public boolean canPlaceBlockAt(World world, int x, int y, int z) {
-		int ground = world.getTypeId(x, y, z);
+		int ground = world.getType(x, y, z);
 		return ground == Block.GRASS.id || ground == Block.DIRT.id || ground == Block.SOIL.id;
 	}
 

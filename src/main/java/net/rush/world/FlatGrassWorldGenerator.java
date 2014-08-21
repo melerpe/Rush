@@ -25,10 +25,10 @@ public class FlatGrassWorldGenerator implements WorldGenerator {
 					else if (y < 55)
 						id = 1;
 
-					chunk.setType(x, z, y, id);
-					chunk.setMetaData(x, z, y, 0);
-					chunk.setBlockLight(x, z, y, 0);
-					chunk.setSkyLight(x, z, y, 15);
+					chunk.setType(x, y, z, id);
+					chunk.setMetaData(x, y, z, 0);
+					chunk.setBlockLight(x, y, z, 0);
+					chunk.setSkyLight(x, y, z, 15);
 				}
 			}
 		}

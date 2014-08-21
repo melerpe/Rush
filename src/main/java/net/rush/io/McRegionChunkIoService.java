@@ -96,9 +96,9 @@ public final class McRegionChunkIoService implements ChunkIoService {
 						meta = metaData[offset] & 0x0F;
 					}
 
-					chunk.setSkyLight(cx, cz, cy, skyLight);
-					chunk.setBlockLight(cx, cz, cy, blockLight);
-					chunk.setMetaData(cx, cz, cy, meta);
+					chunk.setSkyLight(cx, cy, cz, skyLight);
+					chunk.setBlockLight(cx, cy, cz, blockLight);
+					chunk.setMetaData(cx, cy, cz, meta);
 				}
 			}
 		}
@@ -146,11 +146,11 @@ public final class McRegionChunkIoService implements ChunkIoService {
 				for (int cy = 0; cy < Chunk.DEPTH; cy+=2) {
 					int blockOffset = ((cx * Chunk.HEIGHT + cz) * Chunk.DEPTH + cy);
 					int offset = blockOffset / 2;
-					tileData[blockOffset] = (byte) chunk.getType(cx, cz, cy);
-					tileData[blockOffset + 1] = (byte) chunk.getType(cx, cz, cy + 1);
-					skyLightData[offset] = (byte) ((chunk.getSkyLight(cx, cz, cy + 1) << 4) | chunk.getSkyLight(cx, cz, cy));
-					blockLightData[offset] = (byte) ((chunk.getBlockLight(cx, cz, cy + 1) << 4) | chunk.getBlockLight(cx, cz, cy));
-					metaData[offset] = (byte) ((chunk.getMetaData(cx, cz, cy + 1) << 4) | chunk.getMetaData(cx, cz, cy));
+					tileData[blockOffset] = (byte) chunk.getType(cx, cy, cz);
+					tileData[blockOffset + 1] = (byte) chunk.getType(cx, cy + 1, cz);
+					skyLightData[offset] = (byte) ((chunk.getSkyLight(cx, cy + 1, cz) << 4) | chunk.getSkyLight(cx, cy, cz));
+					blockLightData[offset] = (byte) ((chunk.getBlockLight(cx, cy + 1, cz) << 4) | chunk.getBlockLight(cx, cy, cz));
+					metaData[offset] = (byte) ((chunk.getMetaData(cx, cy + 1, cz) << 4) | chunk.getMetaData(cx, cy, cz));
 				}
 			}
 		}

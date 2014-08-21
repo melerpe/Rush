@@ -14,11 +14,11 @@ public class WorldGenCactus extends WorldGenerator {
 			int yPos = y + random.nextInt(4) - random.nextInt(4);
 			int zPos = z + random.nextInt(8) - random.nextInt(8);
 
-			if (world.getTypeId(xPos, yPos, zPos) == 0) {
+			if (world.getType(xPos, yPos, zPos) == 0) {
 				int pieceCount = 1 + random.nextInt(random.nextInt(3) + 1);
 				for (int piece = 0; piece < pieceCount; ++piece)
 					if (Block.CACTUS.canPlaceBlockAt(world, xPos, yPos + piece, zPos))
-						world.setTypeId(xPos, yPos + piece, zPos, Block.CACTUS.id, true);
+						world.setType(xPos, yPos + piece, zPos, Block.CACTUS.id, true);
 			}
 		}
 
