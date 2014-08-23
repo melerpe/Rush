@@ -237,7 +237,7 @@ public final class Player extends LivingEntity implements CommandSender {
 	/**
 	 * Streams chunks to the player's client.
 	 */
-	private void streamBlocks() {
+	public void streamBlocks() {
 		Set<ChunkCoords> previousChunks = new HashSet<ChunkCoords>(knownChunks);
 
 		int centralX = ((int) position.x) / Chunk.WIDTH;
@@ -490,11 +490,6 @@ public final class Player extends LivingEntity implements CommandSender {
 			setHealth(health + 1);
 			getSession().send(new UpdateHealthPacket(health, (short)food, saturation));
 		}
-	}
-	
-	@Override
-	public void destroy() {
-		super.destroy();
 	}
 }
 

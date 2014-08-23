@@ -31,9 +31,10 @@ public final class ChunkManager {
 	 */
 	private final HashMap<ChunkCoords, Chunk> chunks = new HashMap<ChunkCoords, Chunk>();
 
-	public int currChunkX = -999999999;
-	public int currChunkZ = -999999999;
-	public Chunk currChunk;
+	/** @deprecated just a workaround */
+	public static boolean decorating = false;
+	/** @deprecated just a workaround */
+	public static Chunk ch = null;
 
 	/**
 	 * Creates a new chunk manager with the specified I/O service and world
@@ -54,12 +55,9 @@ public final class ChunkManager {
 	 * @param z The Z coordinate.
 	 * @return The chunk.
 	 */
-	/*public Chunk getChunk(int x, int z) {
+	public Chunk getChunk(int x, int z) {
 		ChunkCoords key = new ChunkCoords(x, z);
 		Chunk chunk = chunks.get(key);
-
-		if(chunk == null && decorated != null)
-			return decorated;
 
 		if (chunk == null) {
 			try {
@@ -68,24 +66,31 @@ public final class ChunkManager {
 				chunk = null;
 			}
 
+			if(decorating && ch != null)
+				return ch;
+			
 			if (chunk == null) 
 				chunk = generator.generate(world, x, z);
+
+			if(!decorating && !chunk.terrainPopulated) {
+				chunk.terrainPopulated = true;
+				ch = chunk;
+				
+				generator.populate(x, z);
+			}
 
 			chunks.put(key, chunk);
 		}
 
 		return chunk;
-	}*/
-	
-	public Chunk getChunk(int x, int z) {
-		if (currChunk != null /*&& x == currChunkX && z == currChunkZ*/)
-			return currChunk;
+	}
 
+	/*public Chunk getChunk(int x, int z) {
 		ChunkCoords key = new ChunkCoords(x, z);
 		Chunk chunk = chunks.get(key);
-		
+
 		if (chunk == null) {
-			
+
 			try {
 				chunk = service.read(x, z);
 			} catch (IOException e) {
@@ -96,36 +101,18 @@ public final class ChunkManager {
 				chunk = generator.generate(world, x, z);
 
 			chunks.put(key, chunk);
-			
-			//if (!chunk.terrainPopulated && this.chunkExist(x + 1, z + 1) && this.chunkExist(x, z + 1) && this.chunkExist(x + 1, z))
-			currChunk = chunk;
+
+			if(decorating)
+				return chunk;
+
+			decorating = true;
 			this.populate(chunk, x, z);
-			currChunk = null;
-			
-			/*if (this.chunkExist(x - 1, z) && !this.getChunk(x - 1, z).terrainPopulated && this.chunkExist(x - 1, z + 1) && this.chunkExist(x, z + 1) && this.chunkExist(x - 1, z))
-				this.populate(chunk,x - 1, z);
+			decorating = false;
 
-			if (this.chunkExist(x, z - 1) && !this.getChunk(x, z - 1).terrainPopulated && this.chunkExist(x + 1, z - 1) && this.chunkExist(x, z - 1) && this.chunkExist(x + 1, z))
-				this.populate(chunk, x, z - 1);
-
-			if (this.chunkExist(x - 1, z - 1) && !this.getChunk(x - 1, z - 1).terrainPopulated && this.chunkExist(x - 1, z - 1) && this.chunkExist(x, z - 1) && this.chunkExist(x - 1, z))
-				this.populate(chunk, x - 1, z - 1);*/
 		}
-		
-		/*currChunkX = x;
-		currChunkZ = z;
-		currChunk = chunk;*/
 		return chunk;
 
-	}
-	
-	private void populate(Chunk chunk, int x, int z) {
-		if(!chunk.terrainPopulated) {
-			//System.out.println("Generating: x: " + x + " z: " + z);
-			chunk.terrainPopulated = true;
-			generator.populate(x, z);
-		}
-	}
+	}*/
 
 	public boolean chunkExists(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 		if (maxY >= 0 && minY < 256) {
@@ -148,14 +135,14 @@ public final class ChunkManager {
 
 	public boolean chunkExist(int x, int z) {
 		Chunk chunk = chunks.get(new ChunkCoords(x, z));		
-		
+
 		if (chunk == null) {
 			try {
 				chunk = service.read(x, z);
 			} catch (IOException e) {
 			}
 		}
-		
+
 		if (chunk == null)
 			return false;
 		else

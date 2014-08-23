@@ -29,7 +29,7 @@ public class ThreadConsoleReader extends Thread {
 		String msg;
 		
 		try {
-			while (true) {
+			while (server.isRunning) {
 				if(jline)
 					msg = reader.readLine(">", null);
 				else

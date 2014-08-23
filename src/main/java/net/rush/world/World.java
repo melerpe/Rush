@@ -95,6 +95,7 @@ public class World {
 	 */
 	public World(String name) {
 		this.name = name;
+
 	}
 	
 	public void setChunkManager(ChunkIoService service, WorldGenerator generator) {

@@ -3,6 +3,7 @@ package net.rush.model;
 import java.util.List;
 import java.util.Random;
 
+import net.rush.model.block.BlockAir;
 import net.rush.model.block.BlockCacti;
 import net.rush.model.block.BlockClay;
 import net.rush.model.block.BlockCraftingTable;
@@ -74,7 +75,7 @@ public class Block {
 	/** Flag if block ID should use the brightest neighbor light value as its own */
 	public static boolean[] useNeighborBrightness = new boolean[4096];
 
-	public static final Block AIR = new Block(0, Material.AIR);	
+	public static final Block AIR = new BlockAir(0);	
 	public static final Block STONE = new BlockStone(1).setHardness(1.5F).setResistance(10).setStepSound(Sound.STONE).setName("stone").aliases("rock");
 	public static final BlockGrass GRASS = (BlockGrass) new BlockGrass(2).setHardness(0.6F).setStepSound(Sound.GRASS).setName("grass").setTickRandomly(true);
 	public static final Block DIRT = new Block(3, Material.DIRT).setHardness(0.5F).setStepSound(Sound.GRAVEL).setName("dirt");

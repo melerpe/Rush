@@ -18,6 +18,7 @@ import java.util.Random;
 
 import net.rush.chunk.Chunk;
 import net.rush.chunk.ChunkCoords;
+import net.rush.chunk.ChunkManager;
 import net.rush.model.Block;
 
 public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
@@ -284,6 +285,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
 	@Override
 	public void populate(int chunkX, int chunkZ) {
+		ChunkManager.decorating = true;
 		// BlockSand.fallInstantly = true;
 		int blockX = chunkX * 16;
 		int blockZ = chunkZ * 16;
@@ -300,6 +302,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		int YorIndex;
 		int xOrZ;
 
+		// MOB SPAWNERS
 		for (tries = 0; tries < 8; ++tries) {
 			maybeX = blockX + rand.nextInt(16) + 8;
 			YorIndex = rand.nextInt(128);
@@ -307,6 +310,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			new WorldGenDungeons().generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
+		// CLAY DIRT AND GRAVEL		
 		for (tries = 0; tries < 10; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(128);
@@ -314,53 +318,54 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			new WorldGenClay(32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 		
-		for (tries = 0; tries < 20; ++tries) {
+		for (tries = 0; tries < /*20*/17; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(128);
 			xOrZ = blockZ + rand.nextInt(16);
 			new WorldGenMinable(Block.DIRT.id, 32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
-		for (tries = 0; tries < 10; ++tries) {
+		for (tries = 0; tries < /*10*/9; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(128);
 			xOrZ = blockZ + rand.nextInt(16);
 			new WorldGenMinable(Block.GRAVEL.id, 32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
-
-		for (tries = 0; tries < 20; ++tries) {
+		
+		// VALUABLE ORES
+		for (tries = 0; tries < /*20*/13; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(128);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.COAL_ORE.id, 16).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.COAL_ORE.id, /*16*/14).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
-		for (tries = 0; tries < 20; ++tries) {
+		for (tries = 0; tries < /*20*/9; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(64);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.IRON_ORE.id, 8).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.IRON_ORE.id, /*8*/7).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 2; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(32);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.GOLD_ORE.id, 8).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.GOLD_ORE.id, /*8*/6).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
-		for (tries = 0; tries < 8; ++tries) {
+		for (tries = 0; tries < /*8*/4; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(16);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.REDSTONE_ORE.id, 7).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.REDSTONE_ORE.id, /*7*/5).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 1; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(16);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.DIAMOND_ORE.id, 7).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.DIAMOND_ORE.id, /*7*/5).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		d0 = 0.5D;
@@ -372,21 +377,26 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			++tries;
 
 		WorldGenerator treeGenerator = new WorldGenTrees();
-
-		//if (rand.nextInt(10) == 0)
-		//	treeGenerator = new WorldGenBigTree();
-
-		int randZ;
+		boolean bigTree = false;
 		
+		if (rand.nextInt(10) == 0) {
+			treeGenerator = new WorldGenBigTree();
+			bigTree = true;
+		}
+			
+		int randZ;
+
+		// TREES
 		for (YorIndex = 0; YorIndex < tries; ++YorIndex) {
-			xOrZ = blockX + 3 + rand.nextInt(10);//+ rand.nextInt(16) + 8;
-			randZ = blockZ + 3 + rand.nextInt(10);//+ rand.nextInt(16) + 8;
+			xOrZ = blockX + 3 + rand.nextInt(bigTree ? 5 : 11);//+ rand.nextInt(16) + 8;
+			randZ = blockZ + 3 + rand.nextInt(bigTree ? 5 : 11);//+ rand.nextInt(16) + 8;
 			treeGenerator.a(1.0D, 1.0D, 1.0D);
 			treeGenerator.generate(world, rand, xOrZ, world.getTerrainHeight(xOrZ, randZ), randZ);
 		}
 		
 		int l2;
 
+		// FLOWERS AND MUSHROOMS
 		for (YorIndex = 0; YorIndex < 2; ++YorIndex) {
 			xOrZ = blockX + rand.nextInt(16) + 8;
 			randZ = rand.nextInt(128);
@@ -415,34 +425,38 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			new WorldGenFlowers(Block.RED_MUSHROOM.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
 
-		for (YorIndex = 0; YorIndex < 10; ++YorIndex) {
+		// SUGAR CANE
+		for (YorIndex = 0; YorIndex < 13/*10*/; ++YorIndex) {
 			xOrZ = blockX + rand.nextInt(16) + 8;
 			randZ = rand.nextInt(128);
 			l2 = blockZ + rand.nextInt(16) + 8;
 			new WorldGenReed().generate(world, rand, xOrZ, randZ, l2);
 		}
 
-		for (YorIndex = 0; YorIndex < 1; ++YorIndex) {
+		// CACTI
+		for (YorIndex = 0; YorIndex < 3/*1*/; ++YorIndex) {
 			xOrZ = blockX + rand.nextInt(16) + 8;
 			randZ = rand.nextInt(128);
 			l2 = blockZ + rand.nextInt(16) + 8;
 			new WorldGenCactus().generate(world, rand, xOrZ, randZ, l2);
 		}
 
-		for (YorIndex = 0; YorIndex < 50; ++YorIndex) {
+		// LAVA AND WATER LAKES
+		for (YorIndex = 0; YorIndex < 60/*50*/; ++YorIndex) {
 			xOrZ = blockX + rand.nextInt(16) + 8;
 			randZ = rand.nextInt(rand.nextInt(120) + 8);
 			l2 = blockZ + rand.nextInt(16) + 8;
 			new WorldGenLiquids(Block.WATER.id).generate(world, rand, xOrZ, randZ, l2);
 		}
 
-		for (YorIndex = 0; YorIndex < 20; ++YorIndex) {
+		for (YorIndex = 0; YorIndex < 25/*20*/; ++YorIndex) {
 			xOrZ = blockX + rand.nextInt(16) + 8;
 			randZ = rand.nextInt(rand.nextInt(rand.nextInt(112) + 8) + 8);
 			l2 = blockZ + rand.nextInt(16) + 8;
 			new WorldGenLiquids(Block.LAVA.id).generate(world, rand, xOrZ, randZ, l2);
 		}
-
+		
 		// BlockSand.fallInstantly = false;
+		ChunkManager.decorating = false;
 	}
 }

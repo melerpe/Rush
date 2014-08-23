@@ -5,10 +5,10 @@ import java.util.List;
 
 import net.rush.chunk.ChunkCoords;
 import net.rush.model.entity.ai.EntityAI;
-import net.rush.model.entity.ai.WorldThreadAI;
 import net.rush.packets.Packet;
 import net.rush.packets.packet.AnimationPacket;
 import net.rush.packets.packet.SpawnMobPacket;
+import net.rush.task.WorldTaskAI;
 import net.rush.util.Parameter;
 import net.rush.world.World;
 
@@ -55,7 +55,7 @@ public class LivingEntity extends Mob {
 	public void pulse() {
 		if(getWorld().activeChunks.contains(new ChunkCoords(getChunk().getX(), getChunk().getZ())))
 			for(EntityAI task : aiTasks)
-				WorldThreadAI.addTask(task);
+				WorldTaskAI.addTask(task);
 	}
 
 	/** On right click on the entity */

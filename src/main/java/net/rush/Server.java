@@ -54,6 +54,7 @@ public final class Server {
 
 	public final String serverId;
 	public boolean saveEnabled = true;
+	public boolean isRunning = true;
 	
 	private static Server server;
 
@@ -250,6 +251,7 @@ public final class Server {
 	
 	public void stopServer() {
 		logger.info("Server is shutting down.");
+		isRunning = false;
 		// Save chunks on shutdown.
 		if (saveEnabled) {
 			logger.info("Saving chunks...");

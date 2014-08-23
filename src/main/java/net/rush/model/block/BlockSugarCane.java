@@ -23,10 +23,6 @@ public class BlockSugarCane extends Block {
 			return w.getMaterial(x - 1, y - 1, z) == Material.WATER ? true : w.getMaterial(x + 1, y - 1, z) == Material.WATER ? true : w.getMaterial(x, y - 1, z - 1) == Material.WATER ? true : w.getMaterial(x, y - 1, z + 1) == Material.WATER;
 		return false;
 	}
-
-	public boolean canReedStay(World w, int x, int y, int z) {
-		return canPlaceBlockAt(w, x, y, z);
-	}
 	
 	@Override
 	public void tick(World world, int x, int y, int z, Random rand) {
@@ -39,7 +35,7 @@ public class BlockSugarCane extends Block {
 	}
 
 	private void checkIfCanStay(World world, int x, int y, int z) {
-		if (!canReedStay(world, x, y - 1, z)) {
+		if (!canPlaceBlockAt(world, x, y - 1, z)) {
 			dropBlock(world, x, y, z, world.getBlockData(x, y, z), 0);
 			world.setAir(x, y, z);
 		}

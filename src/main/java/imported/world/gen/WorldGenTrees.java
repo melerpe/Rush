@@ -58,8 +58,8 @@ public class WorldGenTrees extends WorldGenerator {
 
 						for (int zPos = z - trunkZ; zPos <= z + trunkZ; ++zPos) {
 							int l2 = zPos - z;
-
-							if ((Math.abs(j2) != trunkZ || Math.abs(l2) != trunkZ || random.nextInt(2) != 0 && trunkX != 0) /*&& !Block.opaqueCubeLookup[world.getType(idOrPos, yPos, zPos)]*/)
+							
+							if ((Math.abs(j2) != trunkZ || Math.abs(l2) != trunkZ || random.nextInt(2) != 0 && trunkX != 0) && !Block.opaqueCubeLookup[world.getType(idOrPos, yPos, zPos)])
 								world.setType(idOrPos, yPos, zPos, Block.LEAVES.id, false);
 						}
 					}
