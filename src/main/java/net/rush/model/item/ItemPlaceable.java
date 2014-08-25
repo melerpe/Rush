@@ -22,7 +22,7 @@ public class ItemPlaceable extends Item {
 		
 		Block block = Block.byId[blockId];
 		
-		if (block.canPlaceBlockAt(world, x, y + 1, z)) {
+		if (block.canPlaceBlockAt(world, x, y, z)) {
 			world.setType(x, y + 1, z, blockId, true);
 			//--item.count;
 		

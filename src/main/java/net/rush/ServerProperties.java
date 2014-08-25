@@ -47,6 +47,7 @@ public class ServerProperties {
 	public boolean spawnMonsters;
 	public boolean generateStructures;
 	public int viewDistance;
+	public boolean debug;
 	public String motd;
 
 	public String favicon;
@@ -74,7 +75,7 @@ public class ServerProperties {
 			generateNew();
 	}	
 
-	public void load() {
+	public void reload() {
 		genSettings = getString("generator-settings", "");
 		opPermLevel = getInt("op-permission-level", 4);
 		allowNether = getBoolean("allow-nether", true);
@@ -105,6 +106,7 @@ public class ServerProperties {
 		spawnMonsters = getBoolean("spawn-monsters", true);
 		generateStructures = getBoolean("generate-structures", true);
 		viewDistance = getInt("view-distance", 10);
+		debug = getBoolean("debug", false);
 		motd = StringUtils.colorize(getString("motd", "A Rush server"));
 
 		favicon = loadFavicon();

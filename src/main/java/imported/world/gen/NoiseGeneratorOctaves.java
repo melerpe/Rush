@@ -27,20 +27,20 @@ public class NoiseGeneratorOctaves extends NoiseGenerator {
 		return d2;
 	}
 
-	public double[] generateNoise(double[] adouble, double d0, double d1, double d2, int i, int j, int k, double d3, double d4, double d5) {
-		if (adouble == null)
-			adouble = new double[i * j * k];
+	public double[] generateNoise(double[] cache, double d0, double d1, double d2, int i, int j, int k, double d3, double d4, double d5) {
+		if (cache == null)
+			cache = new double[i * j * k];
 		else
-			for (int l = 0; l < adouble.length; ++l)
-				adouble[l] = 0.0D;
+			for (int l = 0; l < cache.length; ++l)
+				cache[l] = 0.0D;
 
 		double d6 = 1.0D;
 
 		for (int i1 = 0; i1 < tries; ++i1) {
-			perlinGenerators[i1].generateNoise(adouble, d0, d1, d2, i, j, k, d3 * d6, d4 * d6, d5 * d6, d6);
+			perlinGenerators[i1].generateNoise(cache, d0, d1, d2, i, j, k, d3 * d6, d4 * d6, d5 * d6, d6);
 			d6 /= 2.0D;
 		}
 
-		return adouble;
+		return cache;
 	}
 }

@@ -2,10 +2,10 @@ package net.rush.world;
 
 import net.rush.chunk.Chunk;
 import net.rush.chunk.ChunkCoords;
+import net.rush.model.Block;
 
 /**
  * A simple {@link WorldGenerator} used to generate a "flat grass" world.
-
  */
 public class FlatGrassWorldGenerator implements WorldGenerator {
 	
@@ -16,17 +16,17 @@ public class FlatGrassWorldGenerator implements WorldGenerator {
 			for (int z = 0; z < Chunk.HEIGHT; z++) {
 				for (int y = 0; y < Chunk.DEPTH; y++) {
 					int id = 0;
+					
 					if (y == 60)
-						id = 2;
+						id = Block.GRASS.id;
 					else if (y >= 55 && y < 60)
-						id = 3;
+						id = Block.DIRT.id;
 					else if (y == 0)
-						id = 7; //Bedrock
+						id = Block.BEDROCK.id;
 					else if (y < 55)
-						id = 1;
+						id = Block.STONE.id;
 
-					chunk.setType(x, y, z, id);
-					chunk.setMetaData(x, y, z, 0);
+					chunk.setTypeAndData(x, y, z, id, 0);
 					chunk.setBlockLight(x, y, z, 0);
 					chunk.setSkyLight(x, y, z, 15);
 				}

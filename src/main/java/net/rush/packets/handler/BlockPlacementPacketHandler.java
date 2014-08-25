@@ -89,9 +89,9 @@ public final class BlockPlacementPacketHandler extends PacketHandler<PlayerBlock
 			return false;
 
 		if(Item.byId[item.getId()] != null)
-			if (Item.byId[item.getId()].onItemUse(item, player, world, x, y, z, direction, xOffset, yOffset, zOffset)) {
+			if (Item.byId[item.getId()].onItemUse(item, player, world, x, y, z, direction, xOffset, yOffset, zOffset))
 				return true;
-			}
+			
 
 		return tryPlace(item, player, world, x, y, z, direction, xOffset, yOffset, zOffset);
 	}
@@ -138,7 +138,7 @@ public final class BlockPlacementPacketHandler extends PacketHandler<PlayerBlock
 		//else if (world.canPlaceEntityOnSide(id, x, y, z, false, direction, player, item)) {
 
 		int metadata = block.onBlockPlaced(world, x, y, z, direction, xOffset, yOffset, zOffset, item.getDamage());
-		//block.onPostBlockPlaced(world, x, y, z, metadata);
+		block.onPostBlockPlaced(world, x, y, z, metadata);
 		
 		world.setTypeAndDataWithNotify(x, y, z, id, metadata, false);
 

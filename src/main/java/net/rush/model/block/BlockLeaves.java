@@ -22,6 +22,6 @@ public class BlockLeaves extends Block {
 	
 	@Override
 	public void dropBlock(World world, int x, int y, int z, int damage, int bonus) {
-		dropBlockWithChance(world, x, y, z, damage, 0.05F, bonus);
+		dropBlockWithChance(world, x, y, z, damage, 0.08F, bonus);
 	}
 }

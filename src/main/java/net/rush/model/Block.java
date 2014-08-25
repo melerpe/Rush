@@ -8,6 +8,7 @@ import net.rush.model.block.BlockCacti;
 import net.rush.model.block.BlockClay;
 import net.rush.model.block.BlockCraftingTable;
 import net.rush.model.block.BlockCrops;
+import net.rush.model.block.BlockDeadBush;
 import net.rush.model.block.BlockFallable;
 import net.rush.model.block.BlockFlower;
 import net.rush.model.block.BlockGrass;
@@ -109,7 +110,7 @@ public class Block {
 	public static final BlockPistonBase PISTON_STICKY_BASE = (BlockPistonBase) (new BlockPistonBase(29, true)).setName("pistonStickyBase");
 	public static final Block WEB = (new BlockWeb(30)).setLightOpacity(1).setHardness(4.0F).setName("web").aliases("web");
 	*/public static final Block TALL_GRASS = new Block/*TallGrass*/(31, Material.PLANT).setHardness(0.0F).setStepSound(Sound.GRASS).setName("tallgrass"); // TODO was BlockTallGrass
-	public static final Block DEAD_BUSH = (new Block/*DeadBush*/(32, Material.PLANT)).setHardness(0.0F).setStepSound(Sound.GRASS).setName("deadbush"); // TODO was BlockDeadBush
+	public static final Block DEAD_BUSH = new BlockDeadBush(32).setHardness(0.0F).setStepSound(Sound.GRASS).setName("deadbush"); // TODO was BlockDeadBush
 	/*public static final BlockPistonBase PISTON_BASE = (BlockPistonBase) (new BlockPistonBase(33, false)).setName("pistonBase");
 	public static final BlockPistonExtension PISTON_EXTENSION = new BlockPistonExtension(34);
 	*/public static final Block WOOL = new BlockWool(35).setHardness(0.8F).setStepSound(Sound.WOOL).setName("cloth").aliases("wool_colored");

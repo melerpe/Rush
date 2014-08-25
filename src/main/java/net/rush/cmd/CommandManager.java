@@ -38,7 +38,7 @@ public final class CommandManager {
 		bind(new SpawnCommand());
 		bind(new MetaCommand());
 		bind(new ListCommand());
-		bind(new TestCommand());
+		bind(new ReloadCommand());
 		bind(new RemoveCommand());
 		bind(new GiveCommand());
 		bind(new ClearCommand());

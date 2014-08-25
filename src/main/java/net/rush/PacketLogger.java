@@ -16,33 +16,40 @@ public class PacketLogger {
 
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 	private static List<String> ignored = Arrays.asList("MapChunkPacket", "BlockChangePacket");
-	
+
 	private static File file = new File("packets-dump.log");
 
+	public static boolean enabled;
+
+	static {
+		enabled = Server.getServer().getProperties().debug;				
+	}
+
 	public static void submitWrite(final Packet packet, final int protocol, final boolean read) {
-		executor.submit(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					write(packet, protocol, read);
-				} catch (IOException e) {
-					e.printStackTrace();
+		if(enabled)
+			executor.submit(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						write(packet, protocol, read);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
 	}
 
 	private static void write(Packet packet, int protocol, boolean read) throws IOException {
-		if(ignored.contains(packet.getPacketType().getSimpleName()))
+		if(!enabled || ignored.contains(packet.getPacketType().getSimpleName()))
 			return;
 		// Prevent too big file
 		if((file.length() / 1000) > 200)
 			file.renameTo(new File("old_packet.log"));
-			
+
 		FileWriter fw = null;
 		if(!file.exists())
 			file.createNewFile();
-		
+
 		try {
 			fw = new FileWriter(file, true);
 			fw.write(getTime() + (read ? "Read  " : "Write ") + "(p=" + protocol + "): " + packet);

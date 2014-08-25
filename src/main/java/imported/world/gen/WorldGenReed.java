@@ -10,14 +10,14 @@ public class WorldGenReed extends WorldGenerator {
 
 	@Override
 	public boolean generate(World world, Random random, int x, int y, int z) {
-		for (int l = 0; l < 20; ++l) {
+		for (int tries = 0; tries < 15; ++tries) {
 			int xPos = x + random.nextInt(4) - random.nextInt(4);
 			int yPos = y;
 			int zPos = z + random.nextInt(4) - random.nextInt(4);
 			int height = 2 + random.nextInt(random.nextInt(3) + 1);
 
 			for (int piece = 0; piece < height; ++piece)
-				if (Block.SUGAR_CANE_BLOCK.canPlaceBlockAt(world, xPos, yPos + piece, zPos) && !isSurroundedWith(world, xPos, yPos + piece + 1, zPos, Material.WATER)
+				if (Block.SUGAR_CANE_BLOCK.canPlaceBlockAt(world, xPos, yPos + piece - 1, zPos) && !isSurroundedWith(world, xPos, yPos + piece + 1, zPos, Material.WATER)
 						&& !isSurroundedWith(world, xPos, yPos + piece, zPos, Material.WATER))
 					world.setType(xPos, yPos + piece, zPos, Block.SUGAR_CANE_BLOCK.id, false);		
 		}

@@ -16,11 +16,11 @@ public class BlockSugarCane extends Block {
 
 	@Override
 	public boolean canPlaceBlockAt(World w, int x, int y, int z) {
-		int rootBlock = w.getType(x, y - 1, z);
+		int rootBlock = w.getType(x, y, z);
 		if(rootBlock == Block.SUGAR_CANE_BLOCK.id)
 			return true;		
 		if(rootBlock == Block.GRASS.id || rootBlock == Block.DIRT.id || rootBlock == Block.SAND.id)
-			return w.getMaterial(x - 1, y - 1, z) == Material.WATER ? true : w.getMaterial(x + 1, y - 1, z) == Material.WATER ? true : w.getMaterial(x, y - 1, z - 1) == Material.WATER ? true : w.getMaterial(x, y - 1, z + 1) == Material.WATER;
+			return w.getMaterial(x - 1, y, z) == Material.WATER ? true : w.getMaterial(x + 1, y, z) == Material.WATER ? true : w.getMaterial(x, y, z - 1) == Material.WATER ? true : w.getMaterial(x, y, z + 1) == Material.WATER;
 		return false;
 	}
 	

@@ -26,30 +26,50 @@ public class ForestWorldGenerator extends FlatGrassWorldGenerator {
 		Chunk chunk = super.generate(world, chunkX, chunkZ);
 
 		int numTrees = random.nextInt(MAX_TREES + 1);
+		int x;
+		int z;
+
 		for (int i = 0; i < numTrees; i++) {
-			int x = random.nextInt(Chunk.WIDTH - (TREE_CANOPY_WIDTH * 2) + TREE_CANOPY_WIDTH);
-			int z = random.nextInt(Chunk.HEIGHT- (TREE_CANOPY_WIDTH * 2) + TREE_CANOPY_WIDTH);
+			x = random.nextInt(Chunk.WIDTH - (TREE_CANOPY_WIDTH * 2) + TREE_CANOPY_WIDTH);
+			z = random.nextInt(Chunk.HEIGHT- (TREE_CANOPY_WIDTH * 2) + TREE_CANOPY_WIDTH);
 			int height = random.nextInt(TREE_MAX_HEIGHT - TREE_MIN_HEIGHT) + TREE_MIN_HEIGHT;
 			int type = random.nextInt(3); // standard, redwood, birch
 
 			makeTree(chunk, x, 61, z, height, type);
 		}
 
-		/*for (int cislo = 0; cislo < 8; cislo++) {
-			int x = random.nextInt(Chunk.WIDTH);
-			int z = random.nextInt(Chunk.HEIGHT);
-			if (chunk.isBlockAir(x, z, 61))
-				if(random.nextBoolean())
-					chunk.setType(x, z, 61, 37 + random.nextInt(2));
+		if(random.nextDouble() > .6D) {
+			for (int tries = 0; tries < 8; tries++) {
+				if(random.nextDouble() > .6D) {
+					x = random.nextInt(Chunk.WIDTH);
+					z = random.nextInt(Chunk.HEIGHT);
+
+					if (chunk.getType(x, 61, z) == 0)
+						chunk.setType(x, 61, z, Block.YELLOW_FLOWER.id);
+				}
+			}
+
+			for (int tries = 0; tries < 16; tries++) {
+				if(random.nextDouble() > .6D) {
+					x = random.nextInt(Chunk.WIDTH);
+					z = random.nextInt(Chunk.HEIGHT);
+
+					if (chunk.getType(x, 61, z) == 0)
+						chunk.setType(x, 61, z, Block.RED_ROSE.id);
+				}
+			}
 		}
 
-		for (int cislo = 0; cislo < 16; cislo++) {
-			int x = random.nextInt(Chunk.WIDTH);
-			int z = random.nextInt(Chunk.HEIGHT);
-			if (chunk.isBlockAir(x, z, 61))
-				chunk.setType(x, z, 61, 31);
-				chunk.setMetaData(x, z, 61, 1);
-		}*/
+		if(random.nextDouble() > .5D)
+			for (int tries = 0; tries < 16; tries++) {
+				if(random.nextDouble() > .2D) {
+					x = random.nextInt(Chunk.WIDTH);
+					z = random.nextInt(Chunk.HEIGHT);
+
+					if (chunk.getType(x, 61, z) == 0)
+						chunk.setTypeAndData(x, 61, z, Block.TALL_GRASS.id, 1);
+				}
+			}
 
 		return chunk;
 	}

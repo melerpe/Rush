@@ -333,51 +333,56 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		}
 		
 		// VALUABLE ORES
-		for (tries = 0; tries < /*20*/13; ++tries) {
+		for (tries = 0; tries < /*20*/12; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(128);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.COAL_ORE.id, /*16*/14).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.COAL_ORE.id, /*16*/11).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < /*20*/9; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(64);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.IRON_ORE.id, /*8*/7).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.IRON_ORE.id, /*8*/6).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 2; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(32);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.GOLD_ORE.id, /*8*/6).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.GOLD_ORE.id, /*8*/5).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < /*8*/4; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(16);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.REDSTONE_ORE.id, /*7*/5).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.REDSTONE_ORE.id, /*7*/4).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		for (tries = 0; tries < 1; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(16);
 			xOrZ = blockZ + rand.nextInt(16);
-			new WorldGenMinable(Block.DIAMOND_ORE.id, /*7*/5).generate(world, rand, maybeX, YorIndex, xOrZ);
+			new WorldGenMinable(Block.DIAMOND_ORE.id, /*7*/4).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
 		d0 = 0.5D;
 		tries = (int) ((decorationNoise.a(blockX * d0, blockZ * d0) / 8.0D + rand.nextDouble() * 4.0D + 4.0D) / 3.0D);
 		if (tries < 0)
-			tries = 0;
+			tries = 1;
 
-		if (rand.nextInt(10) == 0)
+		if (rand.nextInt(5/*10*/) == 0)
 			++tries;
-
+		
+		// r start
+		if (rand.nextInt(10) == 0)
+			tries+= 3;
+		// r end
+		
 		WorldGenerator treeGenerator = new WorldGenTrees();
-		boolean bigTree = false;
+		boolean bigTree = false; // r edit
 		
 		if (rand.nextInt(10) == 0) {
 			treeGenerator = new WorldGenBigTree();
@@ -390,7 +395,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		for (YorIndex = 0; YorIndex < tries; ++YorIndex) {
 			xOrZ = blockX + 3 + rand.nextInt(bigTree ? 5 : 11);//+ rand.nextInt(16) + 8;
 			randZ = blockZ + 3 + rand.nextInt(bigTree ? 5 : 11);//+ rand.nextInt(16) + 8;
-			treeGenerator.a(1.0D, 1.0D, 1.0D);
+			treeGenerator.setScale(1.0D, 1.0D, 1.0D);
 			treeGenerator.generate(world, rand, xOrZ, world.getTerrainHeight(xOrZ, randZ), randZ);
 		}
 		
@@ -411,6 +416,16 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			new WorldGenFlowers(Block.RED_ROSE.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
 
+		// TODO s
+		// a) find out why is not generating (same with cacti)
+		// b) move the check-for-staying methods in one class
+		if (rand.nextInt(1) == 0) {
+			YorIndex = blockX + rand.nextInt(16) + 8;
+			xOrZ = rand.nextInt(128);
+			randZ = blockZ + rand.nextInt(16) + 8;
+			new WorldGenFlowers(Block.DEAD_BUSH.id).generate(world, rand, YorIndex, xOrZ, randZ);
+		}
+		
 		if (rand.nextInt(4) == 0) {
 			YorIndex = blockX + rand.nextInt(16) + 8;
 			xOrZ = rand.nextInt(128);
@@ -434,7 +449,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		}
 
 		// CACTI
-		for (YorIndex = 0; YorIndex < 3/*1*/; ++YorIndex) {
+		for (YorIndex = 0; YorIndex < 4/*1*/; ++YorIndex) {
 			xOrZ = blockX + rand.nextInt(16) + 8;
 			randZ = rand.nextInt(128);
 			l2 = blockZ + rand.nextInt(16) + 8;

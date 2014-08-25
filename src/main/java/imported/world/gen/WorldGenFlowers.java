@@ -3,7 +3,6 @@ package imported.world.gen;
 import java.util.Random;
 
 import net.rush.model.Block;
-import net.rush.model.block.BlockFlower;
 import net.rush.world.World;
 
 public class WorldGenFlowers extends WorldGenerator {
@@ -20,7 +19,7 @@ public class WorldGenFlowers extends WorldGenerator {
 			int xPos = x + random.nextInt(8) - random.nextInt(8);
 			int yPos = y + random.nextInt(4) - random.nextInt(4);
 			int zPos = z + random.nextInt(8) - random.nextInt(8);
-			if (world.getType(xPos, yPos, zPos) == 0 && ((BlockFlower) Block.byId[flowerId]).canPlaceBlockAt(world, xPos, yPos - 1, zPos))
+			if (world.getType(xPos, yPos, zPos) == 0 && Block.byId[flowerId].canPlaceBlockAt(world, xPos, yPos - 1, zPos))
 				world.setType(xPos, yPos, zPos, flowerId, false);
 		}
 

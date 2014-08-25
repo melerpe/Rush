@@ -6,15 +6,17 @@ import net.rush.model.Block;
 import net.rush.model.Material;
 import net.rush.world.World;
 
-public class BlockCacti extends Block {
 
-	public BlockCacti(int id) {
+public class BlockDeadBush extends Block {
+
+	public BlockDeadBush(int id) {
 		super(id, Material.PLANT);
 	}
-
+	
 	@Override
-	public boolean canPlaceBlockAt(World w, int x, int y, int z) {
-		return (w.getType(x, y, z) == Block.SAND.id || w.getType(x, y, z) == Block.CACTUS.id) && w.isAir(x - 1, y, z) && w.isAir(x + 1, y, z) && w.isAir(x, y, z - 1) && w.isAir(x, y, z + 1);
+	public boolean canPlaceBlockAt(World world, int x, int y, int z) {
+		int ground = world.getType(x, y, z);
+		return ground == Block.SAND.id;
 	}
 
 	@Override

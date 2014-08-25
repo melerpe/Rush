@@ -47,6 +47,10 @@ import net.rush.util.NumberUtils;
 import net.rush.world.AlphaWorldGenerator;
 import net.rush.world.World;
 
+import org.bukkit.plugin.PluginLoadOrder;
+
+import craftbukkit.CraftServer;
+
 /**
  * The core class of the Rush server.
  */
@@ -76,6 +80,12 @@ public final class Server {
 
 	/** A list of all the active {@link Session}s. */
 	private final SessionRegistry sessions = new SessionRegistry();
+	
+	// Craftbukkit >
+	
+	public CraftServer bukkit_server;
+	
+	// < Craftbukkit
 	
 	/**
 	 * @deprecated Old javadocs. Reading following is deprecated. De-pre-ca-ted. (Following Bukkit- policy compliant terms)
@@ -129,7 +139,7 @@ public final class Server {
 
 		logger.info("Loading properties");
 		properties = new ServerProperties("server.properties");
-		properties.load();
+		properties.reload();
 
 		world = new World(properties.levelName);
 		world.setChunkManager(new McRegionChunkIoService(new File(properties.levelName)), new AlphaWorldGenerator(world));
@@ -137,23 +147,25 @@ public final class Server {
 		logger.info("Generating server id");
 		serverId = Long.toString(new Random().nextLong(), 16);
 
+		bukkit_server = new CraftServer(server);
+		
 		logger.info("Starting Minecraft server on " + (properties.serverIp.length() == 0 ? "*" : properties.serverIp) + ":" + properties.port);
 		new NettyNetworkThread().start();
-
+		
 		Runtime.getRuntime().addShutdownHook(new ServerShutdownHandler());
 		
-		byte radius = 7;
-
-		for (int x = -radius; x <= radius; ++x) {
+		byte radius = 6;
+		/*for (int x = -radius; x <= radius; ++x) {
 			logger.info("Preparing spawn area: " + (x + radius) * 100 / (radius + radius + 1) + "%");
 
 			for (int z = -radius; z <= radius; ++z) {
 				world.getChunks().getChunk(((int)world.getSpawnPosition().x >> 4) + x, ((int)world.getSpawnPosition().z >> 4) + z);
 			}
-		}
+		}*/
 
+		bukkit_server.enablePlugins(PluginLoadOrder.POSTWORLD);
+		
 		scheduler.start();
-
 		gui = new RushGui();
 
 		logger.info("Ready for connections. (Took " + NumberUtils.msToSeconds(System.currentTimeMillis() - initialTime) + "s !)");
@@ -250,8 +262,9 @@ public final class Server {
 	}
 	
 	public void stopServer() {
-		logger.info("Server is shutting down.");
 		isRunning = false;
+		
+		logger.info("Server is shutting down.");
 		// Save chunks on shutdown.
 		if (saveEnabled) {
 			logger.info("Saving chunks...");
@@ -264,6 +277,11 @@ public final class Server {
 		logger.info("Shutdown complete.");
 	}
 
+	public void reload() {
+		logger.info("Reloading properties ..");
+		getProperties().reload();
+	}
+	
 	private class NettyNetworkThread extends Thread {
 
 		@Override

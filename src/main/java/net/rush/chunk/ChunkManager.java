@@ -31,9 +31,9 @@ public final class ChunkManager {
 	 */
 	private final HashMap<ChunkCoords, Chunk> chunks = new HashMap<ChunkCoords, Chunk>();
 
-	/** @deprecated just a workaround */
+	/** @deprecated limits generating to a chunk */
 	public static boolean decorating = false;
-	/** @deprecated just a workaround */
+	/** @deprecated limits generating to a chunk */
 	public static Chunk ch = null;
 
 	/**

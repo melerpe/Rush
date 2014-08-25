@@ -87,7 +87,7 @@ public class NoiseGeneratorPerlin extends NoiseGenerator {
 		return this.a(d0, d1, 0.0D);
 	}
 
-	public void generateNoise(double[] adouble, double d0, double d1, double d2, int i, int j, int k, double d3, double d4, double d5, double d6) {
+	public void generateNoise(double[] cache, double d0, double d1, double d2, int i, int j, int k, double d3, double d4, double d5, double d6) {
 		int l = 0;
 		double d7 = 1.0D / d6;
 		int i1 = -1;
@@ -152,7 +152,7 @@ public class NoiseGeneratorPerlin extends NoiseGenerator {
 					double d20 = b(d15, d18, d19);
 					int i5 = l++;
 
-					adouble[i5] += d20 * d7;
+					cache[i5] += d20 * d7;
 				}
 			}
 		}

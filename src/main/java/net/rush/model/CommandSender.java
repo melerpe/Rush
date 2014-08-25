@@ -2,9 +2,9 @@ package net.rush.model;
 
 import net.rush.Server;
 
-public interface CommandSender {
-
-	public void sendMessage(String message);
-	public String getName();
-	public Server getServer();
+public abstract interface CommandSender {
+	
+  public abstract void sendMessage(String paramString);
+  public abstract String getName();
+  public abstract Server getServer();
 }
