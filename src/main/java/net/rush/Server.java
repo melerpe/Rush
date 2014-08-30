@@ -49,7 +49,7 @@ import net.rush.world.World;
 
 import org.bukkit.plugin.PluginLoadOrder;
 
-import craftbukkit.CraftServer;
+import crashbukkit.CrashServer;
 
 /**
  * The core class of the Rush server.
@@ -83,7 +83,7 @@ public final class Server {
 	
 	// Craftbukkit >
 	
-	public CraftServer bukkit_server;
+	public CrashServer bukkit_server;
 	
 	// < Craftbukkit
 	
@@ -147,7 +147,7 @@ public final class Server {
 		logger.info("Generating server id");
 		serverId = Long.toString(new Random().nextLong(), 16);
 
-		bukkit_server = new CraftServer(server);
+		bukkit_server = new CrashServer(server);
 		
 		logger.info("Starting Minecraft server on " + (properties.serverIp.length() == 0 ? "*" : properties.serverIp) + ":" + properties.port);
 		new NettyNetworkThread().start();
