@@ -18,7 +18,7 @@ import org.bukkit.util.StringUtil;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Represents a Command, which executes various tasks upon user input
+ * Represents a Command, which executes various mystical tasks upon user input
  */
 public abstract class Command {
     private final String name;
