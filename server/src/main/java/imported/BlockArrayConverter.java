@@ -8,7 +8,6 @@ public class BlockArrayConverter {
 	 * Converts a block array with height 128 (mcregion) to block array with height 256 (anvil)
 	 */
 	public static byte[] convertBlockArray(byte[] mcRegionBlocks) {
-
 		for (int byteY = 0; byteY < 8; ++byteY) {
 			boolean loopRunning = true;
 
