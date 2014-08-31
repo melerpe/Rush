@@ -116,16 +116,12 @@ public class MathHelper {
 	}
 
 	public static double average(long[] longParams) {
-		long var1 = 0L;
-		long[] var3 = longParams;
-		int var4 = longParams.length;
+		long total = 0L;
 
-		for (int var5 = 0; var5 < var4; ++var5) {
-			long var6 = var3[var5];
-			var1 += var6;
-		}
+		for (int param = 0; param < longParams.length; ++param)
+			total += longParams[param];
 
-		return (double) var1 / (double) longParams.length;
+		return (double) total / (double) longParams.length;
 	}
 
 	/**

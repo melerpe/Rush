@@ -309,6 +309,7 @@ public interface Entity extends Metadatable {
         {
             throw new UnsupportedOperationException( "Not supported yet." );
         }
+        
     }
 
     Spigot spigot();
