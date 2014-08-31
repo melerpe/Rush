@@ -15,7 +15,6 @@ local.properties
 .classpath
 .settings/
 .loadpath
-target/
 
 # External tool builders
 .externalToolBuilders/
@@ -188,7 +187,7 @@ $RECYCLE.BIN/
 ## Python
 #############
 
-*.py[co]
+*.py[cod]
 
 # Packages
 *.egg
@@ -214,9 +213,3 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-/target
-server.properties
-server.log
-/world
-server-icon.png
-server-icon.png.old
