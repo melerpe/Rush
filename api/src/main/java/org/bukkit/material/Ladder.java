@@ -83,6 +83,8 @@ public class Ladder extends SimpleAttachableMaterialData {
         case WEST:
             data = 0x5;
             break;
+        default:
+        	throw new IllegalArgumentException("Unknown face " + face);
         }
 
         setData(data);

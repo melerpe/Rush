@@ -37,7 +37,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.RegisteredListener;
-import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.yaml.snakeyaml.error.YAMLException;
@@ -354,6 +353,7 @@ public final class JavaPluginLoader implements PluginLoader {
 			loaders.remove(jPlugin.getDescription().getName());
 
 			if (cloader instanceof PluginClassLoader) {
+				@SuppressWarnings("resource")
 				PluginClassLoader loader = (PluginClassLoader) cloader;
 				Set<String> names = loader.getClasses();
 

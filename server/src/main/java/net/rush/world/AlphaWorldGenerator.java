@@ -283,6 +283,7 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		return blockArray;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void populate(int chunkX, int chunkZ) {
 		ChunkManager.decorating = true;

@@ -103,7 +103,7 @@ public class CraftEnchantment extends Enchantment {
         if (!(other instanceof CraftEnchantment)) 
             return false;
         
-        CraftEnchantment ench = (CraftEnchantment) other;
+        //CraftEnchantment ench = (CraftEnchantment) other;
         return false; // TODO !mcenchant.ConflictsWith(ench.target);
     }
 }

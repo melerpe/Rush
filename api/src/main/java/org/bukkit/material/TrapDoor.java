@@ -108,6 +108,8 @@ public class TrapDoor extends SimpleAttachableMaterialData implements Openable {
             case EAST:
                 data |= 0x3;
                 break;
+            default:
+            	throw new IllegalArgumentException("Unknown face " + face);
         }
 
         setData(data);

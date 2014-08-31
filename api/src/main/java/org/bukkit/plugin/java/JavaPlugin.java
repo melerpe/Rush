@@ -170,14 +170,12 @@ public abstract class JavaPlugin extends PluginBase {
      * @throws IllegalArgumentException if file is null
      * @see ClassLoader#getResourceAsStream(String)
      */
-    @SuppressWarnings("deprecation")
     protected final Reader getTextResource(String file) {
         final InputStream in = getResource(file);
 
         return in == null ? null : new InputStreamReader(in, isStrictlyUTF8() || FileConfiguration.UTF8_OVERRIDE ? Charsets.UTF_8 : Charset.defaultCharset());
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void reloadConfig() {
         newConfig = YamlConfiguration.loadConfiguration(configFile);

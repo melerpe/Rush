@@ -28,6 +28,7 @@ import org.bukkit.util.StringUtil;
 import org.spigotmc.CustomTimingsHandler;
 // Spigot end
 
+
 import com.google.common.collect.ImmutableList;
 
 public class TimingsCommand extends BukkitCommand {
@@ -100,7 +101,8 @@ public class TimingsCommand extends BukkitCommand {
     }
     // Spigot end
 
-    @Override
+    @SuppressWarnings("unused")
+	@Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (!testPermission(sender)) return true;
         if (args.length < 1)  { // Spigot

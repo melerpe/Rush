@@ -76,7 +76,8 @@ public class ConversationTest {
         assertEquals(conversation, forWhom.abandonedConverstion);
     }
 
-    @Test
+    @SuppressWarnings("unused")
+	@Test
     public void testNotPlayer() {
         FakeConversable forWhom = new FakeConversable();
         NullConversationPrefix prefix = new NullConversationPrefix();

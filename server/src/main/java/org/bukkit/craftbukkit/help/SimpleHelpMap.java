@@ -31,15 +31,15 @@ import com.google.common.collect.Collections2;
 /**
  * Standard implementation of {@link HelpMap} for CraftBukkit servers.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class SimpleHelpMap implements HelpMap {
 
     private HelpTopic defaultTopic;
     private final Map<String, HelpTopic> helpTopics;
-    private final Map<Class, HelpTopicFactory<Command>> topicFactoryMap;
+	private final Map<Class, HelpTopicFactory<Command>> topicFactoryMap;
     private final CraftServer server;
     private HelpYamlReader yaml;
 
-    @SuppressWarnings("unchecked")
     public SimpleHelpMap(CraftServer server) {
         this.helpTopics = new TreeMap<String, HelpTopic>(HelpTopicComparator.topicNameComparatorInstance()); // Using a TreeMap for its explicit sorting on key
         this.topicFactoryMap = new HashMap<Class, HelpTopicFactory<Command>>();

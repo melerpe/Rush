@@ -91,6 +91,7 @@ import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 
+@SuppressWarnings("unused")
 public final class CraftServer implements Server {
 
 	private final String serverName = "CraftBukkit";
@@ -1096,7 +1097,7 @@ public final class CraftServer implements Server {
 
 	@Override
 	public Iterator<Recipe> recipeIterator() {
-		return new ArrayList().iterator(); // TODO new RecipeIterator();
+		return new ArrayList<Recipe>().iterator(); // TODO new RecipeIterator();
 	}
 
 	@Override
@@ -1317,7 +1318,6 @@ public final class CraftServer implements Server {
 	}*/
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Set<String> getIPBans() {
 		return new HashSet<String>(); // TODO (Arrays.asList(playerList.getIPBans().getEntries()));
 	}

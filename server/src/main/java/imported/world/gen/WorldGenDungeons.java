@@ -8,6 +8,8 @@ import net.rush.world.World;
 
 public class WorldGenDungeons extends WorldGenerator {
 
+	// TODO
+	@SuppressWarnings("unused")
 	@Override
 	public boolean generate(World world, Random random, int x, int y, int z) {
 		byte b0 = 3;

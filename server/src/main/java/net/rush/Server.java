@@ -153,14 +153,14 @@ public final class Server {
 		
 		Runtime.getRuntime().addShutdownHook(new ServerShutdownHandler());
 		
-		byte radius = 6;
-		/*for (int x = -radius; x <= radius; ++x) {
+		byte radius = 5;
+		for (int x = -radius; x <= radius; ++x) {
 			logger.info("Preparing spawn area: " + (x + radius) * 100 / (radius + radius + 1) + "%");
 
 			for (int z = -radius; z <= radius; ++z) {
 				world.getChunks().getChunk(((int)world.getSpawnPosition().x >> 4) + x, ((int)world.getSpawnPosition().z >> 4) + z);
 			}
-		}*/
+		}
 
 		bukkit_server.enablePlugins(PluginLoadOrder.POSTWORLD);
 		
