@@ -10,12 +10,14 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class TabCompletePacket extends Packet {
-	
+
 	public TabCompletePacket() {
 	}
 
 	@Serialize(type = Type.STRING, order = 0)
 	private String text;
+	
+	public long position;
 
 	public TabCompletePacket(String text) {
 		super();
@@ -36,9 +38,13 @@ public class TabCompletePacket extends Packet {
 
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
-		text = readString(input, 65000, false);
+		text = readString(input, 32767, false);
+		if (protocol >= 37)
+			if (input.readBoolean()) {
+				position = input.readLong();
+			}
 	}
-	
+
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		writeString(text, output, false);

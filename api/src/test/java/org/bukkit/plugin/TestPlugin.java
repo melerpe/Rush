@@ -10,8 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.generator.ChunkGenerator;
 
-import com.avaje.ebean.EbeanServer;
-
 public class TestPlugin extends PluginBase {
     private boolean enabled = true;
 
@@ -93,7 +91,7 @@ public class TestPlugin extends PluginBase {
         throw new UnsupportedOperationException("Not supported.");
     }
 
-    public EbeanServer getDatabase() {
+    public /*EbeanServer*/Object getDatabase() {
         throw new UnsupportedOperationException("Not supported.");
     }
 

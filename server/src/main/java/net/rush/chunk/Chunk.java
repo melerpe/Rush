@@ -201,7 +201,8 @@ public final class Chunk {
 	 * @return The {@link MapChunkPacket}.
 	 */
 	public Packet toMessage() {
-		return new MapChunkPacket(coords.x, coords.z, true, 0xFFFF, 0, serializeTileData());
+		return new MapChunkPacket(this);
+		//return new MapChunkPacket(coords.x, coords.z, true, 0xFFFF, 0, serializeTileData());
 		//return new MapChunkPacketImpl(x * Chunk.WIDTH, z * Chunk.HEIGHT, 0, WIDTH, HEIGHT, DEPTH, serializeTileData());
 	}
 
@@ -244,68 +245,6 @@ public final class Chunk {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Serializes tile data into a byte array.
-	 * @return The byte array populated with the tile data.
-	 */
-	private byte[] serializeTileData() {
-		// (types + metaData + blocklight + skylight + add) * 16 vanilla-chunks + biome
-		byte[] data = new byte[(4096 + 2048 + 2048 + 2048 + 0) * 16 + 256];
-
-		int pos = types.length;
-
-		// types
-		System.arraycopy(types, 0, data, 0, types.length);
-
-		if (pos != types.length)
-			throw new IllegalStateException("Illegal pos: " + pos + " vs " + types.length);
-
-		// metadata
-		for (int i = 0; i < metaData.length; i += 2) {
-			byte meta1 = metaData[i];
-			byte meta2 = metaData[i + 1];
-			data[pos++] = (byte) ((meta2 << 4) | meta1);
-		}
-
-		// skylight
-		for (int i = 0; i < skyLight.length; i += 2) {
-			byte light1 = 15;//skyLight[i];
-			byte light2 = 15;//skyLight[i + 1];
-			data[pos++] = (byte) ((light2 << 4) | light1);
-		}
-
-		// blocklight
-		for (int i = 0; i < blockLight.length; i += 2) {
-			byte light1 = 15;//blockLight[i];
-			byte light2 = 15;//blockLight[i + 1];
-			data[pos++] = (byte) ((light2 << 4) | light1);
-		}
-
-		// biome
-		for (int i = 0; i < 256; i++)
-			data[pos++] = 4; // biome data, just set it to forest
-
-		if (pos != data.length)
-			throw new IllegalStateException("Illegal Pos: " + pos + " vs " + data.length);
-
-		// we are done, now compress it
-		Deflater deflater = new Deflater(Deflater.BEST_SPEED);
-		deflater.setInput(data);
-		deflater.finish();
-
-		byte[] compressed = new byte[data.length];
-		int length = deflater.deflate(compressed);
-
-		deflater.end();
-
-		byte[] realCompressed = new byte[length];
-
-		for (int i = 0; i < length; i++)
-			realCompressed[i] = compressed[i];
-
-		return realCompressed;
 	}
 
 	/*public void addEntity(Entity en) {

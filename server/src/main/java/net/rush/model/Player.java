@@ -169,10 +169,10 @@ public final class Player extends LivingEntity implements CommandSender {
 	
 	public void updateTabList() {
 		Packet newPlayer = new PlayerListItemPacket(name, true, (short)100);
-
+		// FIXME fix on 1.8
 		for(Player pl : getWorld().getPlayers()) {
-			pl.getSession().send(newPlayer);
-			session.send(new PlayerListItemPacket(pl.getName(), true, (short)100));
+			//pl.getSession().send(newPlayer);
+			//session.send(new PlayerListItemPacket(pl.getName(), true, (short)100));
 		}
 	}
 

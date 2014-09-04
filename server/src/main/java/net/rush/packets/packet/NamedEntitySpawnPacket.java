@@ -3,15 +3,17 @@ package net.rush.packets.packet;
 import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import net.rush.model.Position;
 import net.rush.packets.Packet;
 import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
+import net.rush.util.BlockDebreakifier;
 import net.rush.util.Parameter;
 
 public class NamedEntitySpawnPacket extends Packet {
-	
+
 	public NamedEntitySpawnPacket() {
 	}
 
@@ -94,29 +96,23 @@ public class NamedEntitySpawnPacket extends Packet {
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		writeVarInt(entityId, output);
-		writeString("invalid", output, false);
-		writeString(entityName, output, false);
+		if (protocol < 20) {
+			writeString("0-0-0-0-0", output, false);
+			writeString(entityName, output, false);
+			if (protocol > 4)
+				writeVarInt(0, output);		
+		} else {
+			writeUuid(output, UUID.fromString("0-0-0-0-0"));
+		}
 		output.writeInt(x);
 		output.writeInt(y);
-		output.writeInt(z);
+		output.writeInt(z);		
 		output.writeByte(yaw);
 		output.writeByte(pitch);
-		output.writeShort(currentItem);
+		if (protocol >= 47)
+			output.writeShort(BlockDebreakifier.getItemId(currentItem));
+		else
+			output.writeShort(currentItem);
 		writeMetadata(output, metadata);
 	}
-	
-	@Override
-	public void write176(ByteBufOutputStream output) throws IOException {
-		writeVarInt(entityId, output);
-		writeString("0-0-0-0-0", output, false);
-		writeString(entityName, output, false);
-		writeVarInt(0, output);
-		output.writeInt(x);
-		output.writeInt(y);
-		output.writeInt(z);
-		output.writeByte(yaw);
-		output.writeByte(pitch);
-		output.writeShort(currentItem);
-		writeMetadata(output, metadata);
-	};
 }

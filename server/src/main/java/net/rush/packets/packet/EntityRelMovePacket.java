@@ -5,6 +5,9 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
 
+
+import java.io.DataOutput;
+
 import net.rush.packets.Packet;
 import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
@@ -22,6 +25,8 @@ public class EntityRelMovePacket extends Packet {
 
 	public EntityRelMovePacket() {
 	}
+	
+	private boolean onGround;
 	
 	public EntityRelMovePacket(int entityId, byte diffX, byte diffY, byte diffZ) {
 		super();
@@ -61,6 +66,7 @@ public class EntityRelMovePacket extends Packet {
 		output.writeByte(diffX);
 		output.writeByte(diffY);
 		output.writeByte(diffZ);
+		output.writeBoolean(onGround);
 	}
 	
 	@Override

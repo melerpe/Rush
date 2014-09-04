@@ -9,7 +9,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class ItemCollectPacket extends Packet {
-	
+
 	public ItemCollectPacket() {
 	}
 
@@ -42,7 +42,12 @@ public class ItemCollectPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(collected);
-		output.writeInt(collector);
+		if (protocol < 16) {
+			output.writeInt(collected);
+			output.writeInt(collector);
+		} else {
+			writeByteInteger(output, collected);
+			writeByteInteger(output, collector);
+		}
 	}
 }

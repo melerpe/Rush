@@ -10,7 +10,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class AnimationPacket extends Packet {
-	
+
 	public static final int SWING_ARM = 1;
 	public static final int DAMAGE_ANIMATION = 2;
 	public static final int BED_LEAVE = 3;
@@ -20,7 +20,7 @@ public class AnimationPacket extends Packet {
 	public static final int UNKNOWN = 102;
 	public static final int CROUNCH = 104;
 	public static final int UNCROUNCH = 105;
-	
+
 	@Serialize(type = Type.INT, order = 0)
 	private int entityId;
 	@Serialize(type = Type.BYTE, order = 1)
@@ -29,12 +29,12 @@ public class AnimationPacket extends Packet {
 	/** To prevent typos, use inbuilt types ids. */
 	public AnimationPacket() {
 	}
-	
+
 	/** To prevent typos, use inbuilt types ids. */
 	public AnimationPacket(int entityId, int animation) {
 		this(entityId, (byte)animation);
 	}
-	
+
 	/** To prevent typos, use inbuilt types ids. */
 	public AnimationPacket(int entityId, byte animation) {
 		super();
@@ -60,16 +60,20 @@ public class AnimationPacket extends Packet {
 
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
-		entityId = input.readInt();
-		animation = input.readByte();
+		if (protocol < 16) {
+			entityId = input.readInt();
+			animation = input.readByte();
+		} else {
+			animation = 1;
+		}
 	}
-	
+
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		writeVarInt(entityId, output);
 		output.writeByte(toNewId(animation));
 	}
-	
+
 	private int toNewId(int id) {
 		if(id == 2)
 			return 1;

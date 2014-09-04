@@ -9,7 +9,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class EntityEffectPacket extends Packet {
-	
+
 	public EntityEffectPacket() {
 	}
 
@@ -56,9 +56,17 @@ public class EntityEffectPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(entityId);
-		output.writeByte(effectId);
-		output.writeByte(amplifier);
-		output.writeShort(duration);
+		if (protocol < 16) {
+			output.writeInt(entityId);
+			output.writeByte(effectId);
+			output.writeByte(amplifier);
+			output.writeShort(duration);
+		} else {
+			 writeByteInteger(output, entityId);
+			 output.writeByte(effectId);
+			 output.writeByte(amplifier);
+			 writeByteInteger(output, duration);
+			 output.writeBoolean(false);
+		}
 	}
 }

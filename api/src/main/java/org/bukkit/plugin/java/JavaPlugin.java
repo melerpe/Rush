@@ -32,12 +32,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
 
-import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.EbeanServerFactory;
-import com.avaje.ebean.config.DataSourceConfig;
-import com.avaje.ebean.config.ServerConfig;
-import com.avaje.ebeaninternal.api.SpiEbeanServer;
-import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
@@ -53,7 +47,7 @@ public abstract class JavaPlugin extends PluginBase {
     private File dataFolder = null;
     private ClassLoader classLoader = null;
     private boolean naggable = true;
-    private EbeanServer ebean = null;
+    //private EbeanServer ebean = null;
     private FileConfiguration newConfig = null;
     private File configFile = null;
     private PluginLogger logger = null;
@@ -340,7 +334,7 @@ public abstract class JavaPlugin extends PluginBase {
         this.configFile = new File(dataFolder, "config.yml");
         this.logger = new PluginLogger(this);
 
-        if (description.isDatabaseEnabled()) {
+        /*if (description.isDatabaseEnabled()) {
             ServerConfig db = new ServerConfig();
 
             db.setDefaultServer(false);
@@ -359,7 +353,7 @@ public abstract class JavaPlugin extends PluginBase {
             Thread.currentThread().setContextClassLoader(classLoader);
             ebean = EbeanServerFactory.create(db);
             Thread.currentThread().setContextClassLoader(previous);
-        }
+        }*/
     }
 
     /**
@@ -371,11 +365,11 @@ public abstract class JavaPlugin extends PluginBase {
         return new ArrayList<Class<?>>();
     }
 
-    private String replaceDatabaseString(String input) {
+    /*private String replaceDatabaseString(String input) {
         input = input.replaceAll("\\{DIR\\}", dataFolder.getPath().replaceAll("\\\\", "/") + "/");
         input = input.replaceAll("\\{NAME\\}", description.getName().replaceAll("[^\\w_-]", ""));
         return input;
-    }
+    }*/
 
     /**
      * Gets the initialization status of this plugin
@@ -453,22 +447,22 @@ public abstract class JavaPlugin extends PluginBase {
     }
 
     @Override
-    public EbeanServer getDatabase() {
-        return ebean;
+    public /*EbeanServer*/Object getDatabase() {
+        return null; //ebean;
     }
 
     protected void installDDL() {
-        SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
+       /* SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
 
-        gen.runScript(false, gen.generateCreateDdl());
+        gen.runScript(false, gen.generateCreateDdl());*/
     }
 
     protected void removeDDL() {
-        SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
+        /*SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
 
-        gen.runScript(true, gen.generateDropDdl());
+        gen.runScript(true, gen.generateDropDdl());*/
     }
 
     @Override

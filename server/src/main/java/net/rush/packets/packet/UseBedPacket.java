@@ -9,7 +9,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class UseBedPacket extends Packet {
-	
+
 	public UseBedPacket() {
 	}
 
@@ -60,12 +60,17 @@ public class UseBedPacket extends Packet {
 	public String getToStringDescription() {
 		return String.format("entityId=\"%d\",unknown_byte_0=\"%d\",x=\"%d\",y=\"%d\",z=\"%d\"", entityId, unknown_byte_0, x, y, z);
 	}
-	
+
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(entityId);
-		output.writeInt(x);
-		output.writeByte(y);
-		output.writeInt(z);
+		if (protocol < 16) {
+			output.writeInt(entityId);
+			output.writeInt(x);
+			output.writeByte(y);
+			output.writeInt(z);
+		} else {
+			writeByteInteger(output, entityId);
+			writePosition(output, x, y, z);
+		}
 	}
 }

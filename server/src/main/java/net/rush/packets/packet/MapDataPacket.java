@@ -3,13 +3,14 @@ package net.rush.packets.packet;
 import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
+import java.lang.invoke.WrongMethodTypeException;
 
 import net.rush.packets.Packet;
 import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class MapDataPacket extends Packet {
-	
+
 	public MapDataPacket() {
 	}
 
@@ -53,12 +54,16 @@ public class MapDataPacket extends Packet {
 	public String getToStringDescription() {
 		return String.format("itemType=\"%d\",itemId=\"%d\",dataLength=\"%d\",data=byte[%d]", itemType, itemId, dataLength, data.length);
 	}
-	
+
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		writeVarInt(itemType, output);
-		output.writeShort(dataLength);
-		output.write(data);
+		if (protocol < 27) {
+			output.writeShort(dataLength);
+			output.write(data);
+		} else 
+			throw new WrongMethodTypeException("Too lazy to write map-packet method for 1.8 :P");
+
 	}
 
 }

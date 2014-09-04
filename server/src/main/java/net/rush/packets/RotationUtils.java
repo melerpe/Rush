@@ -1,9 +1,8 @@
 package net.rush.packets;
 
 public class RotationUtils {
-    protected RotationUtils() {
-        throw new UnsupportedOperationException();
-    }
+	
+    private RotationUtils() {}
 
     public static byte floatToByte(float old) {
         return (byte) (int) ((old * 256F) / 360F);

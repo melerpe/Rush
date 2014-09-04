@@ -9,7 +9,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class SteerVehiclePacket extends Packet {
-	
+
 	public SteerVehiclePacket() {
 	}
 
@@ -58,7 +58,13 @@ public class SteerVehiclePacket extends Packet {
 	public void read17(ByteBufInputStream input) throws IOException {
 		sideways = input.readFloat();
 		forward = input.readFloat();
-		jump = input.readBoolean();
-		unmount = input.readBoolean();
+		if (protocol < 16) {
+			jump = input.readBoolean();
+			unmount = input.readBoolean();
+		} else {
+			int flags = input.readUnsignedByte();
+			jump = (flags & 0x1) != 0;
+			unmount = (flags & 0x2) != 0;
+		}
 	}
 }

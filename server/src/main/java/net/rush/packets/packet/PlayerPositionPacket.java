@@ -10,7 +10,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class PlayerPositionPacket extends Packet {
-	
+
 	public PlayerPositionPacket() {
 	}
 
@@ -65,18 +65,26 @@ public class PlayerPositionPacket extends Packet {
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
 		x = input.readDouble();
-		y = input.readDouble();
-		stance = input.readDouble();
+		if (protocol < 16) {
+			y = input.readDouble();
+			stance = input.readDouble();
+		} else {
+			y = input.readDouble();
+			stance+= 1.62;
+		}
 		z = input.readDouble();
 		onGround = input.readBoolean();
 	}
-	
+
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		output.writeDouble(x);
-		output.writeDouble(y);
+		output.writeDouble(y - (protocol >= 16 ? 1.62 : 0));
 		output.writeDouble(stance);
 		output.writeDouble(z);
-		output.writeBoolean(onGround);
+		if (protocol < 16)
+			output.writeBoolean(onGround);
+		else
+			output.writeByte(0);
 	}
 }

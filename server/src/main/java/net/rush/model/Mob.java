@@ -5,6 +5,7 @@ import net.rush.packets.packet.EntityLookAndRelMovePacket;
 import net.rush.packets.packet.EntityLookPacket;
 import net.rush.packets.packet.EntityRelMovePacket;
 import net.rush.packets.packet.EntityTeleportPacket;
+import net.rush.task.WorldThreadAI;
 import net.rush.world.World;
 
 import org.bukkit.entity.EntityType;
@@ -15,6 +16,8 @@ import org.bukkit.entity.EntityType;
  */
 public abstract class Mob extends Entity {
 
+	protected final WorldThreadAI threadAi;
+	
 	/**
 	 * Creates a mob within the specified world.
 	 * @param world The world.
@@ -22,6 +25,7 @@ public abstract class Mob extends Entity {
 	public Mob(World world, EntityType type) {
 		super(world, type);
 		
+		threadAi = new WorldThreadAI();
 		world.spawnEntity(this);
 	}
 	

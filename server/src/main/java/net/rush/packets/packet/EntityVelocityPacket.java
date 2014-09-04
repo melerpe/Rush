@@ -56,7 +56,10 @@ public class EntityVelocityPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(entityId);
+		if (protocol < 16) 
+			output.writeInt(entityId);
+		else 
+			writeByteInteger(output, entityId);
 		output.writeShort(velocityX);
 		output.writeShort(velocityY);
 		output.writeShort(velocityZ);

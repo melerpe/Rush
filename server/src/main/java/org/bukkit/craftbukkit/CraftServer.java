@@ -84,10 +84,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
 
-import com.avaje.ebean.config.DataSourceConfig;
-import com.avaje.ebean.config.ServerConfig;
-import com.avaje.ebean.config.dbplatform.SQLitePlatform;
-import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 
@@ -1036,10 +1032,10 @@ public final class CraftServer implements Server {
 	}
 
 	@Override
-	public void configureDbConfig(ServerConfig config) {
+	public void configureDbConfig(/*ServerConfig*/Object config) {
 		Validate.notNull(config, "Config cannot be null");
 
-		DataSourceConfig ds = new DataSourceConfig();
+		/*DataSourceConfig ds = new DataSourceConfig();
 		ds.setDriver(configuration.getString("database.driver"));
 		ds.setUrl(configuration.getString("database.url"));
 		ds.setUsername(configuration.getString("database.username"));
@@ -1051,7 +1047,7 @@ public final class CraftServer implements Server {
 			config.getDatabasePlatform().getDbDdlSyntax().setIdentity("");
 		}
 
-		config.setDataSourceConfig(ds);
+		config.setDataSourceConfig(ds);*/
 	}
 
 	@Override

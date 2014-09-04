@@ -31,6 +31,8 @@ public class PreChunkPacket extends Packet {
 	@Serialize(type = Type.UNSIGNED_SHORT, order = 7)
 	private int addBitMap;
 
+	private boolean notWorks = true;
+	
 	public PreChunkPacket(short chunkCount, int dataLength, boolean skyLight, byte[] data, int x, int z, int primaryBitMap, int addBitMap) {
 		super();
 		this.chunkCount = chunkCount;

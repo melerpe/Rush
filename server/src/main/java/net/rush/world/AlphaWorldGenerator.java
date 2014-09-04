@@ -1,6 +1,5 @@
 package net.rush.world;
 
-import imported.BlockArrayConverter;
 import imported.MapGenCaves;
 import imported.world.gen.NoiseGeneratorOctaves;
 import imported.world.gen.WorldGenBigTree;
@@ -20,13 +19,14 @@ import net.rush.chunk.Chunk;
 import net.rush.chunk.ChunkCoords;
 import net.rush.chunk.ChunkManager;
 import net.rush.model.Block;
+import net.rush.util.BlockArrayConverter;
 
 public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 
 	private Random rand;
 	private NoiseGeneratorOctaves noise1, noise2, noise3, sandAndGravelNoise, stoneNoise, noise6, noise7, decorationNoise;
 	private World world;
-	private double[] blocks;
+	private double[] heightArray;
 	private double[] sandNoiseCache = new double[256];
 	private double[] gravelNoiseCache = new double[256];
 	private double[] topStoneNoiseCache = new double[256];
@@ -68,20 +68,20 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		byte b2 = 17;
 		int l = b0 + 1;
 
-		blocks = this.provideSections(blocks, x * b0, 0, z * b0, k, b2, l);
+		heightArray = this.provideSections(heightArray, x * b0, 0, z * b0, k, b2, l);
 
 		for (int i1 = 0; i1 < b0; ++i1)
 			for (int j1 = 0; j1 < b0; ++j1)
 				for (int liquidHeight = 0; liquidHeight < 16; ++liquidHeight) {
 					double d0 = 0.125D;
-					double d1 = blocks[((i1 + 0) * l + j1 + 0) * b2 + liquidHeight + 0];
-					double d2 = blocks[((i1 + 0) * l + j1 + 1) * b2 + liquidHeight + 0];
-					double d3 = blocks[((i1 + 1) * l + j1 + 0) * b2 + liquidHeight + 0];
-					double d4 = blocks[((i1 + 1) * l + j1 + 1) * b2 + liquidHeight + 0];
-					double d5 = (blocks[((i1 + 0) * l + j1 + 0) * b2 + liquidHeight + 1] - d1) * d0;
-					double d6 = (blocks[((i1 + 0) * l + j1 + 1) * b2 + liquidHeight + 1] - d2) * d0;
-					double d7 = (blocks[((i1 + 1) * l + j1 + 0) * b2 + liquidHeight + 1] - d3) * d0;
-					double d8 = (blocks[((i1 + 1) * l + j1 + 1) * b2 + liquidHeight + 1] - d4) * d0;
+					double d1 = heightArray[((i1 + 0) * l + j1 + 0) * b2 + liquidHeight + 0];
+					double d2 = heightArray[((i1 + 0) * l + j1 + 1) * b2 + liquidHeight + 0];
+					double d3 = heightArray[((i1 + 1) * l + j1 + 0) * b2 + liquidHeight + 0];
+					double d4 = heightArray[((i1 + 1) * l + j1 + 1) * b2 + liquidHeight + 0];
+					double d5 = (heightArray[((i1 + 0) * l + j1 + 0) * b2 + liquidHeight + 1] - d1) * d0;
+					double d6 = (heightArray[((i1 + 0) * l + j1 + 1) * b2 + liquidHeight + 1] - d2) * d0;
+					double d7 = (heightArray[((i1 + 1) * l + j1 + 0) * b2 + liquidHeight + 1] - d3) * d0;
+					double d8 = (heightArray[((i1 + 1) * l + j1 + 1) * b2 + liquidHeight + 1] - d4) * d0;
 
 					for (int tries1 = 0; tries1 < 8; ++tries1) {
 						double probModifier = 0.25D;
@@ -188,9 +188,9 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			}
 	}
 
-	private double[] provideSections(double[] blockArray, int x, int y, int z, int width, int depth, int height) {
-		if (blockArray == null)
-			blockArray = new double[width * depth * height];
+	private double[] provideSections(double[] heightArray, int x, int y, int z, int width, int depth, int height) {
+		if (heightArray == null)
+			heightArray = new double[width * depth * height];
 
 		double d0 = 684.412D;
 		double d1 = 684.412D;
@@ -275,14 +275,32 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 						theHeight = theHeight * (1.0D - d11) + -10.0D * d11;
 					}
 
-					blockArray[index] = theHeight;
+					heightArray[index] = theHeight;
 					++index;
 				}
 			}
 
-		return blockArray;
+		return heightArray;
 	}
 
+	private long now = 0;
+	
+	private long took(long time) {
+		long oldValue = now;
+		now = System.currentTimeMillis();
+		
+		return System.currentTimeMillis() - oldValue;
+	}
+	
+	private void logProgress(String what) {
+		long delay = took(now);
+		
+		if(delay > 3000)
+			System.out.println(what + " Took too long: " + delay + "ms!");
+		//else
+		//	System.out.println(what + " Took " + delay + " ms!");
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void populate(int chunkX, int chunkZ) {
@@ -290,7 +308,10 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		// BlockSand.fallInstantly = true;
 		int blockX = chunkX * 16;
 		int blockZ = chunkZ * 16;
-
+		
+		System.out.println("[-!-] -->> Populating x: " + chunkX + " z:" + chunkZ);
+		now = System.currentTimeMillis();
+		
 		rand.setSeed(world.seed);
 		long xRandom = rand.nextLong() / 2L * 2L + 1L;
 		long zRandom = rand.nextLong() / 2L * 2L + 1L;
@@ -310,6 +331,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			xOrZ = blockZ + rand.nextInt(16) + 8;
 			new WorldGenDungeons().generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
+		
+		logProgress("Dungeons");
 
 		// CLAY DIRT AND GRAVEL		
 		for (tries = 0; tries < 10; ++tries) {
@@ -319,19 +342,25 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			new WorldGenClay(32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 		
-		for (tries = 0; tries < /*20*/17; ++tries) {
+		logProgress("Clay");
+		
+		for (tries = 0; tries < /*20*/13; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(128);
 			xOrZ = blockZ + rand.nextInt(16);
 			new WorldGenMinable(Block.DIRT.id, 32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
 
-		for (tries = 0; tries < /*10*/9; ++tries) {
+		logProgress("Dirt");
+		
+		for (tries = 0; tries < /*10*/6; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
 			YorIndex = rand.nextInt(128);
 			xOrZ = blockZ + rand.nextInt(16);
 			new WorldGenMinable(Block.GRAVEL.id, 32).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
+		
+		logProgress("Gravel");
 		
 		// VALUABLE ORES
 		for (tries = 0; tries < /*20*/12; ++tries) {
@@ -347,6 +376,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			xOrZ = blockZ + rand.nextInt(16);
 			new WorldGenMinable(Block.IRON_ORE.id, /*8*/6).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
+		
+		logProgress("Coal and Iron");
 
 		for (tries = 0; tries < 2; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
@@ -361,6 +392,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			xOrZ = blockZ + rand.nextInt(16);
 			new WorldGenMinable(Block.REDSTONE_ORE.id, /*7*/4).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
+		
+		logProgress("Gold and Redstone");
 
 		for (tries = 0; tries < 1; ++tries) {
 			maybeX = blockX + rand.nextInt(16);
@@ -368,6 +401,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			xOrZ = blockZ + rand.nextInt(16);
 			new WorldGenMinable(Block.DIAMOND_ORE.id, /*7*/4).generate(world, rand, maybeX, YorIndex, xOrZ);
 		}
+		
+		logProgress("Diamond");
 
 		d0 = 0.5D;
 		tries = (int) ((decorationNoise.a(blockX * d0, blockZ * d0) / 8.0D + rand.nextDouble() * 4.0D + 4.0D) / 3.0D);
@@ -391,6 +426,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 		}
 			
 		int randZ;
+		
+		logProgress("Decoration noise setup");
 
 		// TREES
 		for (YorIndex = 0; YorIndex < tries; ++YorIndex) {
@@ -399,6 +436,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			treeGenerator.setScale(1.0D, 1.0D, 1.0D);
 			treeGenerator.generate(world, rand, xOrZ, world.getTerrainHeight(xOrZ, randZ), randZ);
 		}
+		
+		logProgress("Trees");
 		
 		int l2;
 
@@ -416,6 +455,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			randZ = blockZ + rand.nextInt(16) + 8;
 			new WorldGenFlowers(Block.RED_ROSE.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
+		
+		logProgress("Flowers");
 
 		// TODO s
 		// a) find out why is not generating (same with cacti)
@@ -426,6 +467,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			randZ = blockZ + rand.nextInt(16) + 8;
 			new WorldGenFlowers(Block.DEAD_BUSH.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
+
+		logProgress("Dead Bush");
 		
 		if (rand.nextInt(4) == 0) {
 			YorIndex = blockX + rand.nextInt(16) + 8;
@@ -440,6 +483,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			randZ = blockZ + rand.nextInt(16) + 8;
 			new WorldGenFlowers(Block.RED_MUSHROOM.id).generate(world, rand, YorIndex, xOrZ, randZ);
 		}
+		
+		logProgress("MushRooms");
 
 		// SUGAR CANE
 		for (YorIndex = 0; YorIndex < 13/*10*/; ++YorIndex) {
@@ -457,6 +502,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			new WorldGenCactus().generate(world, rand, xOrZ, randZ, l2);
 		}
 
+		logProgress("Cacti and Sugar Cane");
+		
 		// LAVA AND WATER LAKES
 		for (YorIndex = 0; YorIndex < 60/*50*/; ++YorIndex) {
 			xOrZ = blockX + rand.nextInt(16) + 8;
@@ -471,6 +518,8 @@ public class AlphaWorldGenerator implements net.rush.world.WorldGenerator {
 			l2 = blockZ + rand.nextInt(16) + 8;
 			new WorldGenLiquids(Block.LAVA.id).generate(world, rand, xOrZ, randZ, l2);
 		}
+		
+		logProgress("Liquids");
 		
 		// BlockSand.fallInstantly = false;
 		ChunkManager.decorating = false;

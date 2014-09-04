@@ -25,6 +25,8 @@ public class ClientSettingsPacket extends Packet {
 	private boolean showCape;
 
 	public boolean chatColours;
+	// 1.8
+	public int flags;
 
 	public ClientSettingsPacket(String locale, byte viewDistance, byte chatFlags, byte difficulty, boolean showCape) {
 		super();
@@ -69,7 +71,11 @@ public class ClientSettingsPacket extends Packet {
 		viewDistance = input.readByte();
 		chatFlags = input.readByte();
 		chatColours = input.readBoolean();
-		difficulty = input.readByte();
-		showCape = input.readBoolean();
+		if (protocol < 16 ) {
+			difficulty = input.readByte();
+			showCape = input.readBoolean();
+		} else {
+			flags = input.readUnsignedByte();
+		}
 	}
 }

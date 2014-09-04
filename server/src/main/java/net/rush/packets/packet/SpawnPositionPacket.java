@@ -11,7 +11,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class SpawnPositionPacket extends Packet {
-	
+
 	public SpawnPositionPacket() {
 	}
 
@@ -58,8 +58,11 @@ public class SpawnPositionPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(x);
-		output.writeInt(y);
-		output.writeInt(z);
+		if (protocol < 16) {
+			output.writeInt(x);
+			output.writeInt(y);
+			output.writeInt(z);
+		} else
+			writePosition(output, x, y, z);
 	}
 }

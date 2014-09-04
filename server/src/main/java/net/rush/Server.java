@@ -58,7 +58,7 @@ public final class Server {
 	public final String serverId;
 	public boolean saveEnabled = true;
 	public boolean isRunning = true;
-	
+
 	private static Server server;
 
 	private final Logger logger = Logger.getLogger("Minecraft");
@@ -79,13 +79,13 @@ public final class Server {
 
 	/** A list of all the active {@link Session}s. */
 	private final SessionRegistry sessions = new SessionRegistry();
-	
+
 	// Craftbukkit >
-	
+
 	public CraftServer bukkit_server;
-	
+
 	// < Craftbukkit
-	
+
 	/**
 	 * @deprecated Old javadocs. Reading following is deprecated. De-pre-ca-ted. (Following Bukkit- policy compliant terms)
 	 * Creates a new server on TCP port 25565 and starts listening for
@@ -96,7 +96,7 @@ public final class Server {
 	 */
 	public static void main(String[] args) {
 		try {
-			
+
 			boolean jline = true;
 			boolean gui = true;
 
@@ -106,15 +106,15 @@ public final class Server {
 				if ("-nogui".equalsIgnoreCase(arg) || "--nogui".equalsIgnoreCase(arg))
 					gui = false;
 			}
-			
-	        System.setProperty( "java.net.preferIPv4Stack", "true" );
-	        ResourceLeakDetector.setLevel(io.netty.util.ResourceLeakDetector.Level.DISABLED);
-			
+
+			System.setProperty( "java.net.preferIPv4Stack", "true" );
+			ResourceLeakDetector.setLevel(io.netty.util.ResourceLeakDetector.Level.DISABLED);
+
 			ConsoleLogManager.register();
-			
+
 			if(gui)
 				ServerGUI.initGui();
-			
+
 			Server server = new Server();
 
 			new ThreadConsoleReader(server, jline).start();
@@ -129,7 +129,7 @@ public final class Server {
 	 */
 	public Server() {
 		server = this;
-		
+
 		logger.info("Initializing Rush for Minecraft 1.6.4 - 1.7.10");
 		long initialTime = System.currentTimeMillis();
 
@@ -147,23 +147,24 @@ public final class Server {
 		serverId = Long.toString(new Random().nextLong(), 16);
 
 		bukkit_server = new CraftServer(server);
-		
+
 		logger.info("Starting Minecraft server on " + (properties.serverIp.length() == 0 ? "*" : properties.serverIp) + ":" + properties.port);
 		new NettyNetworkThread().start();
-		
+
 		Runtime.getRuntime().addShutdownHook(new ServerShutdownHandler());
-		
+
 		byte radius = 5;
 		for (int x = -radius; x <= radius; ++x) {
 			logger.info("Preparing spawn area: " + (x + radius) * 100 / (radius + radius + 1) + "%");
 
 			for (int z = -radius; z <= radius; ++z) {
+				//System.out.println("Generating chunk at x:" + (((int)world.getSpawnPosition().x >> 4) + x) +  " z:" + (((int)world.getSpawnPosition().z >> 4) + z));
 				world.getChunks().getChunk(((int)world.getSpawnPosition().x >> 4) + x, ((int)world.getSpawnPosition().z >> 4) + z);
 			}
 		}
 
 		bukkit_server.enablePlugins(PluginLoadOrder.POSTWORLD);
-		
+
 		scheduler.start();
 		gui = new RushGui();
 
@@ -209,7 +210,7 @@ public final class Server {
 	public World getWorld() {
 		return world;
 	}
-	
+
 	/**
 	 * Broadcasts a message to every player.
 	 * 
@@ -239,12 +240,17 @@ public final class Server {
 	public static Server getServer() {
 		return server;
 	}
-	
+
+	public void debug(String msg) {
+		if (getProperties().debug)
+			logger.info(msg);
+	}
+
 	public void broadcastPacket(Packet packet) {
 		for(Player pl : getWorld().getPlayers())
 			pl.getSession().send(packet);
 	}
-	
+
 	public boolean isPrimaryThread() {
 		return scheduler.isPrimaryThread();
 	}
@@ -259,10 +265,10 @@ public final class Server {
 			stopServer();
 		}
 	}
-	
+
 	public void stopServer() {
 		isRunning = false;
-		
+
 		logger.info("Server is shutting down.");
 		// Save chunks on shutdown.
 		if (saveEnabled) {
@@ -280,7 +286,7 @@ public final class Server {
 		logger.info("Reloading properties ..");
 		getProperties().reload();
 	}
-	
+
 	private class NettyNetworkThread extends Thread {
 
 		@Override
@@ -304,9 +310,9 @@ public final class Server {
 						} else {			
 							if(LegacyCompatProvider.isThrottled(ch.remoteAddress()))
 								return;
-							
+
 							ch.pipeline()
-							
+
 							.addLast("old", new KickPacketWriter())
 							.addLast("legacy", new CompatChecker())
 

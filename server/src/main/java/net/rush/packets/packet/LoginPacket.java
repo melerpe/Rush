@@ -96,5 +96,8 @@ public class LoginPacket extends Packet {
 		output.writeByte(difficulty);
 		output.writeByte(maxPlayers);
 		writeString(worldType == null ? "" : worldType, output, false);
+		
+		if (protocol >= 29)
+			output.writeBoolean(false);
 	}
 }

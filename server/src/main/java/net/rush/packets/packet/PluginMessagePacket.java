@@ -1,5 +1,6 @@
 package net.rush.packets.packet;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 
@@ -15,9 +16,9 @@ public class PluginMessagePacket extends Packet {
 	}
 
 	@Serialize(type = Type.STRING, order = 0)
-	private String channel;
+	private String channel = "";
 	@Serialize(type = Type.SHORT, order = 1)
-	private short length;
+	private short length = -1;
 	@Serialize(type = Type.BYTE_ARRAY, order = 2, moreInfo = 1)
 	private byte[] data;
 
@@ -45,13 +46,18 @@ public class PluginMessagePacket extends Packet {
 	}
 
 	public String getToStringDescription() {
-		return String.format("channel=\"%s\",length=\"%d\",data=byte[%d]", channel, length, data.length);
+		return "channel=" + channel + ", length=" + length + ", data=byte[" +  (data != null ? data.length : 0) + "]";
 	}
 
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
 		channel = readString(input, 999999999, false);
-		length = input.readShort();
+
+		if (protocol < 29)
+			length = input.readShort();
+		else
+			length = (short) input.available(); // TODO readableBytes() ?
+
 		byte[] bytes = new byte[1];
 		input.readFully(bytes);
 		data = bytes;
@@ -60,7 +66,18 @@ public class PluginMessagePacket extends Packet {
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		writeString(channel, output, false);
-		output.writeShort(length);
-		output.write(data);
+
+		if (protocol < 29)
+			output.writeShort(this.data.length);
+		
+		if (protocol >= 47 && channel.equals("MC|Brand")) {
+			writeString(new String(data, "UTF-8"), output, false);
+			return;
+		}
+		
+		output.write(this.data);
+		
+		if (protocol >= 29 && channel.equals("MC|AdvCdm"))
+			output.writeBoolean(true);
 	}
 }

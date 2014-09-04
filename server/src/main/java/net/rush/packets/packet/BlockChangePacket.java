@@ -7,6 +7,7 @@ import java.io.IOException;
 import net.rush.packets.Packet;
 import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
+import net.rush.util.BlockDebreakifier;
 import net.rush.world.World;
 
 public class BlockChangePacket extends Packet {
@@ -68,10 +69,16 @@ public class BlockChangePacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(x);
-		output.writeByte(y);
-		output.writeInt(z);
-		writeVarInt(blockType, output);
-		output.writeByte(blockMetadata);
+		if (protocol < 25) {
+			output.writeInt(x);
+			output.writeByte(y);
+			output.writeInt(z);
+			writeVarInt(blockType, output);
+			output.writeByte(blockMetadata);
+		} else {
+			writePosition(output, x, y, z);
+			blockMetadata = (byte) BlockDebreakifier.getCorrectedData(blockType, blockMetadata);
+			writeByteInteger(output, (blockType << 4) | blockMetadata);
+		}
 	}
 }

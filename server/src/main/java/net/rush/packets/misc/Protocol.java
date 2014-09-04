@@ -43,10 +43,11 @@ import net.rush.packets.packet.MultiBlockChangePacket;
 import net.rush.packets.packet.NamedEntitySpawnPacket;
 import net.rush.packets.packet.NamedSoundEffectPacket;
 import net.rush.packets.packet.OpenWindowPacket;
-import net.rush.packets.packet.PacketLoginRequest;
-import net.rush.packets.packet.PacketLoginSuccess;
-import net.rush.packets.packet.PacketPingTime;
-import net.rush.packets.packet.PacketStatusRequest;
+import net.rush.packets.packet.LoginRequest;
+import net.rush.packets.packet.LoginSuccess;
+import net.rush.packets.packet.PacketLoginCompression;
+import net.rush.packets.packet.PingTime;
+import net.rush.packets.packet.StatusRequest;
 import net.rush.packets.packet.PlayerAbilitiesPacket;
 import net.rush.packets.packet.PlayerBlockPlacementPacket;
 import net.rush.packets.packet.PlayerDiggingPacket;
@@ -189,10 +190,10 @@ public enum Protocol {
 	STATUS {
 		{
 			TO_CLIENT.registerPacket(0x00, KickPacket.class);
-			TO_CLIENT.registerPacket(0x01, PacketPingTime.class);
+			TO_CLIENT.registerPacket(0x01, PingTime.class);
 
-			TO_SERVER.registerPacket(0x00, PacketStatusRequest.class);
-			TO_SERVER.registerPacket(0x01, PacketPingTime.class);
+			TO_SERVER.registerPacket(0x00, StatusRequest.class);
+			TO_SERVER.registerPacket(0x01, PingTime.class);
 		}
 	},
 	//2
@@ -200,9 +201,12 @@ public enum Protocol {
 		{
 			TO_CLIENT.registerPacket(0x00, KickPacket.class);
 			//TO_CLIENT.registerPacket(0x01, EncryptionKeyRequestPacket.class);
-			TO_CLIENT.registerPacket(0x02, PacketLoginSuccess.class);
+			TO_CLIENT.registerPacket(0x02, LoginSuccess.class);
+			
+			// FIXME 1.8 TODO
+			TO_CLIENT.registerPacket(0x3, PacketLoginCompression.class);
 
-			TO_SERVER.registerPacket(0x00, PacketLoginRequest.class);
+			TO_SERVER.registerPacket(0x00, LoginRequest.class);
 			//TO_SERVER.registerPacket(0x01, EncryptionKeyResponsePacket.class);
 		}
 	};

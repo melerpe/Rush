@@ -41,6 +41,9 @@ public class EntityExistsPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(entityId);
+		if (protocol < 16)
+			output.writeInt(entityId);
+		else 
+			writeByteInteger(output, entityId);
 	}
 }

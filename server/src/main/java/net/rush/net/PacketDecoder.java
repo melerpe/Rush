@@ -40,16 +40,11 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
 		if (packetClazz == null)
 			throw new IOException("Unknown operation code: " + packetId + ").");
 		
-		Packet packet = packetClazz.newInstance();
-		
+		Packet packet = packetClazz.newInstance();		
 		ByteBufInputStream is = new ByteBufInputStream(in);
 		
-		if (clientProtocol == 12)
-			packet.read18(is);
-		else if (clientProtocol == 5)
-			packet.read176(is);
-		else
-			packet.read17(is);
+		packet.setProtocol(clientProtocol);
+		packet.read17(is);
 		
 		out.add(packet);
 		 

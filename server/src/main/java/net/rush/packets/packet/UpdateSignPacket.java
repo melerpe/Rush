@@ -5,12 +5,13 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
 
+import net.rush.model.Position;
 import net.rush.packets.Packet;
 import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class UpdateSignPacket extends Packet {
-	
+
 	public UpdateSignPacket() {
 	}
 
@@ -75,12 +76,20 @@ public class UpdateSignPacket extends Packet {
 	public String getToStringDescription() {
 		return String.format("x=\"%d\",y=\"%d\",z=\"%d\",line1=\"%s\",line2=\"%s\",line3=\"%s\",line4=\"%s\"", x, y, z, line1, line2, line3, line4);
 	}
-	
+
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
-		x = input.readInt();
-		y = input.readShort();
-		z = input.readInt();
+		if (protocol < 16) {
+			x = input.readInt();
+			y = input.readShort();
+			z = input.readInt();
+		} else {
+			Position pos = readPosition(input);
+			x = pos.integerX();
+			y = (short) pos.integerY();
+			z = pos.integerZ();
+		}
+
 		line1 = readString(input, 16, false);
 		line2 = readString(input, 16, false);
 		line3 = readString(input, 16, false);
@@ -89,9 +98,12 @@ public class UpdateSignPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(x);
-		output.writeShort(y);
-		output.writeInt(z);
+		if (protocol < 16) {
+			output.writeInt(x);
+			output.writeInt(y);
+			output.writeInt(z);
+		} else
+			writePosition(output, x, y, z);
 		writeString(line1, output, false);
 		writeString(line2, output, false);
 		writeString(line3, output, false);

@@ -49,8 +49,11 @@ public class EntityMetadataPacket extends Packet {
 	}
 
 	@Override
-	public void write17(ByteBufOutputStream out) throws IOException {
-		out.writeInt(entityId);
-		writeMetadata(out, metadata);
+	public void write17(ByteBufOutputStream output) throws IOException {
+		if (protocol < 16) 
+			output.writeInt(entityId);
+		else 
+			writeByteInteger(output, entityId);
+		writeMetadata(output, metadata);
 	}
 }

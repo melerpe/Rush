@@ -21,11 +21,16 @@ public class EntityLookPacket extends Packet {
 	@Serialize(type = Type.BYTE, order = 2)
 	private byte pitch;
 
+	private boolean onGround;
+	
+	private boolean check;
+	
 	public EntityLookPacket(int entityId, byte yaw, byte pitch) {
 		super();
 		this.entityId = entityId;
 		this.yaw = yaw;
 		this.pitch = pitch;
+		this.onGround = true; // TODO
 	}
 
 	public int getOpcode() {
@@ -59,7 +64,9 @@ public class EntityLookPacket extends Packet {
 	public void write17(ByteBufOutputStream output) throws IOException {
 		output.writeInt(entityId);
 		output.writeByte(yaw);
-		output.writeByte(pitch);
+		output.writeByte(pitch);		
+		if (protocol >= 22)
+			output.writeBoolean(onGround);
 	}
 
 }

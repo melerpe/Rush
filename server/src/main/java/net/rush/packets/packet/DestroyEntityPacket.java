@@ -10,7 +10,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class DestroyEntityPacket extends Packet {
-	
+
 	public DestroyEntityPacket() {
 	}
 
@@ -22,7 +22,7 @@ public class DestroyEntityPacket extends Packet {
 	public DestroyEntityPacket(int entityID) {
 		this(new int[] {entityID});
 	}
-	
+
 	public DestroyEntityPacket(int... entityIDs) {
 		super();
 		this.entityCount = (byte) entityIDs.length;
@@ -44,20 +44,27 @@ public class DestroyEntityPacket extends Packet {
 	public String getToStringDescription() {
 		return String.format("entityCount=\"%d\", entityIDs=\"%s\"", entityCount, entityIDs);
 	}
-	
+
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {      
 		entityCount = input.readByte();
 
-        for (int i = 0; i < entityCount; ++i) 
-            entityIDs[i] = input.readInt();
+		for (int i = 0; i < entityCount; ++i) 
+			entityIDs[i] = input.readInt();
 	}
-	
+
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-        output.writeByte(entityIDs.length);
+		if (protocol < 16) {
+			output.writeByte(entityIDs.length);
 
-        for (int i = 0; i < entityIDs.length; ++i)
-            output.writeInt(entityIDs[i]);
+			for (int i = 0; i < entityIDs.length; ++i)
+				output.writeInt(entityIDs[i]);
+		} else {
+			writeByteInteger(output, entityIDs.length);
+			
+			for (int i = 0; i < entityIDs.length; ++i)
+				writeByteInteger(output, entityIDs[i]);
+		}
 	}
 }

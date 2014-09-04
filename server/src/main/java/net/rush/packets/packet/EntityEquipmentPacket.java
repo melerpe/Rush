@@ -10,13 +10,13 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class EntityEquipmentPacket extends Packet {
-	
-    public static final int HELD_ITEM = 0;
-    public static final int BOOTS_SLOT = 1;
-    public static final int LEGGINGS_SLOT = 2;
-    public static final int CHESTPLATE_SLOT = 3;
-    public static final int HELMET_SLOT = 4;
-	
+
+	public static final int HELD_ITEM = 0;
+	public static final int BOOTS_SLOT = 1;
+	public static final int LEGGINGS_SLOT = 2;
+	public static final int CHESTPLATE_SLOT = 3;
+	public static final int HELMET_SLOT = 4;
+
 	public EntityEquipmentPacket() {
 	}
 
@@ -30,7 +30,7 @@ public class EntityEquipmentPacket extends Packet {
 	private short dataValue;
 
 	private ItemStack item;
-	
+
 	public EntityEquipmentPacket(int entityId, short slot, short itemId, short dataValue) {
 		super();
 		this.entityId = entityId;
@@ -66,7 +66,10 @@ public class EntityEquipmentPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(entityId);
+		if (protocol < 16) 
+			output.writeInt(entityId);
+		else 
+			writeByteInteger(output, entityId);
 		output.writeShort(slot);
 		writeItemstack(item, output);
 	}

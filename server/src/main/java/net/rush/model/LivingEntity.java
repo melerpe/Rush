@@ -1,14 +1,12 @@
 package net.rush.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 import net.rush.chunk.ChunkCoords;
 import net.rush.model.entity.ai.EntityAI;
 import net.rush.packets.Packet;
 import net.rush.packets.packet.AnimationPacket;
 import net.rush.packets.packet.SpawnMobPacket;
-import net.rush.task.WorldTaskAI;
 import net.rush.util.Parameter;
 import net.rush.world.World;
 
@@ -23,7 +21,7 @@ public class LivingEntity extends Mob {
 
 	protected int health;
 	protected int maxHealth;
-	protected List<EntityAI> aiTasks = new ArrayList<EntityAI>();
+	protected HashSet<EntityAI> aiTasks = new HashSet<EntityAI>();
 
 	/**
 	 * Creates a new living entity (e.g. zombie or a pig).
@@ -54,7 +52,7 @@ public class LivingEntity extends Mob {
 	public void pulse() {
 		if(getWorld().activeChunks.contains(new ChunkCoords(getChunk().getX(), getChunk().getZ())))
 			for(EntityAI task : aiTasks)
-				WorldTaskAI.addTask(task);
+				threadAi.addToQueue(task);
 	}
 
 	/** On right click on the entity */

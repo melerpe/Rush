@@ -9,7 +9,7 @@ import net.rush.packets.serialization.Serialize;
 import net.rush.packets.serialization.Type;
 
 public class UseEntityPacket extends Packet {
-	
+
 	public UseEntityPacket() {
 	}
 
@@ -46,11 +46,25 @@ public class UseEntityPacket extends Packet {
 	public String getToStringDescription() {
 		return String.format("playerEntityId=\"%d\",targetEntityId=\"%d\",rightclick=\"%b\"", playerEntityId, targetEntityId, rightclick);
 	}
-	
+
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
-		targetEntityId = input.readInt();
-		rightclick = input.readByte() == 0;
+
+		if (protocol < 16) {
+			targetEntityId = input.readInt();
+			rightclick = input.readByte() == 0;
+		} else {
+			targetEntityId = readVarInt(input);
+			int val = readVarInt(input);
+			
+			if (val == 2) {
+				input.readFloat();
+				input.readFloat();
+				input.readFloat();
+			} else {
+				rightclick = val == 0;
+			}
+		}
 	}
 
 }

@@ -7,7 +7,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import net.rush.PacketLogger;
 import net.rush.packets.Packet;
 import net.rush.packets.misc.Protocol;
-import net.rush.packets.packet.PacketLoginSuccess;
+import net.rush.packets.packet.LoginSuccess;
 
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
@@ -24,14 +24,10 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
 		Packet.writeVarInt(protocol.TO_CLIENT.getId(packet.getClass()), out);
 
-		if (clientProtocol == 12)
-			packet.write18(output);
-		else if (clientProtocol == 5)
-			packet.write176(output);
-		else
-			packet.write17(output);
+		packet.setProtocol(clientProtocol);
+		packet.write17(output);
 
-		if (packet instanceof PacketLoginSuccess)
+		if (packet instanceof LoginSuccess)
 			setProtocol(ctx, Protocol.GAME);
 		
 		PacketLogger.submitWrite(packet, clientProtocol, false);

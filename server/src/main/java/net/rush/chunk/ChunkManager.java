@@ -55,7 +55,7 @@ public final class ChunkManager {
 	 * @param z The Z coordinate.
 	 * @return The chunk.
 	 */
-	public Chunk getChunk(int x, int z) {
+	private Chunk getChunkSync(int x, int z) {
 		ChunkCoords key = new ChunkCoords(x, z);
 		Chunk chunk = chunks.get(key);
 
@@ -71,18 +71,35 @@ public final class ChunkManager {
 			
 			if (chunk == null) 
 				chunk = generator.generate(world, x, z);
-
+				
 			if(!decorating && !chunk.terrainPopulated) {
 				chunk.terrainPopulated = true;
 				ch = chunk;
 				
-				generator.populate(x, z);
+				//generator.populate(x, z);
 			}
 
 			chunks.put(key, chunk);
 		}
 
 		return chunk;
+	}
+	
+	Chunk asynChunk = null;
+	
+	public Chunk getChunk(final int x, final int z) {
+		new Runnable() {			
+			@Override
+			public void run() {
+				asynChunk = getChunkSync(x, z);
+			}
+		}.run();
+		
+		if (asynChunk == null) {
+			System.out.println("Falling back");
+			return getChunkSync(x, z);
+		}
+		return asynChunk;
 	}
 
 	/*public Chunk getChunk(int x, int z) {

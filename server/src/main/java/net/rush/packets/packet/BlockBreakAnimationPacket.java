@@ -1,5 +1,6 @@
 package net.rush.packets.packet;
 
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
@@ -63,11 +64,31 @@ public class BlockBreakAnimationPacket extends Packet {
 	}
 
 	@Override
+	public void read17(ByteBufInputStream input) throws IOException {
+		entityId = input.readUnsignedByte();
+		if (protocol < 16) {
+			x = input.readInt();
+			y = input.readUnsignedByte();
+			z = input.readInt();
+		} else {
+			Position pos = readPosition(input);
+			x = pos.integerX();
+			y = pos.integerY();
+			z = pos.integerZ();
+		}
+		stage = (byte) input.readUnsignedByte();
+	}
+
+	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		writeVarInt(entityId, output);
-		output.writeInt(x);
-		output.writeInt(y);
-		output.writeInt(z);
+		 if (protocol < 16) {
+			 output.writeInt(x);
+			 output.writeShort(y);
+			 output.writeInt(z);
+		 } else {
+			 writePosition(output, x, y, z);
+		 }
 		output.writeByte(stage);
 	}
 }

@@ -48,6 +48,7 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
@@ -55,6 +56,7 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.avaje</groupId>
             <artifactId>ebean</artifactId>
@@ -62,10 +64,11 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0-rc2</version>
+            <version>18.0</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

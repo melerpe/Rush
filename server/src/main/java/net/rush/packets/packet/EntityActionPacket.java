@@ -55,8 +55,14 @@ public class EntityActionPacket extends Packet {
 
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
-		entityId = input.readInt();
-		actionId = input.readByte();
-		horseJumpBoost = input.readInt();
+		if (protocol < 16) {
+			entityId = input.readInt();
+			actionId = input.readByte();
+			horseJumpBoost = input.readInt();
+		} else {
+			entityId = readVarInt(input);
+			actionId = (byte) (input.readUnsignedByte() + 1);
+			horseJumpBoost = readVarInt(input);
+		}
 	}
 }

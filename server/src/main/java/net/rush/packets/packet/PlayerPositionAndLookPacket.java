@@ -79,8 +79,13 @@ public class PlayerPositionAndLookPacket extends Packet {
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
 		x = input.readDouble();
-		yOrStance = input.readDouble();
-		stanceOrY = input.readDouble();
+		if (protocol < 16) {
+			this.yOrStance = input.readDouble();
+			stanceOrY = input.readDouble();
+		} else {
+			yOrStance = input.readDouble();
+			stanceOrY = yOrStance + 1.62;
+		}
 		z = input.readDouble();
 		yaw = input.readFloat();
 		pitch = input.readFloat();

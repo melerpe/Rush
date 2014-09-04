@@ -31,8 +31,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
 
-import com.avaje.ebean.config.ServerConfig;
-
 /**
  * Represents the Bukkit core, for version and Server singleton handling
  */
@@ -318,8 +316,8 @@ public final class Bukkit {
     /**
      * @see Server#configureDbConfig(ServerConfig config)
      */
-    public static void configureDbConfig(ServerConfig config) {
-        server.configureDbConfig(config);
+    public static void configureDbConfig(/*ServerConfig*/Object config) {
+        //server.configureDbConfig(config);
     }
 
     /**

@@ -8,6 +8,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import net.rush.model.ItemStack;
 import net.rush.model.Position;
@@ -16,6 +17,12 @@ import net.rush.packets.serialization.HashcodeAndEqualsStub;
 import net.rush.util.Parameter;
 
 public abstract class Packet extends HashcodeAndEqualsStub {
+
+	protected int protocol;
+
+	public void setProtocol(int protocol) {
+		this.protocol = protocol;
+	}
 
 	@Override
 	public String toString() {
@@ -105,46 +112,54 @@ public abstract class Packet extends HashcodeAndEqualsStub {
 		}
 	}
 
-    public String readString(DataInput datainput, int maxLength , boolean compatmode) throws IOException {
-        if(compatmode){
-            short short1 = datainput.readShort();
-            if (short1 > maxLength) {
-                throw new IOException("Received string length longer than maximum allowed (" + short1 + " > " + maxLength + ")");
-            } else if (short1 < 0) {
-                throw new IOException("Received string length is less than zero! Weird string!");
-            } else {
-                StringBuilder stringbuilder = new StringBuilder();
-                for (int j = 0; j < short1; ++j) {
-                    stringbuilder.append(datainput.readChar());
-                }
-                return stringbuilder.toString();
-            }
-        }
-        int len = readVarInt( datainput);
-        byte[] b = new byte[ len ];
-        datainput.readFully( b );
+	public void writeByteInteger(DataOutput out, int value) throws IOException {
+		while ((value & -128) != 0) {
+			out.writeByte(value & 127 | 128);
+			value >>>= 7;
+		}
+		out.writeByte(value);
+	}
 
-        return new String( b, StandardCharsets.UTF_8 );
-    }
-    
-    public void writeString(String string, DataOutput output , boolean compatmode) throws IOException {
-        if(compatmode){
-            if (string.length() > 32767)
-                throw new IOException("String too big");
-            else {
-                output.writeShort(string.length());
-                output.writeChars(string);
-                return;
-            }
-        }
-        byte[] b = string.getBytes( StandardCharsets.UTF_8 );
-        writeVarInt( b.length, output );
-        output.write( b );
-    }
-	
-    public static void writeItemstack(ItemStack item, DataOutput output) throws IOException {
-    	if (item == ItemStack.NULL_ITEMSTACK || item.getId() <= 0) { // FIXME less then zero check
-    		output.writeShort(-1);
+	public String readString(DataInput datainput, int maxLength , boolean compatmode) throws IOException {
+		if(compatmode){
+			short short1 = datainput.readShort();
+			if (short1 > maxLength) {
+				throw new IOException("Received string length longer than maximum allowed (" + short1 + " > " + maxLength + ")");
+			} else if (short1 < 0) {
+				throw new IOException("Received string length is less than zero! Weird string!");
+			} else {
+				StringBuilder stringbuilder = new StringBuilder();
+				for (int j = 0; j < short1; ++j) {
+					stringbuilder.append(datainput.readChar());
+				}
+				return stringbuilder.toString();
+			}
+		}
+		int len = readVarInt( datainput);
+		byte[] b = new byte[ len ];
+		datainput.readFully( b );
+
+		return new String( b, StandardCharsets.UTF_8 );
+	}
+
+	public void writeString(String string, DataOutput output , boolean compatmode) throws IOException {
+		if(compatmode){
+			if (string.length() > 32767)
+				throw new IOException("String too big");
+			else {
+				output.writeShort(string.length());
+				output.writeChars(string);
+				return;
+			}
+		}
+		byte[] b = string.getBytes( StandardCharsets.UTF_8 );
+		writeVarInt( b.length, output );
+		output.write( b );
+	}
+
+	public static void writeItemstack(ItemStack item, DataOutput output) throws IOException {
+		if (item == ItemStack.NULL_ITEMSTACK || item.getId() <= 0) { // FIXME less then zero check
+			output.writeShort(-1);
 		} else {
 			output.writeShort(item.getId());
 			output.writeByte(item.getCount());
@@ -154,9 +169,9 @@ public abstract class Packet extends HashcodeAndEqualsStub {
 				output.write(item.getData());
 			}
 		}
-    }
-    
-    public ItemStack readItemstack(DataInput input) throws IOException {
+	}
+
+	public ItemStack readItemstack(DataInput input) throws IOException {
 		short id = input.readShort();
 		if (id <= 0) {
 			return ItemStack.NULL_ITEMSTACK;
@@ -171,97 +186,97 @@ public abstract class Packet extends HashcodeAndEqualsStub {
 			}
 			return new ItemStack(id, stackSize, dataValue);
 		}
-    }
-    
-    @SuppressWarnings("unchecked")
+	}
+
+	@SuppressWarnings("unchecked")
 	public void writeMetadata(DataOutput output, Parameter<?>[] parameters) throws IOException {
-    	for (Parameter<?> parameter : parameters) {
+		for (Parameter<?> parameter : parameters) {
 
 			if (parameter == null)
 				continue;
 
 			int type = (parameter.getType() << 5 | parameter.getIndex() & 31) & 255;
 			output.writeByte(type);
-			
-			//output.writeByte(((type & 0x07) << 5) | (parameter.getIndex() & 0x1F));
-			
-			switch (parameter.getType()) {
-				case Parameter.TYPE_BYTE:
-					output.writeByte(((Parameter<Byte>) parameter).getValue());
-					break;
-					
-				case Parameter.TYPE_SHORT:
-					output.writeShort(((Parameter<Short>) parameter).getValue());
-					break;
-					
-				case Parameter.TYPE_INT:
-					output.writeInt(((Parameter<Integer>) parameter).getValue());
-					break;
-					
-				case Parameter.TYPE_FLOAT:
-					output.writeFloat(((Parameter<Float>) parameter).getValue());
-					break;
-					
-				case Parameter.TYPE_STRING:
-					writeString(((Parameter<String>) parameter).getValue(), output, false);
-					break;
-					
-				case Parameter.TYPE_ITEM:
-					ItemStack item = ((Parameter<ItemStack>) parameter).getValue();
 
-					if (item.getId() <= 0) {
-						output.writeShort(-1);
-					} else {
-						output.writeShort(item.getId());
-						output.writeByte(item.getCount());
-						output.writeShort(item.getDamage());
-						output.writeShort(-1);
-						// TODO implement NBT tag writing
-					}
-					break;
-					
-				case Parameter.TYPE_COORDINATE:
-					Position coord = ((Parameter<Position>) parameter).getValue();
-					
-					output.writeInt((int) coord.x);
-					output.writeInt((int) coord.y);
-					output.writeInt((int) coord.z);
+			//output.writeByte(((type & 0x07) << 5) | (parameter.getIndex() & 0x1F));
+
+			switch (parameter.getType()) {
+			case Parameter.TYPE_BYTE:
+				output.writeByte(((Parameter<Byte>) parameter).getValue());
+				break;
+
+			case Parameter.TYPE_SHORT:
+				output.writeShort(((Parameter<Short>) parameter).getValue());
+				break;
+
+			case Parameter.TYPE_INT:
+				output.writeInt(((Parameter<Integer>) parameter).getValue());
+				break;
+
+			case Parameter.TYPE_FLOAT:
+				output.writeFloat(((Parameter<Float>) parameter).getValue());
+				break;
+
+			case Parameter.TYPE_STRING:
+				writeString(((Parameter<String>) parameter).getValue(), output, false);
+				break;
+
+			case Parameter.TYPE_ITEM:
+				ItemStack item = ((Parameter<ItemStack>) parameter).getValue();
+
+				if (item.getId() <= 0) {
+					output.writeShort(-1);
+				} else {
+					output.writeShort(item.getId());
+					output.writeByte(item.getCount());
+					output.writeShort(item.getDamage());
+					output.writeShort(-1);
+					// TODO implement NBT tag writing
+				}
+				break;
+
+			case Parameter.TYPE_COORDINATE:
+				Position coord = ((Parameter<Position>) parameter).getValue();
+
+				output.writeInt((int) coord.x);
+				output.writeInt((int) coord.y);
+				output.writeInt((int) coord.z);
 			}
 		}
-    	output.writeByte(127);
-    }
-    
-    public Parameter<?>[] readMetadata(DataInput input) throws IOException {
-    	
-    	Parameter<?>[] parameters = new Parameter<?>[Parameter.METADATA_SIZE];
-    	
+		output.writeByte(127);
+	}
+
+	public Parameter<?>[] readMetadata(DataInput input) throws IOException {
+
+		Parameter<?>[] parameters = new Parameter<?>[Parameter.METADATA_SIZE];
+
 		for (int data = input.readUnsignedByte(); data != 127; data = input.readUnsignedByte()) {
 			int index = data & 0x1F;
 			int type = data >> 5;
-					
-			MetadataType metaType = MetadataType.fromId(type);
-			
-			switch (metaType) {
+
+				MetadataType metaType = MetadataType.fromId(type);
+
+				switch (metaType) {
 				case BYTE:
 					parameters[index] = new Parameter<Byte>(type, index, input.readByte());
 					break;
-					
+
 				case SHORT:
 					parameters[index] = new Parameter<Short>(type, index, input.readShort());
 					break;
-					
+
 				case INT:
 					parameters[index] = new Parameter<Integer>(type, index, input.readInt());
 					break;
-					
+
 				case FLOAT:
 					parameters[index] = new Parameter<Float>(type, index, input.readFloat());
 					break;
-					
+
 				case STRING:
 					parameters[index] = new Parameter<String>(type, index, readString(input, 9999999, false));
 					break;
-					
+
 				case ITEM:
 					short id = input.readShort();
 					if (id <= 0) {
@@ -273,21 +288,42 @@ public abstract class Packet extends HashcodeAndEqualsStub {
 						parameters[index] = new Parameter<ItemStack>(type, index, new ItemStack(id, stackSize, dataValue));
 					}
 					break;
-					
+
 				case POSITION:
 					int x = input.readInt();
 					int y = input.readInt();
 					int z = input.readInt();
-					
+
 					parameters[index] = new Parameter<Position>(type, index, new Position(x, y, z));
-					
+
 				default:
 					throw new UnsupportedOperationException("Metadata-type '" + metaType + "' is not implemented!");
-			}
+				}
 		}
 		return parameters;
-    }
-    
+	}
+
+	// 1.8 stuff
+	public void writePosition(DataOutput out, int x, int y, int z) throws IOException {
+		out.writeLong((x & 0x3FFFFFF) << 38 | (y & 0xFFF) << 26 | (z & 0x3FFFFFF));
+	}
+
+	public Position readPosition(DataInput in) throws IOException {
+		long val = in.readLong();
+		long x = val >> 38;
+		long y = val << 26 >> 52;
+		long z = val << 38 >> 38;
+
+		return new Position(x, y, z);
+	}
+
+	public void writeUuid(DataOutput out, UUID uuid) throws IOException {
+		out.writeLong(uuid.getMostSignificantBits());
+		out.writeLong(uuid.getLeastSignificantBits());
+	}
+
+	// 1.8 stuff ends
+
 	public abstract String getToStringDescription();
 
 	public abstract int getOpcode();
@@ -298,21 +334,5 @@ public abstract class Packet extends HashcodeAndEqualsStub {
 
 	public void write17(ByteBufOutputStream output) throws IOException {
 		throw new UnsupportedOperationException("PacketErr: Writing " + this + " not possible or not implemented");
-	}
-	
-	public void read176(ByteBufInputStream input) throws IOException {
-		read17(input);
-	}
-
-	public void write176(ByteBufOutputStream output) throws IOException {
-		write17(output);
-	}
-	
-	public void read18(ByteBufInputStream input) throws IOException {
-		read17(input);
-	}
-
-	public void write18(ByteBufOutputStream output) throws IOException {
-		write17(output);
 	}
 }

@@ -30,6 +30,9 @@ public class EntityTeleportPacket extends Packet {
 	public EntityTeleportPacket(int entityId, int x, int y, int z, float yaw, float pitch) {
 		this(entityId, x, y, z, RotationUtils.floatToByte(yaw), RotationUtils.floatToByte(pitch));
 	}
+	
+	private boolean onGround;
+	private boolean check;
 
 	public EntityTeleportPacket(int entityId, int x, int y, int z, byte yaw, byte pitch) {
 		super();
@@ -39,6 +42,7 @@ public class EntityTeleportPacket extends Packet {
 		this.z = z;
 		this.yaw = yaw;
 		this.pitch = pitch;
+		this.onGround = true; // TODO
 	}
 
 	public int getOpcode() {
@@ -75,11 +79,16 @@ public class EntityTeleportPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(entityId);
+		if (protocol < 16) 
+			output.writeInt(entityId);
+		else 
+			writeByteInteger(output, entityId);
 		output.writeInt(x);
 		output.writeInt(y);
 		output.writeInt(z);
 		output.writeByte(yaw);
 		output.writeByte(pitch);
+		if (protocol >= 22) 
+			output.writeBoolean(onGround);
 	}
 }

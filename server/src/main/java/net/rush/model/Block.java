@@ -86,7 +86,7 @@ public class Block {
 	public static final Block BEDROCK = new Block(7, Material.STONE).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(Sound.STONE).setName("bedrock");
 	public static final Block WATER = new BlockFluids(8).setHardness(100.0F).setLightOpacity(3).setName("water").aliases("water_flow");
 	public static final Block/*Stationary*/ STATIONARY_WATER = new BlockFluids(9).setHardness(100.0F).setLightOpacity(3).setName("water").aliases("water_still");
-	public static final Block LAVA = new BlockFluids(9).setHardness(0.0F).setLightValue(1.0F).setName("lava").aliases("lava_flow");
+	public static final Block LAVA = new BlockFluids(10).setHardness(0.0F).setLightValue(1.0F).setName("lava").aliases("lava_flow");
 	public static final Block/*Stationary*/ STATIONARY_LAVA = new BlockFluids(11).setHardness(100.0F).setLightValue(1.0F).setName("lava").aliases("lava_still");
 	public static final Block SAND = new BlockFallable(12, Material.SAND).setHardness(0.5F).setStepSound(Sound.SAND).setName("sand").aliases("sand");
 	public static final Block GRAVEL = new BlockFallable(13, Material.SAND).setHardness(0.6F).setStepSound(Sound.GRAVEL).setName("gravel").aliases("gravel");

@@ -22,6 +22,18 @@ public final class Position {
 		this.y = y;
 		this.z = z;
 	}
+	
+	public int integerX() {
+		return (int) x;
+	}
+	
+	public int integerY() {
+		return (int) y;
+	}
+	
+	public int integerZ() {
+		return (int) z;
+	}
 
 	public int getPixelX() {
 		return (int) (x * GRANULARITY);

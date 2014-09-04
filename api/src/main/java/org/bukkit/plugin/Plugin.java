@@ -9,8 +9,6 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.generator.ChunkGenerator;
 
-import com.avaje.ebean.EbeanServer;
-
 /**
  * Represents a Plugin
  * <p>
@@ -155,7 +153,7 @@ public interface Plugin extends TabExecutor {
      *
      * @return ebean server instance or null if not enabled
      */
-    public EbeanServer getDatabase();
+    public /*EbeanServer*/Object getDatabase();
 
     /**
      * Gets a {@link ChunkGenerator} for use in a default world, as specified

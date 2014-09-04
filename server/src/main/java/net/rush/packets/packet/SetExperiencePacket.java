@@ -50,7 +50,12 @@ public class SetExperiencePacket extends Packet {
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
 		output.writeFloat(experienceBar);
-		output.writeShort(level);
-		output.writeShort(totalExperience);
+		if (protocol < 16) {
+			output.writeShort(level);
+			output.writeShort(totalExperience);
+		} else {
+			writeByteInteger(output, level);
+			writeByteInteger(output, totalExperience);
+		}
 	}
 }

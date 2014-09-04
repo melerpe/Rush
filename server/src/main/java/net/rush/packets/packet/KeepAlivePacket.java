@@ -35,11 +35,17 @@ public class KeepAlivePacket extends Packet {
 
 	@Override
 	public void read17(ByteBufInputStream input) throws IOException {
-		token = input.readInt();
+		if(protocol < 16)
+			token = input.readInt();
+		else
+			token = readVarInt(input);
 	}
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(token);
+		if (protocol < 32) 
+			output.writeInt(token);
+		else 
+			writeByteInteger(output, token);
 	}
 }

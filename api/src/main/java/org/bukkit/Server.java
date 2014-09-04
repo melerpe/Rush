@@ -38,7 +38,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
 
-import com.avaje.ebean.config.ServerConfig;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -111,7 +110,7 @@ public interface Server extends PluginMessageRecipient {
      * @return a view of currently online players.
      */
     public Collection<? extends Player> getOnlinePlayers();
-
+    
     /**
      * Get the maximum amount of players which can login to this server.
      *
@@ -460,7 +459,7 @@ public interface Server extends PluginMessageRecipient {
      *
      * @param config the server config to populate
      */
-    public void configureDbConfig(ServerConfig config);
+    public void configureDbConfig(/*ServerConfig*/Object config);
 
     /**
      * Adds a recipe to the crafting manager.

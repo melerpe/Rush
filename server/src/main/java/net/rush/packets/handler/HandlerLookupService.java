@@ -13,9 +13,9 @@ import net.rush.packets.packet.HandshakePacket;
 import net.rush.packets.packet.HeldItemChangePacket;
 import net.rush.packets.packet.KeepAlivePacket;
 import net.rush.packets.packet.KickPacket;
-import net.rush.packets.packet.PacketLoginRequest;
-import net.rush.packets.packet.PacketPingTime;
-import net.rush.packets.packet.PacketStatusRequest;
+import net.rush.packets.packet.LoginRequest;
+import net.rush.packets.packet.PingTime;
+import net.rush.packets.packet.StatusRequest;
 import net.rush.packets.packet.PlayerBlockPlacementPacket;
 import net.rush.packets.packet.PlayerDiggingPacket;
 import net.rush.packets.packet.PlayerLookPacket;
@@ -61,9 +61,9 @@ public final class HandlerLookupService {
 			bind(ClickWindowPacket.class, ClickWindowPacketHandler.class);
 			bind(UseEntityPacket.class, UseEntityPacketHandler.class);
 			// 1.7
-			bind(PacketStatusRequest.class, PacketStatusRequestHandler.class);
-			bind(PacketLoginRequest.class, PacketLoginRequestHandler.class);
-			bind(PacketPingTime.class, PacketPingTimeHandler.class);
+			bind(StatusRequest.class, PacketStatusRequestHandler.class);
+			bind(LoginRequest.class, PacketLoginRequestHandler.class);
+			bind(PingTime.class, PacketPingTimeHandler.class);
 		} catch (Exception ex) {
 			throw new ExceptionInInitializerError(ex);
 		}

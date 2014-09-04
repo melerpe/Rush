@@ -6,7 +6,7 @@ import net.rush.packets.misc.ServerPing;
 import net.rush.packets.misc.ServerPing.Players;
 import net.rush.packets.misc.ServerPing.Protocol;
 import net.rush.packets.packet.KickPacket;
-import net.rush.packets.packet.PacketStatusRequest;
+import net.rush.packets.packet.StatusRequest;
 
 import org.bukkit.ChatColor;
 
@@ -14,10 +14,10 @@ import org.bukkit.ChatColor;
  * A {@link PacketHandler} which disconnects clients when they send a
  * {@link KickMessage} to the server.
  */
-public final class PacketStatusRequestHandler extends PacketHandler<PacketStatusRequest> {
+public final class PacketStatusRequestHandler extends PacketHandler<StatusRequest> {
 
 	@Override
-	public void handle(Session session, Player player, PacketStatusRequest message) {
+	public void handle(Session session, Player player, StatusRequest message) {
 		
 		ServerPing response = new ServerPing(
 				new Protocol(session.getClientVersion().getVersion(), session.getClientVersion().getProtocol()), 

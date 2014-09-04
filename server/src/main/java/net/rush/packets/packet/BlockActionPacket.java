@@ -69,9 +69,13 @@ public class BlockActionPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		output.writeInt(x);
-		output.writeShort(y);
-		output.writeInt(z);
+		 if (protocol < 16) {
+			 output.writeInt(x);
+			 output.writeShort(y);
+			 output.writeInt(z);
+		 } else {
+			 writePosition(output, x, y, z);
+		 }
 		output.writeByte(byte1);
 		output.writeByte(byte2);
 		writeVarInt(blockId, output);

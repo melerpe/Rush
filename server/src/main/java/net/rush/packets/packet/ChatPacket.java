@@ -42,6 +42,8 @@ public class ChatPacket extends Packet {
 
 	@Override
 	public void write17(ByteBufOutputStream output) throws IOException {
-		writeString(JsonUtils.chatMessageToJson(message), output, false);
+		writeString(JsonUtils.chatMessageToJson(message), output, false);		
+		if (protocol > 15 )
+			output.writeByte(0);		
 	}
 }

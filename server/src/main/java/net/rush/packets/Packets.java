@@ -83,12 +83,23 @@ public final class Packets {
 
     private static final Map<Integer, Class<? extends Packet>> classMappings = new HashMap<Integer, Class<? extends Packet>>();
     
-    /* TODO Explosion packet
+    /* TODO (low priority)
+        Explosion packet
     	IncrementStatisticPacket
     	MapDataPacket - check 1.7
     	SpawnExperienceOrbPacket - check fixed-point number (*32)
     	ThunderBoltPacket - check fixed-point number
     */
+
+    /*
+     * TODO 1.8 HIGH PRIORITY
+     * all deprecated classes needs review/fix - help greatly appreciated! :)
+     * PacketPlayOutMultiBlockChangen
+     * PacketPlayOutOpenWindow
+     * PacketPlayOutPlayerInfo
+     * PlayerListItem - rewrite
+     */
+    
     static {
         registerPacket(0x00, KeepAlivePacket.class);
         registerPacket(0x01, LoginPacket.class);
