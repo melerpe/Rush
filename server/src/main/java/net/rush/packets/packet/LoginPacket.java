@@ -37,7 +37,7 @@ public class LoginPacket extends Packet {
 	protected LoginPacket(int entityId, String emptyString, byte mode, byte dimension, byte difficulty, int worldHeight, int maxPlayers, boolean hardcore) {
 		super();
 		this.entityId = entityId;
-		worldType = emptyString;
+		this.worldType = emptyString;
 		this.mode = mode;
 		this.dimension = dimension;
 		this.difficulty = difficulty;

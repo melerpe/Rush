@@ -84,7 +84,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("unused")
@@ -1261,7 +1260,7 @@ public final class CraftServer implements Server {
 	public OfflinePlayer getOfflinePlayer(String name) {
 		Validate.notNull(name, "Name cannot be null");
 		com.google.common.base.Preconditions.checkArgument(!StringUtils.isBlank(name), "Name cannot be blank"); // Spigot
-
+		
 		/* TODO OfflinePlayer result = getPlayerExact(name);
 		if (result == null) {
 			// Spigot Start
@@ -1670,7 +1669,7 @@ public final class CraftServer implements Server {
 		ImageIO.write(image, "PNG", new ByteBufOutputStream(bytebuf));
 		ByteBuf bytebuf1 = Base64.encode(bytebuf);
 
-		return new CraftIconCache("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8));
+		return new CraftIconCache("data:image/png;base64," + bytebuf1.toString(StandardCharsets.UTF_8));
 	}
 
 	@Override

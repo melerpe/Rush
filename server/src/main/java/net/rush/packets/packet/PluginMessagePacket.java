@@ -1,6 +1,5 @@
 package net.rush.packets.packet;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 
@@ -23,9 +22,13 @@ public class PluginMessagePacket extends Packet {
 	private byte[] data;
 
 	public PluginMessagePacket(String channel, byte[] data) {
+		this(channel, (short) data.length, data);
+	}
+	
+	public PluginMessagePacket(String channel, short length, byte[] data) {
 		super();
 		this.channel = channel;
-		this.length = (short) data.length;
+		this.length = length;
 		this.data = data;
 	}
 

@@ -1,5 +1,6 @@
 package net.rush.model;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import net.rush.model.item.ItemCoal;
@@ -9,9 +10,6 @@ import net.rush.model.item.ItemPlaceable;
 import net.rush.model.item.ItemRecord;
 import net.rush.util.enums.EnumToolMaterial;
 import net.rush.world.World;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 public class Item {
 
@@ -482,8 +480,8 @@ public class Item {
 	/**
 	 * Gets a map of item attribute modifiers, used by ItemSword to increase hit damage.
 	 */
-	public Multimap<?, ?> getItemAttributeModifiers() {
-		return HashMultimap.create();
+	public HashMap<?, ?> getItemAttributeModifiers() {
+		return new HashMap<>();
 	}
 	
 	public enum ActionOnUse {

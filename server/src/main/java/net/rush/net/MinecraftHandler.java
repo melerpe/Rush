@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,18 +13,10 @@ import net.rush.packets.Packet;
 /**
  * A {@link SimpleChannelUpstreamHandler} which processes incoming network
  * events.
-.
  */
 public class MinecraftHandler extends SimpleChannelInboundHandler<Packet> {
 
-	/**
-	 * The logger for this class.
-	 */
 	private static final Logger logger = Logger.getLogger("Minecraft");
-
-	/**
-	 * The server.
-	 */
 	private final Server server;
 	private final boolean compact;
 	
@@ -57,7 +48,7 @@ public class MinecraftHandler extends SimpleChannelInboundHandler<Packet> {
 	public void channelInactive(ChannelHandlerContext ctx) {
 		Channel c = ctx.channel();
 		server.getChannelGroup().remove(c);
-
+		
 		//Session session = (Session) ctx.getAttachment();
 		server.getSessionRegistry().remove(session);
 
@@ -72,9 +63,9 @@ public class MinecraftHandler extends SimpleChannelInboundHandler<Packet> {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		if (cause instanceof IOException)
+		/*if (cause instanceof IOException)
 			logger.info("End of stream ");
-		else
+		else*/
 			logger.log(Level.WARNING, "Exception caught, closing channel: " + ctx.channel() + "...", cause);
 		ctx.close();
 	}

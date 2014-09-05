@@ -34,20 +34,19 @@ import net.rush.packets.packet.ExplosionPacket;
 import net.rush.packets.packet.HandshakePacket;
 import net.rush.packets.packet.HeldItemChangePacket;
 import net.rush.packets.packet.ItemCollectPacket;
-import net.rush.packets.packet.MapDataPacket;
 import net.rush.packets.packet.KeepAlivePacket;
 import net.rush.packets.packet.KickPacket;
 import net.rush.packets.packet.LoginPacket;
+import net.rush.packets.packet.LoginRequest;
+import net.rush.packets.packet.LoginSuccess;
 import net.rush.packets.packet.MapChunkPacket;
+import net.rush.packets.packet.MapDataPacket;
 import net.rush.packets.packet.MultiBlockChangePacket;
 import net.rush.packets.packet.NamedEntitySpawnPacket;
 import net.rush.packets.packet.NamedSoundEffectPacket;
 import net.rush.packets.packet.OpenWindowPacket;
-import net.rush.packets.packet.LoginRequest;
-import net.rush.packets.packet.LoginSuccess;
 import net.rush.packets.packet.PacketLoginCompression;
 import net.rush.packets.packet.PingTime;
-import net.rush.packets.packet.StatusRequest;
 import net.rush.packets.packet.PlayerAbilitiesPacket;
 import net.rush.packets.packet.PlayerBlockPlacementPacket;
 import net.rush.packets.packet.PlayerDiggingPacket;
@@ -69,6 +68,7 @@ import net.rush.packets.packet.SpawnMobPacket;
 import net.rush.packets.packet.SpawnObjectPacket;
 import net.rush.packets.packet.SpawnPaintingPacket;
 import net.rush.packets.packet.SpawnPositionPacket;
+import net.rush.packets.packet.StatusRequest;
 import net.rush.packets.packet.SteerVehiclePacket;
 import net.rush.packets.packet.TabCompletePacket;
 import net.rush.packets.packet.ThunderboltPacket;
@@ -80,7 +80,7 @@ import net.rush.packets.packet.UpdateWindowPropertyPacket;
 import net.rush.packets.packet.UseBedPacket;
 import net.rush.packets.packet.UseEntityPacket;
 
-import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.Validate;
 
 public enum Protocol {
 
@@ -257,7 +257,7 @@ public enum Protocol {
 		}
 
 		public final int getId(Class<? extends Packet> packet) {
-			Preconditions.checkArgument(packetMap.containsKey(packet), "Cannot get ID for packet " + packet);
+			Validate.isTrue(!packetMap.containsKey(packet), "Cannot get ID for packet " + packet);
 			
 			return packetMap.get(packet);
 		}

@@ -303,14 +303,17 @@ public final class Server {
 						ch.pipeline().addLast("timer", new ReadTimeoutHandler(30));
 
 						if (LegacyCompatProvider.isProvidingCompat(ch.remoteAddress())) {
+							System.out.println("providing 1.6 compat");
 							ch.pipeline()
 							.addLast("decoder", new LegacyDecoder()) // 1.6 decoder - reader
 							.addLast("encoder", new LegacyEncoder()) // 1.6 encoder - writer
 							.addLast("handler", new MinecraftHandler(server, true));
-						} else {			
+						} else {	
 							if(LegacyCompatProvider.isThrottled(ch.remoteAddress()))
 								return;
 
+							System.out.println("providing 1.7 packets");
+							
 							ch.pipeline()
 
 							.addLast("old", new KickPacketWriter())

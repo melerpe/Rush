@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.help;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,8 +13,6 @@ import org.bukkit.Server;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.help.HelpTopic;
-
-import com.google.common.base.Charsets;
 
 /**
  * HelpYamlReader is responsible for processing the contents of the help.yml file.
@@ -28,7 +27,7 @@ public class HelpYamlReader {
         this.server = server;
 
         File helpYamlFile = new File("help.yml");
-        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/help.yml"), Charsets.UTF_8));
+        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/help.yml"), StandardCharsets.UTF_8));
 
         try {
             helpYaml = YamlConfiguration.loadConfiguration(helpYamlFile);
