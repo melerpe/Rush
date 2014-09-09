@@ -9,8 +9,8 @@ import net.rush.Server;
 import net.rush.model.Block;
 import net.rush.model.Material;
 import net.rush.model.Position;
-import net.rush.packets.Packet;
-import net.rush.packets.packet.MapChunkPacket;
+import net.rush.protocol.Packet;
+import net.rush.protocol.packets.MapChunkPacket;
 import net.rush.world.World;
 
 /**
@@ -89,7 +89,7 @@ public final class Chunk {
 	public World getWorld() {
 		return Server.getServer().getWorld();
 	}
-	
+
 	/**
 	 * Sets the types of all tiles within the chunk.
 	 * @param types The array of types.
@@ -201,8 +201,7 @@ public final class Chunk {
 	 * @return The {@link MapChunkPacket}.
 	 */
 	public Packet toMessage() {
-		return new MapChunkPacket(this);
-		//return new MapChunkPacket(coords.x, coords.z, true, 0xFFFF, 0, serializeTileData());
+		return new MapChunkPacket(this, coords.x, coords.z, true, 0xFFFF, 0);
 		//return new MapChunkPacketImpl(x * Chunk.WIDTH, z * Chunk.HEIGHT, 0, WIDTH, HEIGHT, DEPTH, serializeTileData());
 	}
 
@@ -267,7 +266,7 @@ public final class Chunk {
 		en.chunkPosition = new Position(getX(), posY, getZ());
 		entities[posY].add(en);
 	}*/
-	
+
 	public int getTerrainHeight(int x, int z) {
 		for (int y = DEPTH - 1; y > 0; --y) {
 			int blockId = getType(x, y, z);
@@ -277,12 +276,72 @@ public final class Chunk {
 		}
 		return 0;
 	}
-	
+
 	public Material getMaterial(int x, int y, int z) {
 		int blockId = getType(x, y, z);
 
 		return blockId == 0 ? Material.AIR : Block.byId[blockId].material;
 
+	}
+
+	public byte[] serializeTileData(boolean compat, int protocol) {
+		// (types + metaData + blocklight + skylight + add) * 16 vanilla-chunks + biome
+		byte[] data = new byte[(4096 + 2048 + 2048 + 2048 + 0) * 16 + 256];
+
+		int pos = types.length;
+
+		// types
+		System.arraycopy(types, 0, data, 0, types.length);
+
+		if (pos != types.length)
+			throw new IllegalStateException("Illegal pos: " + pos + " vs " + types.length);
+
+		// metadata
+		for (int i = 0; i < metaData.length; i += 2) {
+			byte meta1 = metaData[i];
+			byte meta2 = metaData[i + 1];
+			data[pos++] = (byte) ((meta2 << 4) | meta1);
+		}
+
+		// skylight
+		for (int i = 0; i < skyLight.length; i += 2) {
+			byte light1 = 15;//skyLight[i];
+			byte light2 = 15;//skyLight[i + 1];
+			data[pos++] = (byte) ((light2 << 4) | light1);
+		}
+
+		// blocklight
+		for (int i = 0; i < blockLight.length; i += 2) {
+			byte light1 = 15;//blockLight[i];
+			byte light2 = 15;//blockLight[i + 1];
+			data[pos++] = (byte) ((light2 << 4) | light1);
+		}
+
+		// biome
+		for (int i = 0; i < 256; i++)
+			data[pos++] = 4; // biome data, just set it to forest
+
+		if (pos != data.length)
+			throw new IllegalStateException("Illegal Pos: " + pos + " vs " + data.length);
+
+		if(compat || protocol < 22) {
+			// we are done, now compress it
+			Deflater deflater = new Deflater(Deflater.BEST_SPEED);
+			deflater.setInput(data);
+			deflater.finish();
+
+			byte[] compressed = new byte[data.length];
+			int length = deflater.deflate(compressed);
+
+			deflater.end();
+
+			byte[] realCompressed = new byte[length];
+
+			for (int i = 0; i < length; i++)
+				realCompressed[i] = compressed[i];
+			return realCompressed;
+		}
+		return data;
 	}
 }
 

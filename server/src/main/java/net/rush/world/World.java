@@ -30,8 +30,6 @@ import net.rush.model.entity.EntityRegistry;
 import net.rush.model.entity.ItemEntity;
 import net.rush.model.misc.NextTickEntry;
 import net.rush.model.misc.Vec3Pool;
-import net.rush.packets.packet.BlockChangePacket;
-import net.rush.packets.packet.TimeUpdatePacket;
 import net.rush.util.nbt.CompoundTag;
 import net.rush.util.nbt.NBTOutputStream;
 
@@ -211,6 +209,7 @@ public class World {
 		return time;
 	}
 
+	
 	/**
 	 * Sets the current time.
 	 * 
@@ -219,9 +218,10 @@ public class World {
 	public void setTime(long time) {
 		this.time = time % PULSES_PER_DAY;
 
-		TimeUpdatePacket msg = new TimeUpdatePacket(0, time); // TODO Correct world age?
-		for (Player player : getPlayers())
-			player.getSession().send(msg);
+		boolean fix;
+		// TODO TimeUpdatePacket msg = new TimeUpdatePacket(0, time); // TODO Correct world age?
+		//for (Player player : getPlayers())
+		//	player.getSession().send(msg);
 	}
 
 	/**
@@ -326,10 +326,11 @@ public class World {
 	}
 
 	public void sendBlockChangePacket(int x, int y, int z) {
-		BlockChangePacket packet = new BlockChangePacket(x, y, z, this);
+		boolean fix;
+		//BlockChangePacket packet = new BlockChangePacket(x, y, z, this);
 
-		for(Player pl : getPlayers())
-			pl.getSession().send(packet);
+		//for(Player pl : getPlayers())
+		//	pl.getSession().send(packet);
 	}
 
 	public int getType(int x, int y, int z) {
@@ -415,7 +416,6 @@ public class World {
 		try {
 			this.chunks.saveAll();
 			this.saveWorldInfo();
-
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

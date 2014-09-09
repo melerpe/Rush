@@ -1,6 +1,6 @@
 package net.rush.model;
 
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.util.StringUtils;
 import net.rush.world.World;
 
@@ -21,7 +21,7 @@ public class EntityTameable extends EntityAgeable {
 	}
 	
 	public void setOwner(String owner) {
-		setMetadata(new Parameter<String>(Parameter.TYPE_STRING, 17, StringUtils.colorize(owner)));
+		setMetadata(new MetaParam<String>(MetaParam.TYPE_STRING, 17, StringUtils.colorize(owner)));
 	}	
 	
 	// METADATA END

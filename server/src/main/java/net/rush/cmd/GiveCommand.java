@@ -1,12 +1,12 @@
 package net.rush.cmd;
 
-import org.bukkit.Material;
-
 import net.rush.model.Block;
 import net.rush.model.CommandSender;
 import net.rush.model.Item;
 import net.rush.model.ItemStack;
 import net.rush.model.Player;
+
+import org.bukkit.Material;
 
 /**
  * A command that displays help on using other commands.

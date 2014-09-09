@@ -5,11 +5,13 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.bukkit.GameMode;
+
 import net.rush.ServerProperties;
 import net.rush.model.Player;
-import net.rush.net.Session;
-import net.rush.packets.packet.HandshakePacket;
-import net.rush.packets.packet.LoginPacket;
+import net.rush.protocol.Session;
+import net.rush.protocol.packets.HandshakePacket;
+import net.rush.protocol.packets.LoginPacket;
 import net.rush.util.enums.Dimension;
 
 public class ThreadLoginVerifier extends Thread {
@@ -35,7 +37,7 @@ public class ThreadLoginVerifier extends Thread {
 			
 			if (response.equals("YES")) {
 				ServerProperties prop = session.getServer().getProperties();
-				session.send(new LoginPacket(0, prop.levelType, prop.gamemode, Dimension.NORMAL, prop.difficulty, prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
+				session.send(new LoginPacket(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, prop.difficulty, prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
 				session.setPlayer(new Player(session, loginPacket.getUsername()));
 			} else
 				session.disconnect("Failed to verify username!");

@@ -1,7 +1,7 @@
 package net.rush.model.entity;
 
 import net.rush.model.EntityAgeable;
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.util.enums.ColorEnum;
 import net.rush.world.World;
 
@@ -23,7 +23,7 @@ public class Wolf extends EntityAgeable {
 	 */
 	public void setPissed(boolean pissedOff) {
 		this.pissed = pissedOff;
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 16, (byte) (pissedOff ? 0x02: 0)));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 16, (byte) (pissedOff ? 0x02: 0)));
 		// TODO Do this wipe the other parameters in index 16 ?
 	}
 	
@@ -32,7 +32,7 @@ public class Wolf extends EntityAgeable {
 	}
 	
 	public void setHealth(float health) {
-		setMetadata(new Parameter<Float>(Parameter.TYPE_FLOAT, 18, health));
+		setMetadata(new MetaParam<Float>(MetaParam.TYPE_FLOAT, 18, health));
 	}
 	
 	public float getHealth() {
@@ -40,7 +40,7 @@ public class Wolf extends EntityAgeable {
 	}
 	
 	public void setBegging(boolean begging) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 19, (byte) (begging ? 0x02: 0)));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 19, (byte) (begging ? 0x02: 0)));
 	}
 	
 	public boolean isBegging() {
@@ -48,7 +48,7 @@ public class Wolf extends EntityAgeable {
 	}
 	
 	public void setColarColor(ColorEnum color) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 20, (byte)color.getColor()));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 20, (byte)color.getColor()));
 	}
 	
 	public byte getColarColor() {

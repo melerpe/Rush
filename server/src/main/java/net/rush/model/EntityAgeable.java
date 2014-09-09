@@ -1,6 +1,6 @@
 package net.rush.model;
 
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.entity.EntityType;
@@ -22,7 +22,7 @@ public class EntityAgeable extends LivingEntity {
 	}
 
 	public void setAge(int age) {
-		setMetadata(new Parameter<Integer>(Parameter.TYPE_INT, 12, age));
+		setMetadata(new MetaParam<Integer>(MetaParam.TYPE_INT, 12, age));
 	}
 
 	// METADATA END

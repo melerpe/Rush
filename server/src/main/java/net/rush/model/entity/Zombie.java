@@ -1,7 +1,7 @@
 package net.rush.model.entity;
 
 import net.rush.model.EntityAgeable;
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.entity.EntityType;
@@ -15,7 +15,7 @@ public class Zombie extends EntityAgeable {
 	// METADATA START
 	
 	public void setChild(boolean isChild) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 12, (byte) (isChild ? 1 : 0)));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 12, (byte) (isChild ? 1 : 0)));
 	}
 	
 	public boolean isChild() {
@@ -23,7 +23,7 @@ public class Zombie extends EntityAgeable {
 	}
 	
 	public void setVillager(boolean isVillager) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 13, (byte) (isVillager ? 1 : 0)));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 13, (byte) (isVillager ? 1 : 0)));
 	}
 	
 	public boolean isVillager() {
@@ -31,7 +31,7 @@ public class Zombie extends EntityAgeable {
 	}
 	
 	public void setConverting(boolean isConverting) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 14, (byte) (isConverting ? 1 : 0)));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 14, (byte) (isConverting ? 1 : 0)));
 	}
 	
 	public boolean isConverting() {

@@ -10,24 +10,25 @@ import net.rush.chunk.ChunkCoords;
 import net.rush.inventory.Inventory;
 import net.rush.inventory.PlayerInventory;
 import net.rush.model.entity.ItemEntity;
-import net.rush.net.Session;
-import net.rush.packets.Packet;
-import net.rush.packets.packet.AnimationPacket;
-import net.rush.packets.packet.ChangeGameStatePacket;
-import net.rush.packets.packet.ChatPacket;
-import net.rush.packets.packet.DestroyEntityPacket;
-import net.rush.packets.packet.EntityEquipmentPacket;
-import net.rush.packets.packet.NamedEntitySpawnPacket;
-import net.rush.packets.packet.NamedSoundEffectPacket;
-import net.rush.packets.packet.OpenWindowPacket;
-import net.rush.packets.packet.PlayerListItemPacket;
-import net.rush.packets.packet.PlayerPositionAndLookPacket;
-import net.rush.packets.packet.SetSlotPacket;
-import net.rush.packets.packet.SoundOrParticleEffectPacket;
-import net.rush.packets.packet.SpawnPositionPacket;
-import net.rush.packets.packet.UpdateHealthPacket;
+import net.rush.protocol.Packet;
+import net.rush.protocol.Session;
+import net.rush.protocol.packets.AnimationPacket;
+import net.rush.protocol.packets.AnimationPacket.AnimType;
+import net.rush.protocol.packets.ChangeGameStatePacket;
+import net.rush.protocol.packets.ChatPacket;
+import net.rush.protocol.packets.DestroyEntityPacket;
+import net.rush.protocol.packets.EntityEquipmentPacket;
+import net.rush.protocol.packets.NamedEntitySpawnPacket;
+import net.rush.protocol.packets.NamedSoundEffectPacket;
+import net.rush.protocol.packets.OpenWindowPacket;
+import net.rush.protocol.packets.PlayerListItemPacket;
+import net.rush.protocol.packets.PlayerPositionAndLookPacket;
+import net.rush.protocol.packets.SetSlotPacket;
+import net.rush.protocol.packets.SoundOrParticleEffectPacket;
+import net.rush.protocol.packets.SpawnPositionPacket;
+import net.rush.protocol.packets.UpdateHealthPacket;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.util.MathHelper;
-import net.rush.util.Parameter;
 import net.rush.util.enums.GameStateReason;
 import net.rush.util.enums.InventoryEnum;
 import net.rush.util.enums.SoundEnum;
@@ -83,8 +84,7 @@ public final class Player extends LivingEntity implements CommandSender {
 	 */
 	private boolean crouching = false;
 
-	private ItemStack itemOnCursor = ItemStack.NULL_ITEMSTACK;
-	
+	private ItemStack itemOnCursor;
 	public int windowId = 0;
 
 	/**
@@ -136,43 +136,43 @@ public final class Player extends LivingEntity implements CommandSender {
 	public void playSound(Sound sound, Position pos) {
 		playSound(sound, pos, (0.5F + 0.5F * (float)rand.nextInt(2)), ((float) (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F));
 	}
-	
+
 	public void playSound(Sound sound, Position pos, float volume, float pitch) {
 		playSound(sound, pos.x, pos.y, pos.z, volume, pitch);
 	}
-	
+
 	public void playSound(Sound sound, double x, double y, double z, float volume, float pitch) {
-		session.send(new NamedSoundEffectPacket(SoundEnum.getSoundName(sound), x, y, z, volume, pitch));
+		playSound(SoundEnum.getSoundName(sound), x, y, z, volume, pitch);
 	}
 
 	public void playSound(String sound, Position pos) {
-		session.send(new NamedSoundEffectPacket(sound, pos.x, pos.y, pos.z, (0.6F + 0.6F * (float)rand.nextInt(2)), ((float) (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F)));
+		playSound(sound, pos.x, pos.y, pos.z, (0.6F + 0.6F * (float)rand.nextInt(2)), ((float) (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F));
 	}
-	
+
 	public void playSound(String sound, double x, double y, double z, float volume, float pitch) {
 		session.send(new NamedSoundEffectPacket(sound, x, y, z, volume, pitch));
 	}
-	
+
 	public void playEffect(int effectId, int x, int y, int z, int data) {
-		session.send(new SoundOrParticleEffectPacket(effectId, x, y, z, data, false));
-	}
-	
-	/** To prevent typos use animations in AnimationPacket class. */
-	public void playAnimation(int animationId) {
-		session.send(new AnimationPacket(getId(), animationId));
+		session.send(new SoundOrParticleEffectPacket(effectId, x, y, z, data));
 	}
 
 	/** To prevent typos use animations in AnimationPacket class. */
-	public void playAnimationOf(int entityId, int animationId) {
-		session.send(new AnimationPacket(entityId, animationId));
+	public void playAnimation(AnimType type) {
+		session.send(new AnimationPacket(getId(), type));
 	}
-	
+
+	/** To prevent typos use animations in AnimationPacket class. */
+	public void playAnimationOf(int entityId, AnimType type) {
+		session.send(new AnimationPacket(entityId, type));
+	}
+
 	public void updateTabList() {
-		Packet newPlayer = new PlayerListItemPacket(name, true, (short)100);
+		Packet newPlayer = new PlayerListItemPacket(name, gamemode, true, (short)100);
 		// FIXME fix on 1.8
 		for(Player pl : getWorld().getPlayers()) {
-			//pl.getSession().send(newPlayer);
-			//session.send(new PlayerListItemPacket(pl.getName(), true, (short)100));
+			pl.getSession().send(newPlayer);
+			session.send(new PlayerListItemPacket(pl.getName(), pl.getGamemode(), true, (short)100));
 		}
 	}
 
@@ -191,12 +191,12 @@ public final class Player extends LivingEntity implements CommandSender {
 				Packet msg = entity.createUpdateMessage();
 				if (msg != null)
 					session.send(msg);
-				
+
 				if(!announced) {
 					System.out.println("Created Update Message Packet - closing debug");
 					announced = true;
 				}
-					
+
 			} else {
 				session.send(new DestroyEntityPacket(entity.getId()));
 				it.remove();
@@ -211,7 +211,7 @@ public final class Player extends LivingEntity implements CommandSender {
 			if (withinDistance && !knownEntities.contains(entity)) {
 				knownEntities.add(entity);
 				session.send(entity.createSpawnMessage());
-				
+
 				if(!announced)
 					System.out.println("Created Spawn Packet");
 			}
@@ -290,7 +290,7 @@ public final class Player extends LivingEntity implements CommandSender {
 	public void setCrouching(boolean crouching) {
 		// TODO: update other clients, needs to be figured out
 		this.crouching = crouching;
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 0, new Byte((byte) (crouching ? 0x02: 0))));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 0, new Byte((byte) (crouching ? 0x02: 0))));
 		// FIXME: other bits in the bitmask would be wiped out
 	}
 
@@ -308,20 +308,20 @@ public final class Player extends LivingEntity implements CommandSender {
 
 	public void setSprinting(boolean sprinting) {
 		this.sprinting = sprinting;
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 0, new Byte((byte) (sprinting ? 0x08: 0))));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 0, new Byte((byte) (sprinting ? 0x08: 0))));
 		// FIXME: other bits in the bitmask would be wiped out
 	}
-	
+
 	@Override
 	public void setHealth(float newHealth) {
 		float oldHealth = health;
 		super.setHealth(newHealth);
-		
-		session.send(new UpdateHealthPacket(newHealth, (short) food, saturation));
-		
+
+		session.send(new UpdateHealthPacket(newHealth, food, saturation));
+
 		if(newHealth < oldHealth)
 			playSound(Sound.HURT_FLESH, position);
-		
+
 		if(newHealth <= 0)
 			alive = false;
 	}
@@ -364,11 +364,11 @@ public final class Player extends LivingEntity implements CommandSender {
 	}
 
 	public void throwItemFromPlayer(ItemStack theItemStack, int count) {
-		if (theItemStack == ItemStack.NULL_ITEMSTACK)
+		if (theItemStack == null)
 			return;
-		
+
 		ItemStack itemstack = theItemStack.clone(); 
-		
+
 		itemstack.count = count;
 
 		ItemEntity item = new ItemEntity(world, itemstack, getPosition().x, getPosition().y + getEyeHeight() - .3, getPosition().z);
@@ -391,19 +391,19 @@ public final class Player extends LivingEntity implements CommandSender {
 		item.motionZ += Math.sin(offsetZ) * offsetX;
 
 		item.throwerId = id;
-		
+
 		world.spawnEntity(item);		
 		item.metadataChanged = true;
 	}
-	
+
 	public void openInventory(InventoryEnum type) {
 		openInventory(type, 9, "", -1);
 	}
-	
+
 	public void openInventory(InventoryEnum type, int slots, String name) {
 		openInventory(type, slots, name, -1);
 	}
-	
+
 	public void openInventory(InventoryEnum type, int slots, String name, int horseId) {
 		windowId++;		
 		session.send(new OpenWindowPacket(windowId, type.id, name, slots, name != "", horseId));
@@ -433,19 +433,10 @@ public final class Player extends LivingEntity implements CommandSender {
 
 	public void setItemOnCursor(ItemStack item) {
 		itemOnCursor = item;
-		if (item == null || item == ItemStack.NULL_ITEMSTACK) {
-			session.send(new SetSlotPacket(1, inventory.getHeldItemSlot(), ItemStack.NULL_ITEMSTACK));
-		} else {
-			session.send(new SetSlotPacket(1, inventory.getHeldItemSlot(), item));
-		}
+		session.send(new SetSlotPacket(1, inventory.getHeldItemSlot(), item));
 	}
 
 	public void onSlotSet(Inventory inv, int index, ItemStack item) {
-		//getSession().send(new SetSlotPacket(0, index, item));
-
-		int type = item == null || item == ItemStack.NULL_ITEMSTACK ? -1 : item.getId();
-		int data = item == null || item == ItemStack.NULL_ITEMSTACK ? 0 : item.getDamage();
-
 		int equipSlot = -1;
 
 		if (index == getInventory().getHeldItemSlot()) {
@@ -465,18 +456,13 @@ public final class Player extends LivingEntity implements CommandSender {
 		}
 
 		if (equipSlot >= 0) {
-			EntityEquipmentPacket message = new EntityEquipmentPacket(getId(), (short)equipSlot, (short)type, (short)data);
+			EntityEquipmentPacket message = new EntityEquipmentPacket(getId(), equipSlot, item);
 			for (Player player : getWorld().getPlayers())
 				if (player != this && player.isWithinDistance(this))
 					player.getSession().send(message);
 		}
 
-
-		if (item == null || item == ItemStack.NULL_ITEMSTACK) {
-			session.send(new SetSlotPacket(inventory.getId(), index, ItemStack.NULL_ITEMSTACK));
-		} else {
-			session.send(new SetSlotPacket(inventory.getId(), index, item));
-		}
+		session.send(new SetSlotPacket(inventory.getId(), index, item));
 	}
 
 	public Server getServer() {

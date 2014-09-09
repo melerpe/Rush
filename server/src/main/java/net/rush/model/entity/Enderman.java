@@ -1,7 +1,7 @@
 package net.rush.model.entity;
 
 import net.rush.model.EntityAgeable;
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.Material;
@@ -16,7 +16,7 @@ public class Enderman extends EntityAgeable {
 	// METADATA START
 	
 	public void setCarriedBlock(Material mat) {
-		setMetadata(new Parameter<Short>(Parameter.TYPE_SHORT, 16, (short)mat.getId()));
+		setMetadata(new MetaParam<Short>(MetaParam.TYPE_SHORT, 16, (short)mat.getId()));
 	}
 	
 	public Material getCarriedBlock() {
@@ -24,7 +24,7 @@ public class Enderman extends EntityAgeable {
 	}
 	
 	public void setCarriedBlockData(int data) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 17, (byte)data));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 17, (byte)data));
 	}
 	
 	public byte getCarriedBlockData() {
@@ -32,7 +32,7 @@ public class Enderman extends EntityAgeable {
 	}
 	
 	public void setScreaming(boolean isScreaming) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 18, (byte) (isScreaming ? 1 : 0)));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 18, (byte) (isScreaming ? 1 : 0)));
 	}
 	
 	public boolean isScreaming() {

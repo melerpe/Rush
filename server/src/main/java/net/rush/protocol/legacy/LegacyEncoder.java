@@ -1,0 +1,28 @@
+package net.rush.protocol.legacy;
+
+import java.util.logging.Level;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
+import net.rush.Server;
+import net.rush.protocol.Packet;
+
+/**
+ * This class encodes (write) incoming connections (in this case - packets).
+ * @author kangarko
+ */
+public class LegacyEncoder extends MessageToByteEncoder<Packet> {
+
+	@Override
+	protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) throws Exception {
+		try {
+			buf.writeByte(packet.getId()); // opcode
+
+			packet.setCompat(true);
+			packet.writeCompat(buf);
+		} catch (Throwable t) {
+			Server.getServer().getLogger().log(Level.SEVERE, "Error while writing legacy packet " + packet.getClass().getSimpleName(), t);
+		}
+	}
+}

@@ -35,6 +35,7 @@ public abstract class RotatableBlock extends Block {
 			case 4:
 			case 5:
 				rotation = 4;
+				break;
 		}
 
 		return blockMetadata | rotation;

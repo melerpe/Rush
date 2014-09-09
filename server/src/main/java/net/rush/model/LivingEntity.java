@@ -4,10 +4,10 @@ import java.util.HashSet;
 
 import net.rush.chunk.ChunkCoords;
 import net.rush.model.entity.ai.EntityAI;
-import net.rush.packets.Packet;
-import net.rush.packets.packet.AnimationPacket;
-import net.rush.packets.packet.SpawnMobPacket;
-import net.rush.util.Parameter;
+import net.rush.protocol.Packet;
+import net.rush.protocol.packets.AnimationPacket.AnimType;
+import net.rush.protocol.packets.SpawnMobPacket;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.entity.EntityType;
@@ -31,7 +31,7 @@ public class LivingEntity extends Mob {
 	protected LivingEntity(World world, EntityType type) {
 		super(world, type);
 		// Set health to prevent sending null metadata that crash client.
-		setMetadata(new Parameter<Float>(Parameter.TYPE_FLOAT, 6, 20F), false);
+		setMetadata(new MetaParam<Float>(MetaParam.TYPE_FLOAT, 6, 20F), false);
 		this.health = (int)20;
 	}
 
@@ -60,7 +60,7 @@ public class LivingEntity extends Mob {
 
 	/** On left click on the entity */
 	public void onPlayerHit(Player pl) {
-		pl.playAnimationOf(this.id, AnimationPacket.DAMAGE_ANIMATION);
+		pl.playAnimationOf(this.id, AnimType.DAMAGE_ANIMATION);
 		pl.playSound(getHurtSound(), position);
 	}
 
@@ -79,7 +79,7 @@ public class LivingEntity extends Mob {
 	}
 
 	public void setHealth(float health) {
-		setMetadata(new Parameter<Float>(Parameter.TYPE_FLOAT, 6, health));
+		setMetadata(new MetaParam<Float>(MetaParam.TYPE_FLOAT, 6, health));
 		this.health = (int)health;
 	}
 
@@ -88,7 +88,7 @@ public class LivingEntity extends Mob {
 	}
 
 	public void setPotionEffectColor(int effectColor) {
-		setMetadata(new Parameter<Integer>(Parameter.TYPE_INT, 7, effectColor));
+		setMetadata(new MetaParam<Integer>(MetaParam.TYPE_INT, 7, effectColor));
 	}
 
 	public byte getIsPotionEffectAmbient() {
@@ -96,7 +96,7 @@ public class LivingEntity extends Mob {
 	}
 
 	public void setIsPotionEffectAmbient(boolean ambient) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 8, ambient ? (byte)1 : (byte)0));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 8, ambient ? (byte)1 : (byte)0));
 	}
 
 	public byte getArrowsInEntity() {
@@ -104,7 +104,7 @@ public class LivingEntity extends Mob {
 	}
 
 	public void setArrowsInEntity(int howManyArrows) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 9, (byte)howManyArrows));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 9, (byte)howManyArrows));
 	}
 
 	public String getName() {
@@ -112,7 +112,7 @@ public class LivingEntity extends Mob {
 	}
 
 	public void setName(String name) {
-		setMetadata(new Parameter<String>(Parameter.TYPE_STRING, 10, name.replace("&", "§")));
+		setMetadata(new MetaParam<String>(MetaParam.TYPE_STRING, 10, name.replace("&", "§")));
 	}
 
 	public boolean getNameVisible() {
@@ -120,7 +120,7 @@ public class LivingEntity extends Mob {
 	}
 
 	public void setNameVisible(boolean alwaysVisible) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 11, (byte)(alwaysVisible ? 1 : 0)));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 11, (byte)(alwaysVisible ? 1 : 0)));
 	}
 
 	// METADATA END

@@ -1,9 +1,9 @@
 package net.rush.test.util;
 
-import net.rush.util.ByteBufUtils;
+import net.rush.protocol.utils.PacketUtils;
 
 /**
- * A unit test for the {@link ByteBufUtils} class.
+ * A unit test for the {@link PacketUtils} class.
 
  */
 public final class ByteBufUtilsTest {

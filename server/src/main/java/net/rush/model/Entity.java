@@ -6,9 +6,9 @@ import net.rush.Server;
 import net.rush.ServerProperties;
 import net.rush.chunk.Chunk;
 import net.rush.model.misc.AxisAlignedBB;
-import net.rush.packets.Packet;
-import net.rush.packets.packet.EntityMetadataPacket;
-import net.rush.util.Parameter;
+import net.rush.protocol.Packet;
+import net.rush.protocol.packets.EntityMetadataPacket;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.entity.EntityType;
@@ -27,7 +27,7 @@ public abstract class Entity {
 	/**
 	 * The entity's metadata.
 	 */
-	protected final Parameter<?>[] metadata = new Parameter<?>[Parameter.METADATA_SIZE];
+	protected final MetaParam<?>[] metadata = new MetaParam<?>[MetaParam.METADATA_SIZE];
 	
 	/** If true, the metadata update update packet is sent in no time (0.041847 ms). */
 	protected boolean metadataChanged = false;
@@ -87,8 +87,8 @@ public abstract class Entity {
 		this.ticksLived = 0;
 		//world.getEntities().allocate(this);
 
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 0, (byte) 0));
-		setMetadata(new Parameter<Short>(Parameter.TYPE_SHORT, 1, (short) 300));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 0, (byte) 0));
+		setMetadata(new MetaParam<Short>(MetaParam.TYPE_SHORT, 1, (short) 300));
 	}
 
 	/**
@@ -311,15 +311,15 @@ public abstract class Entity {
 		return entityType;
 	}
 
-	public Parameter<?> getMetadata(int index) {
+	public MetaParam<?> getMetadata(int index) {
 		return metadata[index];
 	}
 
-	public void setMetadata(Parameter<?> data) {
+	public void setMetadata(MetaParam<?> data) {
 		setMetadata(data, true);
 	}
 	
-	public void setMetadata(Parameter<?> data, boolean sendPackets) {
+	public void setMetadata(MetaParam<?> data, boolean sendPackets) {
 		metadata[data.getIndex()] = data;
 		metadataChanged = sendPackets;
 	}

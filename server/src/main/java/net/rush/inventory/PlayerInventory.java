@@ -1,13 +1,13 @@
 package net.rush.inventory;
 
-import org.bukkit.Material;
-import org.bukkit.Sound;
-
 import net.rush.model.Item;
 import net.rush.model.ItemStack;
 import net.rush.model.Player;
 import net.rush.model.item.ItemTool;
 import net.rush.util.RushException;
+
+import org.bukkit.Material;
+import org.bukkit.Sound;
 
 public class PlayerInventory extends Inventory {
 
@@ -112,13 +112,12 @@ public class PlayerInventory extends Inventory {
 	public void takeOrDamageItemInHand(Player pl, boolean onlyDamage) {
 		ItemStack hand = getItemInHand();
 
-		if(hand == null || hand == ItemStack.NULL_ITEMSTACK || hand.getId() == 0)
+		if(hand == null || hand.getId() == 0)
 			throw new RushException("Cannot take or damage NULL itemstack!");
 
 		Item item = Item.byId[hand.getId()];
 
 		if(onlyDamage) {
-			System.out.println("ONLY DAMAGEING");
 			if(item != null && item instanceof ItemTool) {
 
 				if (hand.getDamage() >= item.getMaxDamage()) {

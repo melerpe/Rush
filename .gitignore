@@ -215,3 +215,10 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+server/commands-unused.yml
+server/help.yml
+server/permissions.yml
+server/rush-settings-unused.yml
+server/server.properties
+server/world/
+api/dependency-reduced-pom.xml

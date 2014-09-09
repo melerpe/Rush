@@ -3,14 +3,15 @@ package net.rush.model.entity;
 import net.rush.model.Entity;
 import net.rush.model.ItemStack;
 import net.rush.model.Player;
-import net.rush.packets.Packet;
-import net.rush.packets.packet.EntityLookAndRelMovePacket;
-import net.rush.packets.packet.EntityLookPacket;
-import net.rush.packets.packet.EntityRelMovePacket;
-import net.rush.packets.packet.EntityTeleportPacket;
-import net.rush.packets.packet.ItemCollectPacket;
-import net.rush.packets.packet.SpawnObjectPacket;
-import net.rush.util.Parameter;
+import net.rush.protocol.Packet;
+import net.rush.protocol.packets.EntityLookAndRelMovePacket;
+import net.rush.protocol.packets.EntityLookPacket;
+import net.rush.protocol.packets.EntityRelMovePacket;
+import net.rush.protocol.packets.EntityTeleportPacket;
+import net.rush.protocol.packets.ItemCollectPacket;
+import net.rush.protocol.packets.SpawnObjectPacket;
+import net.rush.protocol.packets.SpawnObjectPacket.ObjectType;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.Sound;
@@ -40,7 +41,7 @@ public final class ItemEntity extends Entity {
 		this.setPosition(x, y, z);
 
 		getRotation().setYaw((double) (Math.random() * 360.0D));
-		setMetadata(new Parameter<ItemStack>(Parameter.TYPE_ITEM, 10, item), false);
+		setMetadata(new MetaParam<ItemStack>(MetaParam.TYPE_ITEM, 10, item), false);
 	}
 
 	/**
@@ -91,7 +92,6 @@ public final class ItemEntity extends Entity {
 			motionY *= -0.5D;
 		
 		// FIXME implementation for debug purposes not for real usage
-
 		for(Entity en : getWorld().getEntities()) {
 			if(en == this) 
 				continue;
@@ -131,7 +131,7 @@ public final class ItemEntity extends Entity {
 
 	public Packet createSpawnMessage() {
 		metadataChanged = true;
-		return new SpawnObjectPacket(this, SpawnObjectPacket.ITEM, throwerId, motionX, motionY, motionZ);
+		return new SpawnObjectPacket(this, ObjectType.ITEM, throwerId, motionX, motionY, motionZ);
 	}
 
 	public Packet createUpdateMessage() {
@@ -141,9 +141,6 @@ public final class ItemEntity extends Entity {
 		setX(getPosition().x + motionX);
 		setY(getPosition().y + motionY);
 		setZ(getPosition().z + motionZ);
-		
-		//System.out.println("prev pos: " + previousPosition);
-		//System.out.println("curr pos: " + position);
 		
 		boolean moved = !position.equals(previousPosition);
 		boolean rotated = !rotation.equals(previousRotation);
@@ -161,15 +158,14 @@ public final class ItemEntity extends Entity {
 		int yaw = rotation.getIntYaw();
 		int pitch = rotation.getIntPitch();
 		
-		if (moved && teleport) {
+		if (moved && teleport)
 			return new EntityTeleportPacket(id, x, y, z, yaw, pitch);
-		} else if (moved && rotated) {
+		else if (moved && rotated) 
 			return new EntityLookAndRelMovePacket(id, (byte)dx, (byte)dy, (byte)dz, (byte)yaw, (byte)pitch);
-		} else if (moved) {
+		else if (moved) 
 			return new EntityRelMovePacket(id, (byte)dx, (byte)dy, (byte)dz);
-		} else if (rotated) {
+		else if (rotated)
 			return new EntityLookPacket(id, (byte)yaw, (byte)pitch);
-		}
 
 		return null;
 	}

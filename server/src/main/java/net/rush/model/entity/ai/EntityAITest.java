@@ -2,7 +2,7 @@ package net.rush.model.entity.ai;
 
 import net.rush.model.LivingEntity;
 import net.rush.model.Player;
-import net.rush.packets.packet.AnimationPacket;
+import net.rush.protocol.packets.AnimationPacket.AnimType;
 
 import org.bukkit.Sound;
 
@@ -68,7 +68,7 @@ public class EntityAITest extends EntityAI {
 
 					for(Player pl : entity.getWorld().getPlayers())
 						if(pl.isWithinDistance(entity))
-							pl.playAnimationOf(entity.getId(), AnimationPacket.DAMAGE_ANIMATION);
+							pl.playAnimationOf(entity.getId(), AnimType.DAMAGE_ANIMATION);
 
 					hasName = true;
 				}

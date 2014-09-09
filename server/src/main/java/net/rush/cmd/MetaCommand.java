@@ -5,7 +5,7 @@ import net.rush.model.Entity;
 import net.rush.model.ItemStack;
 import net.rush.model.LivingEntity;
 import net.rush.model.Player;
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 
 import org.bukkit.Material;
 
@@ -45,17 +45,17 @@ public final class MetaCommand extends Command {
 		LivingEntity living = (LivingEntity) entity;
 		try {
 			if("int".equalsIgnoreCase(type)) {
-				living.setMetadata(new Parameter<Integer>(Parameter.TYPE_INT, index, Integer.valueOf(String.valueOf(param))));
+				living.setMetadata(new MetaParam<Integer>(MetaParam.TYPE_INT, index, Integer.valueOf(String.valueOf(param))));
 			} else if ("short".equalsIgnoreCase(type)) {
-				living.setMetadata(new Parameter<Short>(Parameter.TYPE_SHORT, index, Short.valueOf(String.valueOf(param))));
+				living.setMetadata(new MetaParam<Short>(MetaParam.TYPE_SHORT, index, Short.valueOf(String.valueOf(param))));
 			} else if ("float".equalsIgnoreCase(type)) {
-				living.setMetadata(new Parameter<Float>(Parameter.TYPE_FLOAT, index, Float.valueOf(String.valueOf(param))));
+				living.setMetadata(new MetaParam<Float>(MetaParam.TYPE_FLOAT, index, Float.valueOf(String.valueOf(param))));
 			} else if ("item".equalsIgnoreCase(type)) {
-				living.setMetadata(new Parameter<ItemStack>(Parameter.TYPE_ITEM, index, new ItemStack(Material.valueOf(args[4]).getId(), Integer.valueOf(args[5]), Integer.valueOf(args[6]))));
+				living.setMetadata(new MetaParam<ItemStack>(MetaParam.TYPE_ITEM, index, new ItemStack(Material.valueOf(args[4]).getId(), Integer.valueOf(args[5]), Integer.valueOf(args[6]))));
 			} else if ("byte".equalsIgnoreCase(type)) {
-				living.setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, index, Byte.valueOf(String.valueOf(param))));
+				living.setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, index, Byte.valueOf(String.valueOf(param))));
 			} else if ("string".equalsIgnoreCase(type)) {
-				living.setMetadata(new Parameter<String>(Parameter.TYPE_STRING, index, String.valueOf(param)));
+				living.setMetadata(new MetaParam<String>(MetaParam.TYPE_STRING, index, String.valueOf(param)));
 			} else {
 				pl.sendMessage("&cType must be either: integer or short or byte or string!");
 			}

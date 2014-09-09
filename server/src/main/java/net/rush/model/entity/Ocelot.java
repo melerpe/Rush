@@ -1,7 +1,7 @@
 package net.rush.model.entity;
 
 import net.rush.model.EntityAgeable;
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.entity.EntityType;
@@ -18,7 +18,7 @@ public class Ocelot extends EntityAgeable {
 	// METADATA START
 	
 	public void setOcelotType(byte ocelotType) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 18, ocelotType));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 18, ocelotType));
 	}
 	
 	public byte getOcelotType() {

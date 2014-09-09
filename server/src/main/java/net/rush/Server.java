@@ -4,14 +4,11 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.ResourceLeakDetector;
-import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -28,20 +25,20 @@ import net.rush.gui.ServerGUI;
 import net.rush.gui.contentpane.RushGui;
 import net.rush.io.McRegionChunkIoService;
 import net.rush.model.Player;
-import net.rush.net.MinecraftHandler;
-import net.rush.net.PacketDecoder;
-import net.rush.net.PacketEncoder;
-import net.rush.net.Session;
-import net.rush.net.SessionRegistry;
-import net.rush.packets.KickPacketWriter;
-import net.rush.packets.Packet;
-import net.rush.packets.Varint21FrameDecoder;
-import net.rush.packets.Varint21LengthFieldPrepender;
-import net.rush.packets.legacy.CompatChecker;
-import net.rush.packets.legacy.LegacyCompatProvider;
-import net.rush.packets.legacy.LegacyDecoder;
-import net.rush.packets.legacy.LegacyEncoder;
-import net.rush.packets.misc.Protocol;
+import net.rush.protocol.KickStringWriter;
+import net.rush.protocol.MinecraftHandler;
+import net.rush.protocol.Packet;
+import net.rush.protocol.PacketDecoder;
+import net.rush.protocol.PacketEncoder;
+import net.rush.protocol.ProtocolNew;
+import net.rush.protocol.Session;
+import net.rush.protocol.SessionRegistry;
+import net.rush.protocol.Varint21FrameDecoder;
+import net.rush.protocol.Varint21LengthFieldPrepender;
+import net.rush.protocol.legacy.CompatChecker;
+import net.rush.protocol.legacy.LegacyCompatProvider;
+import net.rush.protocol.legacy.LegacyDecoder;
+import net.rush.protocol.legacy.LegacyEncoder;
 import net.rush.task.TaskScheduler;
 import net.rush.util.NumberUtils;
 import net.rush.world.AlphaWorldGenerator;
@@ -72,18 +69,13 @@ public final class Server {
 	/** The {@link ServerBootstrap} used to initialize Netty. */
 	private final ServerBootstrap bootstrap = new ServerBootstrap();
 
-	/** A group containing all of the channels. */
-	private final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-
-	private final EventLoopGroup eventGroup = new NioEventLoopGroup(3/*, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread - %1$d").build()*/); // TODO configurable
+	private final EventLoopGroup eventGroup = new NioEventLoopGroup(4/*, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread - %1$d").build()*/); // TODO configurable
 
 	/** A list of all the active {@link Session}s. */
 	private final SessionRegistry sessions = new SessionRegistry();
 
 	// Craftbukkit >
-
 	public CraftServer bukkit_server;
-
 	// < Craftbukkit
 
 	/**
@@ -169,14 +161,6 @@ public final class Server {
 		gui = new RushGui();
 
 		logger.info("Ready for connections. (Took " + NumberUtils.msToSeconds(System.currentTimeMillis() - initialTime) + "s !)");
-	}
-
-	/**
-	 * Gets the channel group.
-	 * @return The {@link ChannelGroup}.
-	 */
-	public ChannelGroup getChannelGroup() {
-		return group;
 	}
 
 	/**
@@ -303,7 +287,6 @@ public final class Server {
 						ch.pipeline().addLast("timer", new ReadTimeoutHandler(30));
 
 						if (LegacyCompatProvider.isProvidingCompat(ch.remoteAddress())) {
-							System.out.println("providing 1.6 compat");
 							ch.pipeline()
 							.addLast("decoder", new LegacyDecoder()) // 1.6 decoder - reader
 							.addLast("encoder", new LegacyEncoder()) // 1.6 encoder - writer
@@ -311,19 +294,17 @@ public final class Server {
 						} else {	
 							if(LegacyCompatProvider.isThrottled(ch.remoteAddress()))
 								return;
-
-							System.out.println("providing 1.7 packets");
 							
 							ch.pipeline()
 
-							.addLast("old", new KickPacketWriter())
+							.addLast("kickwriter", new KickStringWriter())
 							.addLast("legacy", new CompatChecker())
 
 							.addLast("lengthdecoder", new Varint21FrameDecoder())
-							.addLast("decoder", new PacketDecoder(Protocol.HANDSHAKE))
+							.addLast("decoder", new PacketDecoder(ProtocolNew.HANDSHAKE))
 
 							.addLast("lengthencoder", new Varint21LengthFieldPrepender())
-							.addLast("encoder", new PacketEncoder(Protocol.HANDSHAKE))
+							.addLast("encoder", new PacketEncoder(ProtocolNew.HANDSHAKE))
 
 							.addLast("handler", new MinecraftHandler(server, false));
 						}

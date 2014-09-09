@@ -1,6 +1,6 @@
 package net.rush.util;
 
-import net.rush.packets.misc.ServerPing;
+import net.rush.protocol.utils.ServerPing;
 
 /**
  * Smart, easy and comfortable JSON handling without the need of an additional library.
@@ -20,13 +20,32 @@ public class JsonUtils {
 		return json;
 	}
 
-	public static String chatMessageToJson(String str) {
-		String json = "\"" + StringUtils.colorize(str.replace("%Rush", "&3Rush //&f")) + "\"";
-
+	public static String plainMessageToJson(String str) {
+		String json = "{\"text\":\"" + StringUtils.colorize(str.replace("%Rush", "&3Rush //&f")) + "\"}";
+		
+		return json;
+	}
+	
+	/*public static String chatMessageToJson(Message message) {
+		String 
+		json = "{";
+		
+		json+= "\"text\":\"" + message.text + "\",";
+		
+		json+= "\"bold\":\"" + message.bold + "\",";		
+		json+= "\"italic\":\"" + message.italic + "\",";
+		json+= "\"underlined\":\"" + message.underlined + "\",";
+		json+= "\"strikethrough\":\"" + message.strikethrough + "\",";
+		json+= "\"obfuscated\":\"" + message.obfuscated + "\",";
+		
+		json+= "\"color\":{\"code\":\"" + message.color.code + "\"" + "},";		
+		json+= "\"clickEvent\":{\"action\":" + message.clickEvent.action + ",\"value\":" + message.clickEvent.value + "}";
+				
+		json+= "}";
 		return json;
 	}
 
-	/*@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public static String serverPingToJson(ServerPing ping) {
 
 		JSONObject version = new JSONObject();		

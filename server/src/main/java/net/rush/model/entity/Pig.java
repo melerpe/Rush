@@ -2,7 +2,7 @@ package net.rush.model.entity;
 
 import net.rush.model.EntityAgeable;
 import net.rush.model.entity.ai.EntityAITest;
-import net.rush.util.Parameter;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
 import org.bukkit.entity.EntityType;
@@ -24,7 +24,7 @@ public class Pig extends EntityAgeable {
 	
 	public void setSaddle(boolean hasSadle) {
 		byte hasSadleByte = (byte) (hasSadle ? 1 : 0);
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 16, hasSadleByte));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 16, hasSadleByte));
 	}
 	
 	public boolean hasSadle() {

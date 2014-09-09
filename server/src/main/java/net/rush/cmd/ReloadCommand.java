@@ -1,8 +1,8 @@
 package net.rush.cmd;
 
-import org.bukkit.ChatColor;
-
 import net.rush.model.CommandSender;
+
+import org.bukkit.ChatColor;
 
 /**
  * Server reload command. Reloading some parts of the server.

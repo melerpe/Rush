@@ -1,49 +1,16 @@
 package net.rush.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.bukkit.Material;
 
+@Getter
+@Setter
 public class ItemStack {
 
-	public static final ItemStack NULL_ITEMSTACK = new ItemStack(-1, -1, -1) {
-		@Override
-		public int getId() {
-			throw new NullPointerException("You tried to use the legendary NULL-ItemStack!");
-		}
-
-		@Override
-		public int getCount() {
-			throw new NullPointerException("You tried to use the legendary NULL-ItemStack!");
-		}
-
-		@Override
-		public int getDamage() {
-			throw new NullPointerException("You tried to use the legendary NULL-ItemStack!");
-		}
-
-		@Override
-		public int getDataLength() {
-			throw new NullPointerException("You tried to use the legendary NULL-ItemStack!");
-		}
-
-		@Override
-		public byte[] getData() {
-			throw new NullPointerException("You tried to use the legendary NULL-ItemStack!");
-		}
-	};
-
-	/**
-	 * The ItemStack's id.
-	 */
 	public int id;
-
-	/**
-	 * The number of ItemStacks within the stack.
-	 */
 	public int count;
-
-	/**
-	 * The ItemStack's damage.
-	 */
 	public int damage;
 
 	/**
@@ -97,54 +64,6 @@ public class ItemStack {
 		this.damage = damage;
 		this.dataLength = dataLength;
 		this.data = data;
-	}
-
-	/**
-	 * Gets the id of this ItemStack.
-	 * @return The id.
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * Gets the number of ItemStacks on a stack, generally this is between 1 and 64.
-	 * @return The count of this ItemStack.
-	 */
-	public int getCount() {
-		return count;
-	}
-
-	/**
-	 * Gets the damage of this ItemStack.
-	 * @return The damage of this ItemStack.
-	 */
-	public int getDamage() {
-		return damage;
-	}
-
-	/**
-	 * Gets the length of NBT data byte array.
-	 * @return The length of NBT data byte array.
-	 */
-	public int getDataLength() {
-		return dataLength;
-	}
-
-	/**
-	 * Gets the NBT data byte array.
-	 * @return The NBT data byte array.
-	 */
-	public byte[] getData() {
-		return data;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public void setCount(int count) {
-		this.count = count;	
 	}
 
 	public boolean doMaterialsMatch(ItemStack is) {

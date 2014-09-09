@@ -11,8 +11,8 @@ import net.rush.model.ItemStack;
 import net.rush.model.Player;
 import net.rush.model.misc.Trade;
 import net.rush.model.misc.TradeList;
-import net.rush.packets.packet.PluginMessagePacket;
-import net.rush.util.Parameter;
+import net.rush.protocol.packets.PluginMessagePacket;
+import net.rush.protocol.utils.MetaParam;
 import net.rush.util.enums.InventoryEnum;
 import net.rush.util.enums.VillagerType;
 import net.rush.world.World;
@@ -42,7 +42,7 @@ public class Villager extends EntityAgeable {
 				DataOutputStream output = new DataOutputStream(arrayOutput);
 				
 				output.writeInt(pl.windowId);
-				trades.writeRecipesToStream(output);
+				trades.writeRecipesToStream(output, !pl.getSession().isCompat() && pl.getSession().getClientVersion().getProtocol() > 46);
 				
 				pl.getSession().send(new PluginMessagePacket("MC|TrList", arrayOutput.toByteArray()));
 				
@@ -68,7 +68,7 @@ public class Villager extends EntityAgeable {
 	// METADATA START
 	
 	public void setVillagerType(VillagerType type) {
-		setMetadata(new Parameter<Byte>(Parameter.TYPE_BYTE, 16, (byte)type.getType()));
+		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 16, (byte)type.getType()));
 	}
 	
 	public byte getVillagerType() {

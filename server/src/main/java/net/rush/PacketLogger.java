@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.rush.packets.Packet;
+import net.rush.protocol.Packet;
 
 public class PacketLogger {
 
@@ -40,7 +40,7 @@ public class PacketLogger {
 	}
 
 	private static void write(Packet packet, int protocol, boolean read) throws IOException {
-		if(!enabled || ignored.contains(packet.getPacketType().getSimpleName()))
+		if(!enabled || ignored.contains(packet.getClass().getSimpleName()))
 			return;
 		// Prevent too big file
 		if((file.length() / 1000) > 200)

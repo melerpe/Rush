@@ -1,10 +1,10 @@
 package net.rush.model;
 
-import net.rush.packets.Packet;
-import net.rush.packets.packet.EntityLookAndRelMovePacket;
-import net.rush.packets.packet.EntityLookPacket;
-import net.rush.packets.packet.EntityRelMovePacket;
-import net.rush.packets.packet.EntityTeleportPacket;
+import net.rush.protocol.Packet;
+import net.rush.protocol.packets.EntityLookAndRelMovePacket;
+import net.rush.protocol.packets.EntityLookPacket;
+import net.rush.protocol.packets.EntityRelMovePacket;
+import net.rush.protocol.packets.EntityTeleportPacket;
 import net.rush.task.WorldThreadAI;
 import net.rush.world.World;
 

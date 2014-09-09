@@ -67,7 +67,7 @@ public abstract class Inventory {
             short damage = (short) items[i].getDamage();
 
             for (int j = 0; toAdd > 0 && j < getSize(); ++j) {
-                if (slots[j] != null && slots[j] != ItemStack.NULL_ITEMSTACK && slots[j].getId() == mat && slots[j].getDamage() == damage) {
+                if (slots[j] != null && slots[j].getId() == mat && slots[j].getDamage() == damage) {
                     int space = maxStackSize - slots[j].getCount();
                     if (space < 0)
                         continue;
@@ -82,7 +82,7 @@ public abstract class Inventory {
 
             if (toAdd > 0) {
                 for (int j = 0; toAdd > 0 && j < getSize(); ++j) {
-                    if (slots[j] == null || slots[j] == ItemStack.NULL_ITEMSTACK || slots[j].getId() == 0) {
+                    if (slots[j] == null || slots[j].getId() == 0) {
                         int num = toAdd > maxStackSize ? maxStackSize : toAdd;
                         slots[j] = new ItemStack(mat, num, damage);
                         toAdd -= num;
@@ -107,7 +107,7 @@ public abstract class Inventory {
             short damage = (short) items[i].getDamage();
 
             for (int j = 0; j < getSize(); ++j) {
-                if (slots[j] != null && slots[j] != ItemStack.NULL_ITEMSTACK && slots[j].getId() == mat && slots[j].getDamage() == damage) {
+                if (slots[j] != null && slots[j].getId() == mat && slots[j].getDamage() == damage) {
                     
                 	if (slots[j].getCount() > toRemove)
                         slots[j].setCount(slots[j].getCount() - toRemove);
