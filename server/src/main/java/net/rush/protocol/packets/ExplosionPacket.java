@@ -16,6 +16,9 @@ import net.rush.protocol.Packet;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
+/**
+ * @deprecated Explosion Packet Only Tested On 1.6.4
+ */
 public class ExplosionPacket extends Packet {
 
 	private double x;
