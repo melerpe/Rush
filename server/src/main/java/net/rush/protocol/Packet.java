@@ -163,11 +163,10 @@ public abstract class Packet extends PacketUtils {
 	}
 
 	protected void compat_writePosition18(int x, int y, int z, ByteBuf out) {
-		if (protocol < 16) {
+		if (protocol < 16)
 			writePositionYShort(x, y, z, out);
-		} else {
+		else 
 			writePosition18(out, x, y, z);
-		}
 	}
 
 	/* TODO (low priority)
@@ -184,7 +183,6 @@ public abstract class Packet extends PacketUtils {
 	  PacketPlayOutMultiBlockChangen
 	  PacketPlayOutOpenWindow
 	  PacketPlayOutPlayerInfo
-	  PlayerListItem - rewrite
 	 */
 
 	static {

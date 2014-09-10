@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.rush.chunk.Chunk;
 import net.rush.protocol.Packet;
-import net.rush.util.BlockDebreakifier;
 
 @Data
 @NoArgsConstructor
@@ -28,14 +27,14 @@ public class MapChunkPacket extends Packet {
 	 */
 	private Chunk ch;
 
-	public MapChunkPacket(Chunk ch, int x, int z, boolean groundUpContinuous, int primaryBitMap, int addBitMap) {
+	public MapChunkPacket(Chunk ch) {
 		super();
 		this.ch = ch;
-		this.x = x;
-		this.z = z;
-		this.groundUpContinuous = groundUpContinuous;
-		this.primaryBitMap = primaryBitMap;
-		this.addBitMap = addBitMap;
+		this.x = ch.getX();
+		this.z = ch.getZ();
+		this.groundUpContinuous = true;
+		this.primaryBitMap = 0xFFFF;
+		this.addBitMap = 0;
 		this.compressedChunkData = ch.serializeTileData(compat, protocol);
 	}
 

@@ -55,6 +55,7 @@ import net.rush.util.enums.Dimension;
 import net.rush.world.World;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Difficulty;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -76,7 +77,7 @@ public class PacketHandler {
 	}
 	
 	public <T extends Packet> void handle(Session session, Player player, ServerListPingPacket packet) {
-		Object[] infos = { 1, 78, "1.6.4", session.getServer().getProperties().motd, session.getServer().getWorld().getPlayers().size(), session.getServer().getProperties().maxPlayers };
+		/*Object[] infos = { 1, 78, "1.6.4", session.getServer().getProperties().motd, session.getServer().getWorld().getPlayers().size(), session.getServer().getProperties().maxPlayers };
 		StringBuilder builder = new StringBuilder();
 		
 		for (Object info : infos) {
@@ -86,17 +87,14 @@ public class PacketHandler {
 				builder.append('\0');
 				
 			builder.append(info.toString().replace("\0", ""));
-		}
-
-		//session.send(new KickPacket(builder.toString()));
-		/*String kickMessage = ChatColor.DARK_BLUE
+		}*/
+		String kickMessage = ChatColor.DARK_BLUE
 				+ "\00" + 78
 				+ "\00" + "1.6.4"
 				+ "\00" + session.getServer().getProperties().motd
 				+ "\00" + session.getServer().getWorld().getPlayers().size()
-				+ "\00" + session.getServer().getProperties().maxPlayers;*/
-		
-		session.disconnect(builder.toString());
+				+ "\00" + session.getServer().getProperties().maxPlayers;		
+		session.send(new KickPacket(kickMessage, false));
 	}
 	
 	public void handle(Session session, Player player, KeepAlivePacket packet) {
@@ -110,10 +108,10 @@ public class PacketHandler {
 	
 	public void handle(Session session, Player player, HandshakePacket message) {
 		// 1.7 clients are not logging in that way
-		if (!session.isCompat()) {
-			session.setClientVersion(message.getProtocolVer());
+		session.setClientVersion(message.getProtocolVer());
+		
+		if (!session.isCompat())
 			return;
-		}
 		
 		if(message.getProtocolVer() < 78) {
 			//session.disconnect("Outdated client! (Connect with 1.6.4)");
@@ -132,7 +130,7 @@ public class PacketHandler {
 				new ThreadLoginVerifier(session, message).start();
 			} else {
 				ServerProperties prop = session.getServer().getProperties();
-				session.send(new LoginPacket(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, prop.difficulty, prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
+				session.send(new LoginPacket(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, Difficulty.getByValue(prop.difficulty), prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
 				session.setPlayer(new Player(session, message.getUsername()));
 			}
 
@@ -282,7 +280,7 @@ public class PacketHandler {
 			return;
 
 		player.setRotation(message.getYaw(), message.getPitch());
-		session.getServer().broadcastPacket(new EntityHeadLookPacket(player.getId(), (byte) player.getRotation().getIntYaw()));
+		session.getServer().broadcastPacketExcept(new EntityHeadLookPacket(player.getId(), (byte) player.getRotation().getIntYaw()), player);
 	}
 	
 	public void handle(Session session, Player player, Packet17LoginRequest message) {
@@ -295,7 +293,7 @@ public class PacketHandler {
 		session.send(new Packet17LoginSuccess("0-0-0-0-0", message.name));
 		
 		ServerProperties prop = session.getServer().getProperties();
-		session.send(new LoginPacket(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, prop.difficulty, prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
+		session.send(new LoginPacket(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, Difficulty.getByValue(prop.difficulty), prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
 		session.setPlayer(new Player(session, message.name));
 	}
 	
@@ -316,7 +314,7 @@ public class PacketHandler {
 		player.setPosition(message.getX(), message.getYOrStance(), message.getZ());
 		player.setRotation(message.getYaw(), message.getPitch());
 		
-		session.getServer().broadcastPacket(new EntityHeadLookPacket(player.getId(), (byte) player.getRotation().getIntYaw()));
+		session.getServer().broadcastPacketExcept(new EntityHeadLookPacket(player.getId(), (byte) player.getRotation().getIntYaw()), player);
 	}
 	
 	public void handle(Session session, Player player, PlayerPositionPacket message) {

@@ -29,7 +29,7 @@ public class SpawnPaintingPacket extends Packet {
 			out.writeInt(entityId);
 		else
 			writeVarInt(entityId, out);
-		writeString(title, out, false);
+		writeString(title, out, compat);
 		writePositionAllIntegers(x, y, z, out);
 		out.writeInt(direction);
 	}

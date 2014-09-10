@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.rush.protocol.Packet;
 import net.rush.util.JsonUtils;
+import net.rush.util.StringUtils;
 
 @Data
 @AllArgsConstructor
@@ -25,8 +26,8 @@ public class ChatPacket extends Packet {
 	}
 
 	@Override
-	public void write(ByteBuf output) throws IOException {
-		writeString(JsonUtils.plainMessageToJson(message), output, compat);		
+	public void write(ByteBuf output) throws IOException {		
+		writeString(compat && protocol < 78 ? StringUtils.colorize(message.replace("%Rush", "&3Rush //&f")) : JsonUtils.plainMessageToJson(message), output, compat);		
 		if (!compat && protocol > 15)
 			output.writeByte(0);		
 	}

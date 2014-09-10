@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import net.rush.protocol.Packet;
 import net.rush.util.enums.Dimension;
 
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 
 @Data
@@ -21,9 +22,9 @@ public class LoginPacket extends Packet {
 
 	private int entityId;
 	private String worldType;
-	private GameMode mode;
+	private GameMode gameMode;
 	private Dimension dimension;
-	private int difficulty;
+	private Difficulty difficulty;
 	private int worldHeight;
 	private int maxPlayers;
 
@@ -34,9 +35,9 @@ public class LoginPacket extends Packet {
 	public void writeCompat(ByteBuf out) throws IOException {
 		out.writeInt(entityId);
 		writeString(worldType, out, true);
-		out.writeByte(mode.getValue());
+		out.writeByte(gameMode.getValue());
 		out.writeByte(dimension.getValue());
-		out.writeByte(difficulty);
+		out.writeByte(difficulty.getValue());
 		out.writeByte(worldHeight);
 		out.writeByte(maxPlayers);
 	}
@@ -44,7 +45,7 @@ public class LoginPacket extends Packet {
 	@Override
 	public void write(ByteBuf out) throws IOException {
 		out.writeInt(entityId);
-		int gamemode = mode.getValue();
+		int gamemode = gameMode.getValue();
 
 		if (hardcore)
 			gamemode |= 8;
@@ -52,7 +53,7 @@ public class LoginPacket extends Packet {
 		out.writeByte(gamemode);
 
 		out.writeByte(dimension.getValue());
-		out.writeByte(difficulty);
+		out.writeByte(difficulty.getValue());
 		out.writeByte(maxPlayers);
 		writeString(worldType == null ? "" : worldType, out, false);
 		

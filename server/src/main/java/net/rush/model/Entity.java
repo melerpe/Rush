@@ -157,7 +157,7 @@ public abstract class Entity {
 		if(metadataChanged) {
 			EntityMetadataPacket message = new EntityMetadataPacket(id, metadata.clone());
 			for (Player player : world.getPlayers()) {
-				if (player != this) {
+				if (player.getId() != this.getId()) {
 					player.getSession().send(message);
 					player.sendMessage("&cRecieved metadata of " + entityType.toString() + " (id " + id + ") @ " + position.toString());
 				}

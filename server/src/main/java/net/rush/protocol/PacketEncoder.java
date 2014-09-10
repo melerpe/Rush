@@ -22,8 +22,6 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) throws Exception {		
-		String p = packet.getClass().getSimpleName();
-		
 		try {
 			int clientProtocol = ctx.pipeline().get(MinecraftHandler.class).session.getClientVersion().getProtocol();
 
@@ -31,9 +29,6 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
 			packet.setProtocol(clientProtocol);
 			packet.write(out);
-			
-			if(!p.contains("Map"))
-				System.out.println("Now Writing Packet ID " + packet);
 
 			if (packet instanceof Packet17LoginSuccess)
 				setProtocol(ctx, ProtocolNew.GAME);

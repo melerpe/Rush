@@ -33,7 +33,7 @@ public class PlayerRespawnPacket extends Packet {
 			difficulty = (byte)in.readUnsignedByte();
 			gameMode = (byte)in.readUnsignedByte();
 		}
-		levelType = readString(in, 65000, false);
+		levelType = readString(in, 65000, compat);
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class PlayerRespawnPacket extends Packet {
 		out.writeByte(gameMode);
 		if(compat)
 			out.writeShort(worldHeight);
-		writeString(levelType, out, false);
+		writeString(levelType, out, compat);
 	}
 
 }

@@ -18,10 +18,6 @@ import net.rush.util.JsonUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-/**
- * @deprecated not working with 1.8, needs rewrite
- */
-@Deprecated
 public class PlayerListItemPacket extends Packet {
 
 	private String playerName;

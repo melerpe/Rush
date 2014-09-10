@@ -201,7 +201,7 @@ public final class Chunk {
 	 * @return The {@link MapChunkPacket}.
 	 */
 	public Packet toMessage() {
-		return new MapChunkPacket(this, coords.x, coords.z, true, 0xFFFF, 0);
+		return new MapChunkPacket(this);
 		//return new MapChunkPacketImpl(x * Chunk.WIDTH, z * Chunk.HEIGHT, 0, WIDTH, HEIGHT, DEPTH, serializeTileData());
 	}
 
@@ -324,7 +324,7 @@ public final class Chunk {
 		if (pos != data.length)
 			throw new IllegalStateException("Illegal Pos: " + pos + " vs " + data.length);
 
-		if(compat || protocol < 22) {
+		//if(compat || protocol < 22) {
 			// we are done, now compress it
 			Deflater deflater = new Deflater(Deflater.BEST_SPEED);
 			deflater.setInput(data);
@@ -340,8 +340,8 @@ public final class Chunk {
 			for (int i = 0; i < length; i++)
 				realCompressed[i] = compressed[i];
 			return realCompressed;
-		}
-		return data;
+		//}
+		//return data;
 	}
 }
 

@@ -13,6 +13,8 @@ import net.rush.Server;
 import net.rush.model.Player;
 import net.rush.protocol.packets.KeepAlivePacket;
 import net.rush.protocol.packets.KickPacket;
+import net.rush.protocol.packets.LoginPacket;
+import net.rush.protocol.utils.ClientVersion;
 
 /**
  * A single connection to the server, which may or may not be associated with a
@@ -146,6 +148,13 @@ public final class Session {
 	}
 
 	/**
+	 * @deprecated all methods together to addPlayer()
+	 */
+	public void send(LoginPacket packet) {
+		channel.writeAndFlush(packet);
+	}
+	
+	/**
 	 * Disconnects the session with the specified reason. This causes a
 	 * {@link KickPacket} to be sent. When it has been delivered, the channel
 	 * is closed.
@@ -208,46 +217,6 @@ public final class Session {
 
 	public void setClientVersion(int protocol) {
 		this.clientVersion = new ClientVersion(protocol);
-	}
-
-	@Getter
-	public static class ClientVersion {
-		private final int protocol;
-		private final String version;
-		
-		public ClientVersion(int protocol) {
-			super();
-			this.protocol = protocol;
-			this.version = getVersion(protocol);
-		}
-
-		public static String getVersion(int protocol) {
-			switch (protocol) {
-			case 29: 
-				return "O_1.2.5";
-			case 39:
-				return "O_1.3.9";
-			case 51:
-				return "O_1.4.7";
-			case 61:
-				return "O_1.5.2";
-			case 78:
-				return "1.6.4";
-			case 4:
-				return "1.7.2-5";
-			case 5:
-				return "1.7.6-10";
-			case 47:
-				return "1.8";
-			default:
-				throw new NullPointerException("Unsupported protocol (" + protocol + ")");
-			}
-		}
-
-		@Override
-		public String toString() {
-			return "ver=" + version + ",protocol=" + protocol;
-		}
 	}
 }
 

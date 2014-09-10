@@ -18,7 +18,7 @@ import net.rush.util.StringUtils;
 @EqualsAndHashCode(callSuper=false)
 public class KickPacket extends Packet {
 	
-	private String reason;	
+	private String reason;
 	private boolean jsonize = false;
 
 	/**
@@ -29,6 +29,11 @@ public class KickPacket extends Packet {
 		
 		if(!compat || (compat && protocol == 78))
 			jsonize = true;
+	}
+	
+	public KickPacket(String reason, boolean jsonize) {
+		this.reason = StringUtils.colorize(reason);
+		this.jsonize = jsonize;
 	}
 	
 	public KickPacket(ServerPing ping) {

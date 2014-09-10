@@ -86,6 +86,8 @@ public class PacketUtils {
 
 			int type = (parameter.getType() << 5 | parameter.getIndex() & 31) & 255;
 			out.writeByte(type);
+			
+			System.out.println("Writing Meta Of Type: " +parameter.getType());
 
 			switch (parameter.getType()) {
 			case MetaParam.TYPE_BYTE:

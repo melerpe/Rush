@@ -38,10 +38,10 @@ public class UpdateSignPacket extends Packet {
 			z = pos.integerZ();
 		}
 
-		line1 = readString(input, 16, false);
-		line2 = readString(input, 16, false);
-		line3 = readString(input, 16, false);
-		line4 = readString(input, 16, false);
+		line1 = readString(input, 16, compat);
+		line2 = readString(input, 16, compat);
+		line3 = readString(input, 16, compat);
+		line4 = readString(input, 16, compat);
 	}
 
 	@Override
@@ -55,9 +55,9 @@ public class UpdateSignPacket extends Packet {
 			output.writeInt(z);
 		} else
 			writePosition18(output, x, y, z);
-		writeString(line1, output, false);
-		writeString(line2, output, false);
-		writeString(line3, output, false);
-		writeString(line4, output, false);
+		writeString(line1, output, compat);
+		writeString(line2, output, compat);
+		writeString(line3, output, compat);
+		writeString(line4, output, compat);
 	}
 }

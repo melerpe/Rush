@@ -145,7 +145,7 @@ public final class Server {
 
 		Runtime.getRuntime().addShutdownHook(new ServerShutdownHandler());
 
-		byte radius = 5;
+		byte radius = 7;
 		for (int x = -radius; x <= radius; ++x) {
 			logger.info("Preparing spawn area: " + (x + radius) * 100 / (radius + radius + 1) + "%");
 
@@ -230,9 +230,12 @@ public final class Server {
 			logger.info(msg);
 	}
 
-	public void broadcastPacket(Packet packet) {
-		for(Player pl : getWorld().getPlayers())
+	public void broadcastPacketExcept(Packet packet, Player except) {
+		for(Player pl : getWorld().getPlayers()) {
+			if(pl.getName().equals(except.getName()))
+				continue;
 			pl.getSession().send(packet);
+		}
 	}
 
 	public boolean isPrimaryThread() {

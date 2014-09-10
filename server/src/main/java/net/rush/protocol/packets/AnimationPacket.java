@@ -58,7 +58,7 @@ public class AnimationPacket extends Packet {
 	}
 
 	@Override
-	public void read(ByteBuf in) throws IOException {
+	public void read(ByteBuf in) throws IOException {		
 		if (protocol < 16) {
 			entityId = in.readInt();
 			animation = AnimType.fromId(in.readByte());

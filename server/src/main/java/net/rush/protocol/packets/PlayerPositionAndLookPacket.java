@@ -41,14 +41,13 @@ public class PlayerPositionAndLookPacket extends Packet {
 	}
 
 	@Override
-	public void write(ByteBuf output) throws IOException {
-		System.out.println("PlayerPositionAndLook Tested Only On 1.6.4");
-		output.writeDouble(this.x);
-		output.writeDouble(this.yOrStance); //feet height ??
-		//output.writeDouble(1.62D); // head height ??
-		output.writeDouble(this.z);
-		output.writeFloat(this.yaw);
-		output.writeFloat(this.pitch);
-		output.writeBoolean(this.onGround);
+	public void writeCompat(ByteBuf output) throws IOException {
+		output.writeDouble(x);
+		output.writeDouble(yOrStance); //feet height ??
+		output.writeDouble(stanceOrY); // head height ??
+		output.writeDouble(z);
+		output.writeFloat(yaw);
+		output.writeFloat(pitch);
+		output.writeBoolean(onGround);
 	}
 }

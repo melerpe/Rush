@@ -31,7 +31,7 @@ public class OpenWindowPacket extends Packet {
 	public void read(ByteBuf input) throws IOException {
 		windowId = (byte) (compat ? input.readByte() : input.readUnsignedByte());
 		inventoryType = (byte) (compat ? input.readByte() : input.readUnsignedByte());
-		windowTitle = readString(input, 33, false);
+		windowTitle = readString(input, 33, compat);
 		numberOfSlots = (byte) (compat ? input.readByte() : input.readUnsignedByte());
 		useProvidedWindowTitle = input.readBoolean();
 		
@@ -43,7 +43,7 @@ public class OpenWindowPacket extends Packet {
 	public void write(ByteBuf output) throws IOException {
 		output.writeByte(windowId);
 		output.writeByte(inventoryType);
-		writeString(windowTitle, output, false);
+		writeString(windowTitle, output, compat);
 		output.writeByte(numberOfSlots);
 		output.writeBoolean(useProvidedWindowTitle);
 		

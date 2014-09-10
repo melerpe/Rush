@@ -42,7 +42,7 @@ public class NamedSoundEffectPacket extends Packet {
 	
 	@Override
 	public void write(ByteBuf out) throws IOException {
-		writeString(soundName, out, false);
+		writeString(soundName, out, compat);
 		writePositionAllIntegers(x, y, z, out);
 		out.writeFloat(volume);
 		out.writeByte(pitch);

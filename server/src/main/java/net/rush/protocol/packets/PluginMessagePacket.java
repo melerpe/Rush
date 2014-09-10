@@ -31,7 +31,7 @@ public class PluginMessagePacket extends Packet {
 		else
 			data = new byte[in.readableBytes()];
 
-		byte[] bytes = new byte[in.readableBytes()];
+		byte[] bytes = new byte[data.length];
 		in.readBytes(bytes);
 		data = bytes;
 	}
