@@ -12,7 +12,7 @@ import net.rush.protocol.PacketDecoder;
 import org.bukkit.ChatColor;
 
 /**
- * Checker whenever the client is 1.6 or 1.7.
+ * Checks the client version according to the ServerListPing and/or plugin message packet.
  */
 public class CompatChecker extends ByteToMessageDecoder {
 
@@ -27,7 +27,7 @@ public class CompatChecker extends ByteToMessageDecoder {
 			if(b1 == 254 && b2 == 1) {
 				LegacyCompatProvider.provideCompatFor(ctx.channel().remoteAddress());
 				String kickMessage = ChatColor.DARK_BLUE 
-						+ "\00" + 78
+						+ "\00" + 61
 						+ "\00" + "1.6.4-1.7.5" 
 						+ "\00" + "Detected 1.5.x client!"
 						+ "\00" + Server.getServer().getWorld().getPlayers().size()
@@ -45,7 +45,7 @@ public class CompatChecker extends ByteToMessageDecoder {
 			if(b1 == 254) {
 				// TODO can't just throttle outdated MC
 				LegacyCompatProvider.throttle(ctx.channel().remoteAddress());
-				String kickMessage = "Detected 1.3.x client!" 
+				String kickMessage = "1.3x clients and older dont works!" 
 				+ "\u00A7" + Server.getServer().getWorld().getPlayers().size() 
 				+ "\u00A7"	+ Server.getServer().getProperties().maxPlayers;
 

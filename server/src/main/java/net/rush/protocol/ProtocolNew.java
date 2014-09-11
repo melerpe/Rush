@@ -48,6 +48,7 @@ import net.rush.protocol.packets.Packet17LoginRequest;
 import net.rush.protocol.packets.Packet17LoginSuccess;
 import net.rush.protocol.packets.Packet17StatusRequest;
 import net.rush.protocol.packets.Packet18LoginCompression;
+import net.rush.protocol.packets.Packet18Title;
 import net.rush.protocol.packets.PingTime;
 import net.rush.protocol.packets.PlayerAbilitiesPacket;
 import net.rush.protocol.packets.PlayerBlockPlacementPacket;
@@ -157,6 +158,9 @@ public enum ProtocolNew {
 			//TO_CLIENT.registerPacket(0x3E, Packet209SetScoreboardTeam.class);
 			TO_CLIENT.registerPacket(0x3F, PluginMessagePacket.class);
 			TO_CLIENT.registerPacket(0x40, KickPacket.class);
+			
+			// 1.8
+			TO_CLIENT.registerPacket(0x45, Packet18Title.class);
 
 			TO_SERVER.registerPacket(0x00, KeepAlivePacket.class);
 			TO_SERVER.registerPacket(0x01, ChatPacket.class);
@@ -202,7 +206,7 @@ public enum ProtocolNew {
 			TO_CLIENT.registerPacket(0x01, EncryptionKeyRequestPacket.class);
 			TO_CLIENT.registerPacket(0x02, Packet17LoginSuccess.class);
 			
-			// FIXME 1.8 TODO
+			// 1.8
 			TO_CLIENT.registerPacket(0x3, Packet18LoginCompression.class);
 
 			TO_SERVER.registerPacket(0x00, Packet17LoginRequest.class);

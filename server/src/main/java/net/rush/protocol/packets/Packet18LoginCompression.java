@@ -21,7 +21,7 @@ public class Packet18LoginCompression extends Packet {
 	private int threshold;
 
 	@Override
-	public void write(ByteBuf output) throws IOException {
-		writeByteInteger(output, threshold);
+	public void write(ByteBuf out) throws IOException {
+		writeByteInteger(out, threshold);
 	}
 }

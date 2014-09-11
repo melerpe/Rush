@@ -21,6 +21,8 @@ import net.rush.protocol.packets.EntityEquipmentPacket;
 import net.rush.protocol.packets.NamedEntitySpawnPacket;
 import net.rush.protocol.packets.NamedSoundEffectPacket;
 import net.rush.protocol.packets.OpenWindowPacket;
+import net.rush.protocol.packets.Packet18Title;
+import net.rush.protocol.packets.Packet18Title.TitleAction;
 import net.rush.protocol.packets.PlayerListItemPacket;
 import net.rush.protocol.packets.PlayerPositionAndLookPacket;
 import net.rush.protocol.packets.SetSlotPacket;
@@ -474,6 +476,20 @@ public final class Player extends LivingEntity implements CommandSender {
 			setHealth(health + 1);
 			getSession().send(new UpdateHealthPacket(health, (short)food, saturation));
 		}
+	}
+	
+	public void setTitle(TitleAction action, String text) {
+		if(!session.isCompat() && session.getClientVersion().getProtocol() > 46) {
+			session.send(new Packet18Title(action, text));
+		} else
+			throw new IllegalStateException("Title can only be displayed on 1.8 client, but " + getName() + " is running " + session.getClientVersion().getVersion());
+	}
+	
+	public void setTitle(TitleAction action, int fadeIn, int stay, int fadeOut) {
+		if(!session.isCompat() && session.getClientVersion().getProtocol() > 46) {
+			session.send(new Packet18Title(action, fadeIn, stay, fadeOut));
+		} else
+			throw new IllegalStateException("Title can only be displayed on 1.8 client, but " + getName() + " is running " + session.getClientVersion().getVersion());
 	}
 }
 

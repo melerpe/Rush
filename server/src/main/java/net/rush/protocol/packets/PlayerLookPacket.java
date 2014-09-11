@@ -26,12 +26,4 @@ public class PlayerLookPacket extends Packet {
 		pitch = input.readFloat();
 		onGround = input.readBoolean();
 	}
-	
-	@Override
-	public void write(ByteBuf output) throws IOException {
-		output.writeFloat(yaw);
-		output.writeFloat(pitch);
-		output.writeBoolean(onGround);
-	}
-
 }

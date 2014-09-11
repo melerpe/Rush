@@ -42,6 +42,7 @@ public final class CommandManager {
 		bind(new RemoveCommand());
 		bind(new GiveCommand());
 		bind(new ClearCommand());
+		bind(new TitleCommand());
 	}
 
 	/**

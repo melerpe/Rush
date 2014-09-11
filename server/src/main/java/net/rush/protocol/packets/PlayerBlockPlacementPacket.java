@@ -32,9 +32,9 @@ public class PlayerBlockPlacementPacket extends Packet {
 		if (compat || protocol < 16) {
 			x = in.readInt();
 			if(compat)
-				y = in.readByte();
-			else
 				y = (byte) in.readUnsignedByte();
+			else
+				y = in.readByte();
 			z = in.readInt();
 		} else {
 			Position pos = readPosition18(in);

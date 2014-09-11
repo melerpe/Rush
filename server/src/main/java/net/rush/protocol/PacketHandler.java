@@ -88,9 +88,10 @@ public class PacketHandler {
 				
 			builder.append(info.toString().replace("\0", ""));
 		}*/
+		
 		String kickMessage = ChatColor.DARK_BLUE
 				+ "\00" + 78
-				+ "\00" + "1.6.4"
+				+ "\00" + "1.5.2-1.6.4"
 				+ "\00" + session.getServer().getProperties().motd
 				+ "\00" + session.getServer().getWorld().getPlayers().size()
 				+ "\00" + session.getServer().getProperties().maxPlayers;		

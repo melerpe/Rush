@@ -4,8 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 
 import net.rush.Server;
