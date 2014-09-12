@@ -14,7 +14,7 @@ import net.rush.protocol.Packet;
 @EqualsAndHashCode(callSuper=false)
 @Deprecated
 /**
- * @deprecated not working
+ * @deprecated not updated nor tested
  */
 public class PreChunkPacket extends Packet {
 

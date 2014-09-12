@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 
+import net.rush.util.MathHelper;
 import net.rush.util.StringUtils;
 
 public class ServerProperties {
@@ -49,7 +50,6 @@ public class ServerProperties {
 	public int viewDistance;
 	public boolean debug;
 	public String motd;
-
 	public String favicon;
 
 	private final Properties prop = new Properties();
@@ -98,9 +98,9 @@ public class ServerProperties {
 		onlineMode = getOnlineMode();
 		resourcePack = getString("resource-pack", "");
 		pvp = getBoolean("pvp", true);
-		difficulty = getDifficulty();
+		difficulty = getDifficulty("difficulty");
 		enableCmdBlock = getBoolean("enable-command-block", false);
-		gamemode = getGamemode(); // TODO
+		gamemode = getGamemode("gamemode");
 		idleTimeout = getInt("player-idle-timeout", 0);
 		maxPlayers = getInt("max-players", 20);
 		spawnMonsters = getBoolean("spawn-monsters", true);
@@ -128,6 +128,7 @@ public class ServerProperties {
 	private boolean getOnlineMode() {
 		boolean online = getBoolean("online-mode", true);
 		if(online) {
+			// TODO
 			logger.warning("* ! * ! * ! * ! * ! * ! * ! * ! *");
 			logger.warning("Online mode currently unavailable");
 			set("online-mode", false);
@@ -136,19 +137,15 @@ public class ServerProperties {
 		return online;
 	}
 
-	private int getDifficulty() {
-		int diff = getInt("difficulty", 1);
-		if(diff < 1)
-			diff = 1;
-		else if (diff > 3)
-			diff = 3;
+	private int getDifficulty(String path) {
+		int diff = getInt(path, 1);
+		diff = MathHelper.getValueInBounds(diff, 1, 3);
 		return diff;
 	}
 
-	private int getGamemode() {
-		int gm = getInt("gamemode", 0);
-		if(gm > 2) // FIXME Spectator mode in MC 1.8.
-			gm = 2;
+	private int getGamemode(String path) {
+		int gm = getInt(path, 0);
+		gm = MathHelper.getValueInBounds(gm, 0, 2);
 		return gm;
 	}
 

@@ -119,7 +119,6 @@ public class PlayerInventory extends Inventory {
 
 		if(onlyDamage) {
 			if(item != null && item instanceof ItemTool) {
-
 				if (hand.getDamage() >= item.getMaxDamage()) {
 					setItemInHand(new ItemStack(0, 0));
 					pl.playSound(Sound.ITEM_BREAK, pl.getPosition());
@@ -127,7 +126,6 @@ public class PlayerInventory extends Inventory {
 					hand.damage++;
 					setItemInHand(hand);
 				}
-				return;	
 			}
 		} else {
 			if(hand.getCount() > 1) {

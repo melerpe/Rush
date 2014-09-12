@@ -1,5 +1,8 @@
 package net.rush.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * An immutable class which represents a rotation in the in-game world.
 
@@ -14,6 +17,8 @@ public final class Rotation {
 	/**
 	 * The components of this rotation.
 	 */
+	@Getter
+	@Setter
 	private double yaw, pitch, roll;
 
 	/**
@@ -34,42 +39,6 @@ public final class Rotation {
 	public Rotation(double yaw, double pitch, int roll) {
 		this.yaw = yaw;
 		this.pitch = pitch;
-		this.roll = roll;
-	}
-
-	/**
-	 * Gets the yaw.
-	 * @return The yaw.
-	 */
-	public double getYaw() {
-		return yaw;
-	}
-
-	/**
-	 * Gets the pitch.
-	 * @return The pitch.
-	 */
-	public double getPitch() {
-		return pitch;
-	}
-
-	/**
-	 * Gets the roll.
-	 * @return The roll.
-	 */
-	public double getRoll() {
-		return roll;
-	}
-	
-	public void setYaw(double yaw) {
-		this.yaw = yaw;
-	}
-	
-	public void setPitch(double pitch) {
-		this.pitch = pitch;
-	}
-	
-	public void setRoll(double roll) {
 		this.roll = roll;
 	}
 

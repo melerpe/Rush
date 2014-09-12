@@ -69,7 +69,7 @@ public final class Server {
 	/** The {@link ServerBootstrap} used to initialize Netty. */
 	private final ServerBootstrap bootstrap = new ServerBootstrap();
 
-	private final EventLoopGroup eventGroup = new NioEventLoopGroup(4/*, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread - %1$d").build()*/); // TODO configurable
+	private final EventLoopGroup eventGroup = new NioEventLoopGroup(4); // TODO configurable
 
 	/** A list of all the active {@link Session}s. */
 	private final SessionRegistry sessions = new SessionRegistry();
@@ -163,42 +163,24 @@ public final class Server {
 		logger.info("Ready for connections. (Took " + NumberUtils.msToSeconds(System.currentTimeMillis() - initialTime) + "s !)");
 	}
 
-	/**
-	 * Gets the session registry.
-	 * @return The {@link SessionRegistry}.
-	 */
 	public SessionRegistry getSessionRegistry() {
 		return sessions;
 	}
 
-	/**
-	 * Gets the task scheduler.
-	 * @return The {@link TaskScheduler}.
-	 */
 	public TaskScheduler getScheduler() {
 		return scheduler;
 	}
 
-	/**
-	 * Gets the command manager.
-	 * @return The {@link CommandManager}.
-	 */
 	public CommandManager getCommandManager() {
 		return commandManager;
 	}
 
-	/**
-	 * Gets the world this server manages.
-	 * @return The {@link World} this server manages.
-	 */
 	public World getWorld() {
 		return world;
 	}
 
 	/**
 	 * Broadcasts a message to every player.
-	 * 
-	 * @param text The message text.
 	 */
 	public void broadcastMessage(String text) {
 		for (Player player : getWorld().getPlayers())
@@ -242,17 +224,6 @@ public final class Server {
 		return scheduler.isPrimaryThread();
 	}
 
-	/**
-	 * A {@link Runnable} which saves chunks on shutdown.
-	 */
-	private class ServerShutdownHandler extends Thread {
-
-		@Override
-		public void run() {
-			stopServer();
-		}
-	}
-
 	public void stopServer() {
 		isRunning = false;
 
@@ -274,6 +245,17 @@ public final class Server {
 		getProperties().reload();
 	}
 
+	/**
+	 * A {@link Thread} which saves chunks on server shutdown.
+	 */
+	private class ServerShutdownHandler extends Thread {
+
+		@Override
+		public void run() {
+			stopServer();
+		}
+	}
+	
 	private class NettyNetworkThread extends Thread {
 
 		@Override

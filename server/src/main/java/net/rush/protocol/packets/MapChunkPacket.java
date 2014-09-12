@@ -20,7 +20,6 @@ public class MapChunkPacket extends Packet {
 	private boolean groundUpContinuous;
 	private int primaryBitMap;
 	private int addBitMap;
-	private byte[] compressedChunkData;
 
 	/**
 	 * @deprecated broken on 1.8
@@ -35,7 +34,6 @@ public class MapChunkPacket extends Packet {
 		this.groundUpContinuous = true;
 		this.primaryBitMap = 0xFFFF;
 		this.addBitMap = 0;
-		this.compressedChunkData = ch.serializeTileData(compat, protocol);
 	}
 
 	@Override
@@ -44,14 +42,16 @@ public class MapChunkPacket extends Packet {
 		output.writeInt(z);
 		output.writeBoolean(groundUpContinuous);
 		output.writeShort(primaryBitMap);
+		
+		byte[] chunkData = ch.serializeTileData(compat, protocol);
 
 		if (compat || protocol < 27) {
 			output.writeShort(addBitMap);
-			output.writeInt(compressedChunkData.length);
-			output.writeBytes(compressedChunkData);
+			output.writeInt(chunkData.length);
+			output.writeBytes(chunkData);
 		} else {
-			writeVarInt(compressedChunkData.length, output);
-			output.writeBytes(compressedChunkData);
+			writeVarInt(chunkData.length, output);
+			output.writeBytes(chunkData);
 		}
 	}
 }

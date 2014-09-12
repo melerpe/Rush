@@ -1,17 +1,12 @@
 package net.rush.chunk;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 import java.util.zip.Deflater;
 
-import net.rush.Server;
 import net.rush.model.Block;
 import net.rush.model.Material;
-import net.rush.model.Position;
 import net.rush.protocol.Packet;
 import net.rush.protocol.packets.MapChunkPacket;
-import net.rush.world.World;
+import net.rush.util.BlockDebreakifier;
 
 /**
  * Represents a chunk of the map.
@@ -34,19 +29,17 @@ public final class Chunk {
 	 */
 	public final byte[] types, metaData, skyLight, blockLight;
 
-	//@SuppressWarnings("unchecked")
-	//private Set<Entity>[] entities = new TreeSet[DEPTH / 16];
-
-	public Chunk(ChunkCoords coords) {
-		this(coords, new byte[SIZE]);
-	}
-
 	public boolean terrainPopulated = false;
 
 	/**
 	 * Creates a new chunk with a specified X and Z coordinate.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
+	 */
+	public Chunk(ChunkCoords coords) {
+		this(coords, new byte[SIZE]);
+	}
+
+	/**
+	 * Creates a new chunk with a specified X and Z coordinate and provided block array.
 	 */
 	public Chunk(ChunkCoords coords, byte[] types) {
 		this.coords = coords;
@@ -61,7 +54,6 @@ public final class Chunk {
 
 	/**
 	 * Gets the X coordinate of this chunk.
-	 * @return The X coordinate of this chunk.
 	 */
 	public int getX() {
 		return coords.x;
@@ -69,7 +61,6 @@ public final class Chunk {
 
 	/**
 	 * Gets the Z coordinate of this chunk.
-	 * @return The Z coordinate of this chunk.
 	 */
 	public int getZ() {
 		return coords.z;
@@ -77,22 +68,14 @@ public final class Chunk {
 
 	/**
 	 * Gets the type of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
-	 * @return The type.
 	 */
 	public int getType(int x, int y, int z) {
 		return types[coordToIndex(x, y, z)];
 	}
 
-	public World getWorld() {
-		return Server.getServer().getWorld();
-	}
-
 	/**
-	 * Sets the types of all tiles within the chunk.
-	 * @param types The array of types.
+	 * Sets the types of all blocks within the chunk.
+	 * @param types The array of all block types.
 	 */
 	public void setTypes(byte[] types) {
 		if (types.length != WIDTH * HEIGHT * DEPTH)
@@ -103,10 +86,6 @@ public final class Chunk {
 
 	/**
 	 * Sets the type of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
-	 * @param type The type.
 	 */
 	public void setType(int x, int y, int z, int type) {
 		if (type < 0)
@@ -117,10 +96,6 @@ public final class Chunk {
 
 	/**
 	 * Gets the metadata of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
-	 * @return The metadata.
 	 */
 	public int getMetaData(int x, int y, int z) {
 		return metaData[coordToIndex(x, y, z)];
@@ -128,10 +103,6 @@ public final class Chunk {
 
 	/**
 	 * Sets the metadata of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
-	 * @param metaData The metadata.
 	 */
 	public void setMetaData(int x, int y, int z, int metaData) {
 		if (metaData < 0 || metaData > 15)
@@ -142,10 +113,6 @@ public final class Chunk {
 
 	/**
 	 * Gets the sky light level of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param y The Z coordinate.
-	 * @param z The Y coordinate.
-	 * @return The sky light level.
 	 */
 	public int getSkyLight(int x, int y, int z) {
 		return skyLight[coordToIndex(x, y, z)];
@@ -153,10 +120,6 @@ public final class Chunk {
 
 	/**
 	 * Sets the sky light level of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
-	 * @param skyLight The sky light level.
 	 */
 	public void setSkyLight(int x, int y, int z, int skyLight) {
 		if (skyLight < 0 || skyLight > 15)
@@ -167,10 +130,6 @@ public final class Chunk {
 
 	/**
 	 * Gets the block light level of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
-	 * @return The block light level.
 	 */
 	public int getBlockLight(int x, int y, int z) {
 		return blockLight[coordToIndex(x, y, z)];
@@ -178,10 +137,6 @@ public final class Chunk {
 
 	/**
 	 * Sets the block light level of a block within this chunk.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
-	 * @param blockLight The block light level.
 	 */
 	public void setBlockLight(int x, int y, int z, int blockLight) {
 		if (blockLight < 0 || blockLight > 15)
@@ -196,9 +151,7 @@ public final class Chunk {
 	}
 
 	/**
-	 * Creates a new {@link Packet} which can be sent to a client to stream
-	 * this chunk to them.
-	 * @return The {@link MapChunkPacket}.
+	 * Creates a new {@link Packet} which can be sent to a client to stream this chunk to them.
 	 */
 	public Packet toMessage() {
 		return new MapChunkPacket(this);
@@ -208,9 +161,6 @@ public final class Chunk {
 	/**
 	 * Converts a three-dimensional coordinate to an index within the
 	 * one-dimensional arrays.
-	 * @param x The X coordinate.
-	 * @param z The Z coordinate.
-	 * @param y The Y coordinate.
 	 * @return The index within the arrays.
 	 */
 	private int coordToIndex(int x, int y, int z) {
@@ -218,33 +168,7 @@ public final class Chunk {
 			throw new IndexOutOfBoundsException("Coords out of bound! x:" + x + ", z:" + z + ", y:" + y);
 
 		return y << 8 | z << 4 | x;
-	}
-
-	Set<Position> tickedBlocks = new HashSet<Position>();
-
-	public void tickAllBlocks(World world, Random rand) {
-		tickedBlocks.clear();
-
-		for(int x = 0; x < WIDTH; x++) {
-			for (int y = 0; y < DEPTH; y++) {
-				for(int z = 0; z < HEIGHT; z++) {
-					int type = getType(x, y, z);
-
-					if(type == 0)
-						continue;
-
-					Block block = Block.byId[type];
-
-					if(block != null)
-						if(!tickedBlocks.contains(block)) {
-							tickedBlocks.add(new Position(x, y, z));
-							//if(block.getTickRandomly())
-							block.tick(world, x * 16, y, z * 16, rand);
-						}
-				}
-			}
-		}
-	}
+	}	
 
 	/*public void addEntity(Entity en) {
 		int posX = MathHelper.floor_double(en.getPosition().getX() / 16D);
@@ -286,45 +210,69 @@ public final class Chunk {
 
 	public byte[] serializeTileData(boolean compat, int protocol) {
 		// (types + metaData + blocklight + skylight + add) * 16 vanilla-chunks + biome
-		byte[] data = new byte[(4096 + 2048 + 2048 + 2048 + 0) * 16 + 256];
+		byte[] data;
 
 		int pos = types.length;
 
-		// types
-		System.arraycopy(types, 0, data, 0, types.length);
+		if(compat || protocol < 24) {
+			data = new byte[(4096 + 2048 + 2048 + 2048 + 0) * 16 + 256];
+			// types
+			System.arraycopy(types, 0, data, 0, types.length);
 
-		if (pos != types.length)
-			throw new IllegalStateException("Illegal pos: " + pos + " vs " + types.length);
+			if (pos != types.length)
+				throw new IllegalStateException("Illegal pos: " + pos + " vs " + types.length);
 
-		// metadata
-		for (int i = 0; i < metaData.length; i += 2) {
-			byte meta1 = metaData[i];
-			byte meta2 = metaData[i + 1];
-			data[pos++] = (byte) ((meta2 << 4) | meta1);
+			// metadata
+			for (int i = 0; i < metaData.length; i += 2) {
+				byte meta1 = metaData[i];
+				byte meta2 = metaData[i + 1];
+				data[pos++] = (byte) ((meta2 << 4) | meta1);
+			}
+		} else {
+			data = new byte[(4096 + 2048 + 2048 + 2048 + 0) * 32 + 256];
+			for (int i = 0; i < types.length; i++) {
+				int id = types[i] & 0xFF;
+
+				int px = i & 0xF;
+				int py = (i >> 8) & 0xF;
+				int pz = (i >> 4) & 0xF;
+
+				int blockData = getMetaData(px, py, pz);
+
+				//if (id == 90 && blockData == 0) {
+				//	Blocks.PORTAL.updateShape(chunk.world, (chunk.locX << 4) + px, (l << 4) + py, (chunk.locZ << 4) + pz);
+				//} else {
+				blockData = BlockDebreakifier.getCorrectedData(id, blockData);
+				//}
+				int val = id << 4 | blockData;
+				data[pos++] = (byte) (val & 0xFF);
+				data[pos++] = (byte) ((val >> 8) & 0xFF );
+			}
 		}
 
-		// skylight
-		for (int i = 0; i < skyLight.length; i += 2) {
-			byte light1 = 15;//skyLight[i];
-			byte light2 = 15;//skyLight[i + 1];
-			data[pos++] = (byte) ((light2 << 4) | light1);
-		}
+		if(compat || protocol < 24) {
+			// skylight TODO
+			for (int i = 0; i < skyLight.length; i += 2) {
+				byte light1 = 15;//skyLight[i];
+				byte light2 = 15;//skyLight[i + 1];
+				data[pos++] = (byte) ((light2 << 4) | light1);
+			}
 
-		// blocklight
-		for (int i = 0; i < blockLight.length; i += 2) {
-			byte light1 = 15;//blockLight[i];
-			byte light2 = 15;//blockLight[i + 1];
-			data[pos++] = (byte) ((light2 << 4) | light1);
-		}
+			// blocklight TODO
+			for (int i = 0; i < blockLight.length; i += 2) {
+				byte light1 = 15;//blockLight[i];
+				byte light2 = 15;//blockLight[i + 1];
+				data[pos++] = (byte) ((light2 << 4) | light1);
+			}
 
-		// biome
-		for (int i = 0; i < 256; i++)
-			data[pos++] = 4; // biome data, just set it to forest
 
-		if (pos != data.length)
-			throw new IllegalStateException("Illegal Pos: " + pos + " vs " + data.length);
+			// biome
+			for (int i = 0; i < 256; i++)
+				data[pos++] = 4; // TODO biome data, just set it to forest
 
-		//if(compat || protocol < 22) {
+			if (pos != data.length)
+				throw new IllegalStateException("Illegal Pos: " + pos + " vs " + data.length);
+
 			// we are done, now compress it
 			Deflater deflater = new Deflater(Deflater.BEST_SPEED);
 			deflater.setInput(data);
@@ -340,8 +288,8 @@ public final class Chunk {
 			for (int i = 0; i < length; i++)
 				realCompressed[i] = compressed[i];
 			return realCompressed;
-		//}
-		//return data;
+		}
+		return data;
 	}
 }
 

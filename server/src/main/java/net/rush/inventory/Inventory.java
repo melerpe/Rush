@@ -43,9 +43,8 @@ public abstract class Inventory {
     public abstract String getName();
 
     private void sendUpdate(int index) {
-        for (Player viewer : viewers) {
+        for (Player viewer : viewers)
             viewer.onSlotSet(this, getSlotConverter().localToNet(index), slots[index]);
-        }
     }
 
     public ItemStack getItem(int index) {
@@ -53,7 +52,7 @@ public abstract class Inventory {
     }
 
     public void setItem(int index, ItemStack item) {
-    	slots[index] = item;
+    	slots[index] = item.id == 0 ? null : item;
         sendUpdate(index);
     }
 

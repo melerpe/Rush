@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import lombok.Getter;
 import net.rush.Server;
 import net.rush.chunk.Chunk;
 import net.rush.chunk.ChunkCoords;
@@ -54,38 +55,36 @@ public final class Player extends LivingEntity implements CommandSender {
 	 */
 	private final double CROUCH_EYE_HEIGHT = 1.42D;
 
+	@Getter
 	private final String name;
+	@Getter
 	private GameMode gamemode;
+	@Getter
 	private boolean sprinting = false;
+	@Getter
 	private boolean riding = false;
+	@Getter
 	private boolean onGround = true;
 
+	@Getter
 	private float exhaustion = 0F;
+	@Getter
 	private int food = 20;
+	@Getter
 	private float saturation = 0;
+	@Getter
 	private boolean alive = true;
+	@Getter
 	private final PlayerInventory inventory = new PlayerInventory();
-
-	/**
-	 * This player's session.
-	 */
+	@Getter
 	private final Session session;
-
-	/**
-	 * The entities that the client knows about.
-	 */
+	@Getter
 	private Set<Entity> knownEntities = new HashSet<Entity>();
-
-	/**
-	 * The chunks that the client knows about.
-	 */
+	@Getter
 	private Set<ChunkCoords> knownChunks = new HashSet<ChunkCoords>();
-
-	/**
-	 * A flag that indicates if this player is crouching.
-	 */
+	@Getter
 	private boolean crouching = false;
-
+	@Getter
 	private ItemStack itemOnCursor;
 	public int windowId = 0;
 
@@ -101,8 +100,13 @@ public final class Player extends LivingEntity implements CommandSender {
 		this.name = name;
 		this.session = session;
 		this.gamemode = GameMode.getByValue(session.getServer().getProperties().gamemode);
-		this.position = world.getSpawnPosition();
-
+		// TODO Fix and remove msg
+		this.position = !session.isCompat() && session.getClientVersion().getProtocol() > 22 ? 
+				new Position(world.getSpawnPosition().x, world.getSpawnPosition().y * 2, world.getSpawnPosition().z) : world.getSpawnPosition();
+		if(!session.isCompat() && session.getClientVersion().getProtocol() > 22)
+			sendMessage("&cCaution: 1.8 support is currently broken and unfinished!");
+		// TODO END
+				
 		this.inventory.addViewer(this);
 
 		// stream the initial set of blocks and teleport us
@@ -117,14 +121,6 @@ public final class Player extends LivingEntity implements CommandSender {
 		getServer().getLogger().info(name + " [" + session.getIp() + ", prot=" + getSession().getClientVersion().getProtocol() + "] logged in with entity id " + id + " at ([" + world.getName() + "] " + (int)position.x + ", " + (int)position.y + ", " + (int)position.z + ")");
 		getServer().broadcastMessage("&e" + name + " has joined the game.");
 		this.sendMessage("%Rush Welcome to Rush, " + name);
-	}
-
-	/**
-	 * Gets the name of this player.
-	 * @return The name of this player.
-	 */
-	public String getName() {
-		return name;
 	}
 
 	/**
@@ -159,19 +155,16 @@ public final class Player extends LivingEntity implements CommandSender {
 		session.send(new SoundOrParticleEffectPacket(effectId, x, y, z, data));
 	}
 
-	/** To prevent typos use animations in AnimationPacket class. */
 	public void playAnimation(AnimType type) {
 		session.send(new AnimationPacket(getId(), type));
 	}
-
-	/** To prevent typos use animations in AnimationPacket class. */
+	
 	public void playAnimationOf(int entityId, AnimType type) {
 		session.send(new AnimationPacket(entityId, type));
 	}
 
 	public void updateTabList() {
 		Packet newPlayer = new PlayerListItemPacket(name, gamemode, true, (short)100);
-		// FIXME fix on 1.8
 		for(Player pl : getWorld().getPlayers()) {
 			pl.getSession().send(newPlayer);
 			session.send(new PlayerListItemPacket(pl.getName(), pl.getGamemode(), true, (short)100));
@@ -267,13 +260,6 @@ public final class Player extends LivingEntity implements CommandSender {
 		previousChunks.clear();
 	}
 
-	/**
-	 * Gets the session.
-	 * @return The session.
-	 */
-	public Session getSession() {
-		return session;
-	}
 
 	@Override
 	public Packet createSpawnMessage() {
@@ -296,18 +282,6 @@ public final class Player extends LivingEntity implements CommandSender {
 		// FIXME: other bits in the bitmask would be wiped out
 	}
 
-	/**
-	 * Gets the crouching flag.
-	 * @return The crouching flag.
-	 */
-	public boolean isCrouching() {
-		return crouching;
-	}
-
-	public boolean isSprinting() {
-		return sprinting;
-	}
-
 	public void setSprinting(boolean sprinting) {
 		this.sprinting = sprinting;
 		setMetadata(new MetaParam<Byte>(MetaParam.TYPE_BYTE, 0, new Byte((byte) (sprinting ? 0x08: 0))));
@@ -328,14 +302,6 @@ public final class Player extends LivingEntity implements CommandSender {
 			alive = false;
 	}
 
-	public GameMode getGamemode() {
-		return gamemode;
-	}
-
-	public boolean isOnGround() {
-		return onGround;
-	}
-
 	public void setOnGround(boolean onGround) {
 		this.onGround = onGround;
 	}
@@ -345,20 +311,12 @@ public final class Player extends LivingEntity implements CommandSender {
 		this.getSession().send(new ChangeGameStatePacket(GameStateReason.CHANGE_GAMEMODE, gamemode.getValue()));
 	}
 
-	public boolean isRiding() {
-		return riding;
-	}
-
 	public void setRiding(boolean riding) {
 		this.riding = riding;
 	}
 
 	public void addExhaustion(float exhaustion) {
 		this.exhaustion+= exhaustion;
-	}
-
-	public float getExhaustion() {
-		return exhaustion;
 	}
 
 	public double getEyeHeight() {
@@ -413,24 +371,12 @@ public final class Player extends LivingEntity implements CommandSender {
 
 	// Inventory
 
-	public PlayerInventory getInventory() {
-		return inventory;
-	}
-
 	public ItemStack getItemInHand() {
 		return inventory.getItemInHand();
 	}
 
 	public void setItemInHand(ItemStack item) {
 		inventory.setItemInHand(item);
-	}
-
-	public ItemStack getItemOnCursor() {
-		return itemOnCursor;
-	}
-
-	public Set<Entity> getKnownEntities() {
-		return knownEntities;
 	}
 
 	public void setItemOnCursor(ItemStack item) {
@@ -441,21 +387,20 @@ public final class Player extends LivingEntity implements CommandSender {
 	public void onSlotSet(Inventory inv, int index, ItemStack item) {
 		int equipSlot = -1;
 
-		if (index == getInventory().getHeldItemSlot()) {
+		if (index == getInventory().getHeldItemSlot())
 			equipSlot = EntityEquipmentPacket.HELD_ITEM;
 
-		} else if (index == PlayerInventory.HELMET_SLOT) {
+		else if (index == PlayerInventory.HELMET_SLOT) 
 			equipSlot = EntityEquipmentPacket.HELMET_SLOT;
 
-		} else if (index == PlayerInventory.CHESTPLATE_SLOT) {
+		else if (index == PlayerInventory.CHESTPLATE_SLOT)
 			equipSlot = EntityEquipmentPacket.CHESTPLATE_SLOT;
 
-		} else if (index == PlayerInventory.LEGGINGS_SLOT) {
+		else if (index == PlayerInventory.LEGGINGS_SLOT)
 			equipSlot = EntityEquipmentPacket.LEGGINGS_SLOT;
 
-		} else if (index == PlayerInventory.BOOTS_SLOT) {
+		else if (index == PlayerInventory.BOOTS_SLOT)
 			equipSlot = EntityEquipmentPacket.BOOTS_SLOT;
-		}
 
 		if (equipSlot >= 0) {
 			EntityEquipmentPacket message = new EntityEquipmentPacket(getId(), equipSlot, item);

@@ -36,11 +36,10 @@ public class BlockDebreakifier {
 		if (id == 175 && data > 8) {
 			data = 8;
 		}
-		if (validBlocks[(id << 4) | data]) {
+		if (validBlocks[(id << 4) | data])
 			return data;
-		} else {
-			return correctedValues[id] & 0xF;
-		}
+		else 
+			return correctedValues[id] & 0xF;		
 	}
 
 	private static HashMap<Integer, Integer> invalidItems = new HashMap<>();
