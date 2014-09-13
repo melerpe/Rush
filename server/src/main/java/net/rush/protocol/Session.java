@@ -11,9 +11,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.rush.Server;
 import net.rush.model.Player;
-import net.rush.protocol.packets.KeepAlivePacket;
-import net.rush.protocol.packets.KickPacket;
-import net.rush.protocol.packets.LoginPacket;
+import net.rush.protocol.packets.PacketKeepAlive;
+import net.rush.protocol.packets.PacketKick;
+import net.rush.protocol.packets.PacketLogin;
 import net.rush.protocol.utils.ClientVersion;
 
 /**
@@ -79,7 +79,7 @@ public final class Session {
 	private final boolean compat;
 
 	@Getter
-	private ClientVersion clientVersion = new ClientVersion(4); // default to prevent NPE
+	private ClientVersion clientVersion;
 
 	private boolean pendingRemoval = false;
 	private int pingMessageId;
@@ -93,6 +93,7 @@ public final class Session {
 		this.server = server;
 		this.channel = channel;
 		this.compat = compat;
+		this.clientVersion = compat ? new ClientVersion(78) : new ClientVersion(4);
 	}
 
 	/**
@@ -128,7 +129,7 @@ public final class Session {
 		if (timeoutCounter >= TIMEOUT_TICKS) {
 			if (pingMessageId == 0) {
 				pingMessageId = new Random().nextInt();
-				send(new KeepAlivePacket(pingMessageId));
+				send(new PacketKeepAlive(pingMessageId));
 			} else 
 				disconnect("Timed out");
 
@@ -150,19 +151,19 @@ public final class Session {
 	/**
 	 * @deprecated all methods together to addPlayer()
 	 */
-	public void send(LoginPacket packet) {
+	public void send(PacketLogin packet) {
 		channel.writeAndFlush(packet);
 	}
 	
 	/**
 	 * Disconnects the session with the specified reason. This causes a
-	 * {@link KickPacket} to be sent. When it has been delivered, the channel
+	 * {@link PacketKick} to be sent. When it has been delivered, the channel
 	 * is closed.
 	 * @param reason The reason for disconnection.
 	 */
 	@SuppressWarnings("deprecation")
 	public void disconnect(String reason) {
-		channel.writeAndFlush(new KickPacket(reason)).addListener(ChannelFutureListener.CLOSE);
+		channel.writeAndFlush(new PacketKick(reason)).addListener(ChannelFutureListener.CLOSE);
 	}
 
 	/**

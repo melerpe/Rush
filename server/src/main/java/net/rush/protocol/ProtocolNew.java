@@ -2,215 +2,215 @@ package net.rush.protocol;
 
 import java.util.HashMap;
 
-import net.rush.protocol.packets.AnimationPacket;
-import net.rush.protocol.packets.AttachEntityPacket;
-import net.rush.protocol.packets.BlockActionPacket;
-import net.rush.protocol.packets.BlockBreakAnimationPacket;
-import net.rush.protocol.packets.BlockChangePacket;
-import net.rush.protocol.packets.ChangeGameStatePacket;
-import net.rush.protocol.packets.ChatPacket;
-import net.rush.protocol.packets.ClickWindowPacket;
-import net.rush.protocol.packets.ClientSettingsPacket;
-import net.rush.protocol.packets.ClientStatusPacket;
-import net.rush.protocol.packets.CloseWindowPacket;
-import net.rush.protocol.packets.ConfirmTransactionPacket;
-import net.rush.protocol.packets.CreativeInventoryActionPacket;
-import net.rush.protocol.packets.DestroyEntityPacket;
-import net.rush.protocol.packets.EnchantItemPacket;
-import net.rush.protocol.packets.EncryptionKeyRequestPacket;
-import net.rush.protocol.packets.EncryptionKeyResponsePacket;
-import net.rush.protocol.packets.EntityActionPacket;
-import net.rush.protocol.packets.EntityEffectPacket;
-import net.rush.protocol.packets.EntityEquipmentPacket;
-import net.rush.protocol.packets.EntityExistsPacket;
-import net.rush.protocol.packets.EntityHeadLookPacket;
-import net.rush.protocol.packets.EntityLookAndRelMovePacket;
-import net.rush.protocol.packets.EntityLookPacket;
-import net.rush.protocol.packets.EntityMetadataPacket;
-import net.rush.protocol.packets.EntityRelMovePacket;
-import net.rush.protocol.packets.EntityStatusPacket;
-import net.rush.protocol.packets.EntityTeleportPacket;
-import net.rush.protocol.packets.EntityVelocityPacket;
-import net.rush.protocol.packets.ExplosionPacket;
-import net.rush.protocol.packets.HandshakePacket;
-import net.rush.protocol.packets.HeldItemChangePacket;
-import net.rush.protocol.packets.ItemCollectPacket;
-import net.rush.protocol.packets.KeepAlivePacket;
-import net.rush.protocol.packets.KickPacket;
-import net.rush.protocol.packets.LoginPacket;
-import net.rush.protocol.packets.MapChunkPacket;
-import net.rush.protocol.packets.MapDataPacket;
-import net.rush.protocol.packets.MultiBlockChangePacket;
-import net.rush.protocol.packets.NamedEntitySpawnPacket;
-import net.rush.protocol.packets.NamedSoundEffectPacket;
-import net.rush.protocol.packets.OpenWindowPacket;
 import net.rush.protocol.packets.Packet17LoginRequest;
 import net.rush.protocol.packets.Packet17LoginSuccess;
+import net.rush.protocol.packets.Packet17PingTime;
 import net.rush.protocol.packets.Packet17StatusRequest;
 import net.rush.protocol.packets.Packet18LoginCompression;
 import net.rush.protocol.packets.Packet18Title;
-import net.rush.protocol.packets.PingTime;
-import net.rush.protocol.packets.PlayerAbilitiesPacket;
-import net.rush.protocol.packets.PlayerBlockPlacementPacket;
-import net.rush.protocol.packets.PlayerDiggingPacket;
-import net.rush.protocol.packets.PlayerListItemPacket;
-import net.rush.protocol.packets.PlayerLookPacket;
-import net.rush.protocol.packets.PlayerOnGroundPacket;
-import net.rush.protocol.packets.PlayerPositionAndLookPacket;
-import net.rush.protocol.packets.PlayerPositionPacket;
-import net.rush.protocol.packets.PlayerRespawnPacket;
-import net.rush.protocol.packets.PluginMessagePacket;
-import net.rush.protocol.packets.PreChunkPacket;
-import net.rush.protocol.packets.RemoveEntityEffectPacket;
-import net.rush.protocol.packets.SetExperiencePacket;
-import net.rush.protocol.packets.SetSlotPacket;
-import net.rush.protocol.packets.SetWindowItemsPacket;
-import net.rush.protocol.packets.SoundOrParticleEffectPacket;
-import net.rush.protocol.packets.SpawnExperienceOrbPacket;
-import net.rush.protocol.packets.SpawnMobPacket;
-import net.rush.protocol.packets.SpawnObjectPacket;
-import net.rush.protocol.packets.SpawnPaintingPacket;
-import net.rush.protocol.packets.SpawnPositionPacket;
-import net.rush.protocol.packets.SteerVehiclePacket;
-import net.rush.protocol.packets.TabCompletePacket;
-import net.rush.protocol.packets.ThunderboltPacket;
-import net.rush.protocol.packets.TimeUpdatePacket;
-import net.rush.protocol.packets.UpdateHealthPacket;
-import net.rush.protocol.packets.UpdateSignPacket;
-import net.rush.protocol.packets.UpdateTileEntityPacket;
-import net.rush.protocol.packets.UpdateWindowPropertyPacket;
-import net.rush.protocol.packets.UseBedPacket;
-import net.rush.protocol.packets.UseEntityPacket;
+import net.rush.protocol.packets.PacketAnimation;
+import net.rush.protocol.packets.PacketAttachEntity;
+import net.rush.protocol.packets.PacketBlockAction;
+import net.rush.protocol.packets.PacketBlockBreakAnim;
+import net.rush.protocol.packets.PacketBlockChange;
+import net.rush.protocol.packets.PacketBlockPlacement;
+import net.rush.protocol.packets.PacketChangeGameState;
+import net.rush.protocol.packets.PacketChat;
+import net.rush.protocol.packets.PacketChunkBulk;
+import net.rush.protocol.packets.PacketClickWindow;
+import net.rush.protocol.packets.PacketClientSettings;
+import net.rush.protocol.packets.PacketClientStatus;
+import net.rush.protocol.packets.PacketCloseWindow;
+import net.rush.protocol.packets.PacketConfirmTransaction;
+import net.rush.protocol.packets.PacketCreativeInventoryAction;
+import net.rush.protocol.packets.PacketDestroyEntity;
+import net.rush.protocol.packets.PacketDigging;
+import net.rush.protocol.packets.PacketEnchantItem;
+import net.rush.protocol.packets.PacketEncryptionRequest;
+import net.rush.protocol.packets.PacketEncryptionResponse;
+import net.rush.protocol.packets.PacketEntityAction;
+import net.rush.protocol.packets.PacketEntityEffect;
+import net.rush.protocol.packets.PacketEntityEquipment;
+import net.rush.protocol.packets.PacketEntityExists;
+import net.rush.protocol.packets.PacketEntityHeadLook;
+import net.rush.protocol.packets.PacketEntityLook;
+import net.rush.protocol.packets.PacketEntityLookRelMove;
+import net.rush.protocol.packets.PacketEntityMetadata;
+import net.rush.protocol.packets.PacketEntityRelMove;
+import net.rush.protocol.packets.PacketEntityStatus;
+import net.rush.protocol.packets.PacketEntityTeleport;
+import net.rush.protocol.packets.PacketEntityVelocity;
+import net.rush.protocol.packets.PacketExplosion;
+import net.rush.protocol.packets.PacketHandshake;
+import net.rush.protocol.packets.PacketHeldItemChange;
+import net.rush.protocol.packets.PacketItemCollect;
+import net.rush.protocol.packets.PacketKeepAlive;
+import net.rush.protocol.packets.PacketKick;
+import net.rush.protocol.packets.PacketLogin;
+import net.rush.protocol.packets.PacketMap;
+import net.rush.protocol.packets.PacketMapChunk;
+import net.rush.protocol.packets.PacketMultiBlockChange;
+import net.rush.protocol.packets.PacketNamedEntitySpawn;
+import net.rush.protocol.packets.PacketNamedSoundEffect;
+import net.rush.protocol.packets.PacketOpenWindow;
+import net.rush.protocol.packets.PacketPlayerAbilities;
+import net.rush.protocol.packets.PacketPlayerListItem;
+import net.rush.protocol.packets.PacketPlayerLook;
+import net.rush.protocol.packets.PacketPlayerLookPosition;
+import net.rush.protocol.packets.PacketPlayerOnGround;
+import net.rush.protocol.packets.PacketPlayerPosition;
+import net.rush.protocol.packets.PacketPluginMessage;
+import net.rush.protocol.packets.PacketRemoveEntityEffect;
+import net.rush.protocol.packets.PacketRespawn;
+import net.rush.protocol.packets.PacketSetExperience;
+import net.rush.protocol.packets.PacketSetSlot;
+import net.rush.protocol.packets.PacketSetWindowItems;
+import net.rush.protocol.packets.PacketSoundOrParticleEffect;
+import net.rush.protocol.packets.PacketSpawnExpOrb;
+import net.rush.protocol.packets.PacketSpawnMob;
+import net.rush.protocol.packets.PacketSpawnObject;
+import net.rush.protocol.packets.PacketSpawnPainting;
+import net.rush.protocol.packets.PacketSpawnPosition;
+import net.rush.protocol.packets.PacketSteerVehicle;
+import net.rush.protocol.packets.PacketTabComplete;
+import net.rush.protocol.packets.PacketThunderbolt;
+import net.rush.protocol.packets.PacketTimeUpdate;
+import net.rush.protocol.packets.PacketUpdateHealth;
+import net.rush.protocol.packets.PacketUpdateSign;
+import net.rush.protocol.packets.PacketUpdateTileEntity;
+import net.rush.protocol.packets.PacketUpdateWindowProperty;
+import net.rush.protocol.packets.PacketUseBed;
+import net.rush.protocol.packets.PacketUseEntity;
 
 public enum ProtocolNew {
 
 	// Undef
 	HANDSHAKE {
 		{
-			TO_SERVER.registerPacket(0x00, HandshakePacket.class);
+			TO_SERVER.registerPacket(0x00, PacketHandshake.class);
 		}
 	},
 	// 0
 	GAME {
 		{
-			TO_CLIENT.registerPacket(0x00, KeepAlivePacket.class);
-			TO_CLIENT.registerPacket(0x01, LoginPacket.class);
-			TO_CLIENT.registerPacket(0x02, ChatPacket.class);
-			TO_CLIENT.registerPacket(0x03, TimeUpdatePacket.class);
-			TO_CLIENT.registerPacket(0x04, EntityEquipmentPacket.class);
-			TO_CLIENT.registerPacket(0x05, SpawnPositionPacket.class);
-			TO_CLIENT.registerPacket(0x06, UpdateHealthPacket.class);
-			TO_CLIENT.registerPacket(0x07, PlayerRespawnPacket.class);
-			TO_CLIENT.registerPacket(0x08, PlayerPositionAndLookPacket.class);
-			TO_CLIENT.registerPacket(0x09, HeldItemChangePacket.class);
-			TO_CLIENT.registerPacket(0x0A, UseBedPacket.class); //Packet17EntityLocationAction
-			TO_CLIENT.registerPacket(0x0B, AnimationPacket.class);
-			TO_CLIENT.registerPacket(0x0C, NamedEntitySpawnPacket.class);
-			TO_CLIENT.registerPacket(0x0D, ItemCollectPacket.class);
-			TO_CLIENT.registerPacket(0x0E, SpawnObjectPacket.class);
-			TO_CLIENT.registerPacket(0x0F, SpawnMobPacket.class);
-			TO_CLIENT.registerPacket(0x10, SpawnPaintingPacket.class);
-			TO_CLIENT.registerPacket(0x11, SpawnExperienceOrbPacket.class);
-			TO_CLIENT.registerPacket(0x12, EntityVelocityPacket.class);
-			TO_CLIENT.registerPacket(0x13, DestroyEntityPacket.class);
-			TO_CLIENT.registerPacket(0x14, EntityExistsPacket.class);
-			TO_CLIENT.registerPacket(0x15, EntityRelMovePacket.class);
-			TO_CLIENT.registerPacket(0x16, EntityLookPacket.class);
-			TO_CLIENT.registerPacket(0x17, EntityLookAndRelMovePacket.class);
-			TO_CLIENT.registerPacket(0x18, EntityTeleportPacket.class);
-			TO_CLIENT.registerPacket(0x19, EntityHeadLookPacket.class);
-			TO_CLIENT.registerPacket(0x1A, EntityStatusPacket.class);
-			TO_CLIENT.registerPacket(0x1B, AttachEntityPacket.class);
-			TO_CLIENT.registerPacket(0x1C, EntityMetadataPacket.class);
-			TO_CLIENT.registerPacket(0x1D, EntityEffectPacket.class);
-			TO_CLIENT.registerPacket(0x1E, RemoveEntityEffectPacket.class);
-			TO_CLIENT.registerPacket(0x1F, SetExperiencePacket.class);
+			TO_CLIENT.registerPacket(0x00, PacketKeepAlive.class);
+			TO_CLIENT.registerPacket(0x01, PacketLogin.class);
+			TO_CLIENT.registerPacket(0x02, PacketChat.class);
+			TO_CLIENT.registerPacket(0x03, PacketTimeUpdate.class);
+			TO_CLIENT.registerPacket(0x04, PacketEntityEquipment.class);
+			TO_CLIENT.registerPacket(0x05, PacketSpawnPosition.class);
+			TO_CLIENT.registerPacket(0x06, PacketUpdateHealth.class);
+			TO_CLIENT.registerPacket(0x07, PacketRespawn.class);
+			TO_CLIENT.registerPacket(0x08, PacketPlayerLookPosition.class);
+			TO_CLIENT.registerPacket(0x09, PacketHeldItemChange.class);
+			TO_CLIENT.registerPacket(0x0A, PacketUseBed.class); //Packet17EntityLocationAction
+			TO_CLIENT.registerPacket(0x0B, PacketAnimation.class);
+			TO_CLIENT.registerPacket(0x0C, PacketNamedEntitySpawn.class);
+			TO_CLIENT.registerPacket(0x0D, PacketItemCollect.class);
+			TO_CLIENT.registerPacket(0x0E, PacketSpawnObject.class);
+			TO_CLIENT.registerPacket(0x0F, PacketSpawnMob.class);
+			TO_CLIENT.registerPacket(0x10, PacketSpawnPainting.class);
+			TO_CLIENT.registerPacket(0x11, PacketSpawnExpOrb.class);
+			TO_CLIENT.registerPacket(0x12, PacketEntityVelocity.class);
+			TO_CLIENT.registerPacket(0x13, PacketDestroyEntity.class);
+			TO_CLIENT.registerPacket(0x14, PacketEntityExists.class);
+			TO_CLIENT.registerPacket(0x15, PacketEntityRelMove.class);
+			TO_CLIENT.registerPacket(0x16, PacketEntityLook.class);
+			TO_CLIENT.registerPacket(0x17, PacketEntityLookRelMove.class);
+			TO_CLIENT.registerPacket(0x18, PacketEntityTeleport.class);
+			TO_CLIENT.registerPacket(0x19, PacketEntityHeadLook.class);
+			TO_CLIENT.registerPacket(0x1A, PacketEntityStatus.class);
+			TO_CLIENT.registerPacket(0x1B, PacketAttachEntity.class);
+			TO_CLIENT.registerPacket(0x1C, PacketEntityMetadata.class);
+			TO_CLIENT.registerPacket(0x1D, PacketEntityEffect.class);
+			TO_CLIENT.registerPacket(0x1E, PacketRemoveEntityEffect.class);
+			TO_CLIENT.registerPacket(0x1F, PacketSetExperience.class);
 			//TO_CLIENT.registerPacket(0x20, Packet44UpdateAttributes.class);
-			TO_CLIENT.registerPacket(0x21, MapChunkPacket.class);
-			TO_CLIENT.registerPacket(0x22, MultiBlockChangePacket.class);
-			TO_CLIENT.registerPacket(0x23, BlockChangePacket.class);
-			TO_CLIENT.registerPacket(0x24, BlockActionPacket.class);
-			TO_CLIENT.registerPacket(0x25, BlockBreakAnimationPacket.class);
-			TO_CLIENT.registerPacket(0x26, PreChunkPacket.class);
-			TO_CLIENT.registerPacket(0x27, ExplosionPacket.class);
-			TO_CLIENT.registerPacket(0x28, SoundOrParticleEffectPacket.class);
-			TO_CLIENT.registerPacket(0x29, NamedSoundEffectPacket.class);
+			TO_CLIENT.registerPacket(0x21, PacketMapChunk.class);
+			TO_CLIENT.registerPacket(0x22, PacketMultiBlockChange.class);
+			TO_CLIENT.registerPacket(0x23, PacketBlockChange.class);
+			TO_CLIENT.registerPacket(0x24, PacketBlockAction.class);
+			TO_CLIENT.registerPacket(0x25, PacketBlockBreakAnim.class);
+			TO_CLIENT.registerPacket(0x26, PacketChunkBulk.class);
+			TO_CLIENT.registerPacket(0x27, PacketExplosion.class);
+			TO_CLIENT.registerPacket(0x28, PacketSoundOrParticleEffect.class);
+			TO_CLIENT.registerPacket(0x29, PacketNamedSoundEffect.class);
 			//TO_CLIENT.registerPacket(0x2A, Packet63WorldParticles.class);
-			TO_CLIENT.registerPacket(0x2B, ChangeGameStatePacket.class);
-			TO_CLIENT.registerPacket(0x2C, ThunderboltPacket.class);
-			TO_CLIENT.registerPacket(0x2D, OpenWindowPacket.class);
-			TO_CLIENT.registerPacket(0x2E, CloseWindowPacket.class);
-			TO_CLIENT.registerPacket(0x2F, SetSlotPacket.class);
-			TO_CLIENT.registerPacket(0x30, SetWindowItemsPacket.class);
-			TO_CLIENT.registerPacket(0x31, UpdateWindowPropertyPacket.class);
-			TO_CLIENT.registerPacket(0x32, ConfirmTransactionPacket.class);
-			TO_CLIENT.registerPacket(0x33, UpdateSignPacket.class);
-			TO_CLIENT.registerPacket(0x34, MapDataPacket.class);
-			TO_CLIENT.registerPacket(0x35, UpdateTileEntityPacket.class);
+			TO_CLIENT.registerPacket(0x2B, PacketChangeGameState.class);
+			TO_CLIENT.registerPacket(0x2C, PacketThunderbolt.class);
+			TO_CLIENT.registerPacket(0x2D, PacketOpenWindow.class);
+			TO_CLIENT.registerPacket(0x2E, PacketCloseWindow.class);
+			TO_CLIENT.registerPacket(0x2F, PacketSetSlot.class);
+			TO_CLIENT.registerPacket(0x30, PacketSetWindowItems.class);
+			TO_CLIENT.registerPacket(0x31, PacketUpdateWindowProperty.class);
+			TO_CLIENT.registerPacket(0x32, PacketConfirmTransaction.class);
+			TO_CLIENT.registerPacket(0x33, PacketUpdateSign.class);
+			TO_CLIENT.registerPacket(0x34, PacketMap.class);
+			TO_CLIENT.registerPacket(0x35, PacketUpdateTileEntity.class);
 			//TO_CLIENT.registerPacket(0x36, Packet133OpenTileEntity.class);
 			//TO_CLIENT.registerPacket(0x37, Packet200Statistic.class);
-			TO_CLIENT.registerPacket(0x38, PlayerListItemPacket.class);
-			TO_CLIENT.registerPacket(0x39, PlayerAbilitiesPacket.class);
-			TO_CLIENT.registerPacket(0x3A, TabCompletePacket.class);
+			TO_CLIENT.registerPacket(0x38, PacketPlayerListItem.class);
+			TO_CLIENT.registerPacket(0x39, PacketPlayerAbilities.class);
+			TO_CLIENT.registerPacket(0x3A, PacketTabComplete.class);
 			//TO_CLIENT.registerPacket(0x3B, Packet206SetScoreboardObjective.class);
 			//TO_CLIENT.registerPacket(0x3C, Packet207SetScoreboardScore.class);
 			//TO_CLIENT.registerPacket(0x3D, Packet208SetScoreboardDisplayObjective.class);
 			//TO_CLIENT.registerPacket(0x3E, Packet209SetScoreboardTeam.class);
-			TO_CLIENT.registerPacket(0x3F, PluginMessagePacket.class);
-			TO_CLIENT.registerPacket(0x40, KickPacket.class);
+			TO_CLIENT.registerPacket(0x3F, PacketPluginMessage.class);
+			TO_CLIENT.registerPacket(0x40, PacketKick.class);
 			
 			// 1.8
 			TO_CLIENT.registerPacket(0x45, Packet18Title.class);
 
-			TO_SERVER.registerPacket(0x00, KeepAlivePacket.class);
-			TO_SERVER.registerPacket(0x01, ChatPacket.class);
-			TO_SERVER.registerPacket(0x02, UseEntityPacket.class);
-			TO_SERVER.registerPacket(0x03, PlayerOnGroundPacket.class);
-			TO_SERVER.registerPacket(0x04, PlayerPositionPacket.class);
-			TO_SERVER.registerPacket(0x05, PlayerLookPacket.class);
-			TO_SERVER.registerPacket(0x06, PlayerPositionAndLookPacket.class);
-			TO_SERVER.registerPacket(0x07, PlayerDiggingPacket.class);
-			TO_SERVER.registerPacket(0x08, PlayerBlockPlacementPacket.class);
-			TO_SERVER.registerPacket(0x09, HeldItemChangePacket.class);
-			TO_SERVER.registerPacket(0x0A, AnimationPacket.class);
-			TO_SERVER.registerPacket(0x0B, EntityActionPacket.class);
-			TO_SERVER.registerPacket(0x0C, SteerVehiclePacket.class);
-			TO_SERVER.registerPacket(0x0D, CloseWindowPacket.class);
-			TO_SERVER.registerPacket(0x0E, ClickWindowPacket.class);
-			TO_SERVER.registerPacket(0x0F, ConfirmTransactionPacket.class);
-			TO_SERVER.registerPacket(0x10, CreativeInventoryActionPacket.class);
-			TO_SERVER.registerPacket(0x11, EnchantItemPacket.class);
-			TO_SERVER.registerPacket(0x12, UpdateSignPacket.class);
-			TO_SERVER.registerPacket(0x13, PlayerAbilitiesPacket.class);
-			TO_SERVER.registerPacket(0x14, TabCompletePacket.class);
-			TO_SERVER.registerPacket(0x15, ClientSettingsPacket.class);
-			TO_SERVER.registerPacket(0x16, ClientStatusPacket.class);
-			TO_SERVER.registerPacket(0x17, PluginMessagePacket.class);
+			TO_SERVER.registerPacket(0x00, PacketKeepAlive.class);
+			TO_SERVER.registerPacket(0x01, PacketChat.class);
+			TO_SERVER.registerPacket(0x02, PacketUseEntity.class);
+			TO_SERVER.registerPacket(0x03, PacketPlayerOnGround.class);
+			TO_SERVER.registerPacket(0x04, PacketPlayerPosition.class);
+			TO_SERVER.registerPacket(0x05, PacketPlayerLook.class);
+			TO_SERVER.registerPacket(0x06, PacketPlayerLookPosition.class);
+			TO_SERVER.registerPacket(0x07, PacketDigging.class);
+			TO_SERVER.registerPacket(0x08, PacketBlockPlacement.class);
+			TO_SERVER.registerPacket(0x09, PacketHeldItemChange.class);
+			TO_SERVER.registerPacket(0x0A, PacketAnimation.class);
+			TO_SERVER.registerPacket(0x0B, PacketEntityAction.class);
+			TO_SERVER.registerPacket(0x0C, PacketSteerVehicle.class);
+			TO_SERVER.registerPacket(0x0D, PacketCloseWindow.class);
+			TO_SERVER.registerPacket(0x0E, PacketClickWindow.class);
+			TO_SERVER.registerPacket(0x0F, PacketConfirmTransaction.class);
+			TO_SERVER.registerPacket(0x10, PacketCreativeInventoryAction.class);
+			TO_SERVER.registerPacket(0x11, PacketEnchantItem.class);
+			TO_SERVER.registerPacket(0x12, PacketUpdateSign.class);
+			TO_SERVER.registerPacket(0x13, PacketPlayerAbilities.class);
+			TO_SERVER.registerPacket(0x14, PacketTabComplete.class);
+			TO_SERVER.registerPacket(0x15, PacketClientSettings.class);
+			TO_SERVER.registerPacket(0x16, PacketClientStatus.class);
+			TO_SERVER.registerPacket(0x17, PacketPluginMessage.class);
 			
 		}
 	},
 	// 1
 	STATUS {
 		{
-			TO_CLIENT.registerPacket(0x00, KickPacket.class);
-			TO_CLIENT.registerPacket(0x01, PingTime.class);
+			TO_CLIENT.registerPacket(0x00, PacketKick.class);
+			TO_CLIENT.registerPacket(0x01, Packet17PingTime.class);
 
 			TO_SERVER.registerPacket(0x00, Packet17StatusRequest.class);
-			TO_SERVER.registerPacket(0x01, PingTime.class);
+			TO_SERVER.registerPacket(0x01, Packet17PingTime.class);
 		}
 	},
 	//2
 	LOGIN {
 		{
-			TO_CLIENT.registerPacket(0x00, KickPacket.class);
-			TO_CLIENT.registerPacket(0x01, EncryptionKeyRequestPacket.class);
+			TO_CLIENT.registerPacket(0x00, PacketKick.class);
+			TO_CLIENT.registerPacket(0x01, PacketEncryptionRequest.class);
 			TO_CLIENT.registerPacket(0x02, Packet17LoginSuccess.class);
 			
 			// 1.8
 			TO_CLIENT.registerPacket(0x3, Packet18LoginCompression.class);
 
 			TO_SERVER.registerPacket(0x00, Packet17LoginRequest.class);
-			TO_SERVER.registerPacket(0x01, EncryptionKeyResponsePacket.class);
+			TO_SERVER.registerPacket(0x01, PacketEncryptionResponse.class);
 		}
 	};
 
@@ -245,7 +245,7 @@ public enum ProtocolNew {
 			try {
 				return packetClasses[id].newInstance();
 			} catch (Exception ex) {
-				throw new RuntimeException("Could not construct packet ID " + id, ex);
+				throw new RuntimeException(String.format("Couldn't construct packet ID %1$d (0x0%1$X)", id), ex);
 			}
 		}
 

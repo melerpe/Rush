@@ -5,7 +5,7 @@ import java.util.zip.Deflater;
 import net.rush.model.Block;
 import net.rush.model.Material;
 import net.rush.protocol.Packet;
-import net.rush.protocol.packets.MapChunkPacket;
+import net.rush.protocol.packets.PacketMapChunk;
 import net.rush.util.BlockDebreakifier;
 
 /**
@@ -154,7 +154,7 @@ public final class Chunk {
 	 * Creates a new {@link Packet} which can be sent to a client to stream this chunk to them.
 	 */
 	public Packet toMessage() {
-		return new MapChunkPacket(this);
+		return new PacketMapChunk(this);
 		//return new MapChunkPacketImpl(x * Chunk.WIDTH, z * Chunk.HEIGHT, 0, WIDTH, HEIGHT, DEPTH, serializeTileData());
 	}
 

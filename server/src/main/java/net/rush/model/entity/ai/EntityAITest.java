@@ -2,7 +2,7 @@ package net.rush.model.entity.ai;
 
 import net.rush.model.LivingEntity;
 import net.rush.model.Player;
-import net.rush.protocol.packets.AnimationPacket.AnimType;
+import net.rush.protocol.packets.PacketAnimation.AnimType;
 
 import org.bukkit.Sound;
 

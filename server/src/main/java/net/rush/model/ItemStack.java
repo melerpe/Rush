@@ -14,11 +14,6 @@ public class ItemStack {
 	public int damage;
 
 	/**
-	 * The ItemStack's NBT data length. -1 to disable
-	 */
-	private final int dataLength;
-
-	/**
 	 * The ItemStack's NBT byte array storing data (enchantments, etc).
 	 */
 	private final byte[] data;
@@ -48,7 +43,7 @@ public class ItemStack {
 	 * @param damage The damage.
 	 */
 	public ItemStack(int id, int count, int damage) {
-		this(id, count, damage, -1, null);
+		this(id, count, damage, null);
 	}
 
 	/**
@@ -58,11 +53,10 @@ public class ItemStack {
 	 * @param count The number of ItemStacks within the stack.
 	 * @param damage The damage.
 	 */
-	public ItemStack(int id, int count, int damage, int dataLength, byte[] data) {
+	public ItemStack(int id, int count, int damage, byte[] data) {
 		this.id = id;
 		this.count = count;
 		this.damage = damage;
-		this.dataLength = dataLength;
 		this.data = data;
 	}
 
@@ -110,7 +104,7 @@ public class ItemStack {
 
 	@Override
 	public ItemStack clone() {
-		return new ItemStack(id, count, damage, dataLength, data);
+		return new ItemStack(id, count, damage, data);
 	}
 }
 

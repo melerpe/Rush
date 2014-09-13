@@ -23,15 +23,15 @@ public final class Position {
 		this.z = z;
 	}
 	
-	public int integerX() {
+	public int intX() {
 		return (int) x;
 	}
 	
-	public int integerY() {
+	public int intY() {
 		return (int) y;
 	}
 	
-	public int integerZ() {
+	public int intZ() {
 		return (int) z;
 	}
 

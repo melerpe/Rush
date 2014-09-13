@@ -11,7 +11,6 @@ import net.rush.model.ItemStack;
 import net.rush.model.Position;
 import net.rush.protocol.serialization.Serialization.Serializor;
 import net.rush.protocol.utils.MetaParam;
-import net.rush.protocol.utils.MetaType;
 import net.rush.protocol.utils.PacketUtils;
 import net.rush.util.JsonUtils;
 
@@ -158,24 +157,23 @@ public enum Type {
 			for (int x = input.readUnsignedByte(); x != 127; x = input.readUnsignedByte()) {
 				int index = x & 0x1F;
 				int type = x >> 5;
-				MetaType metaType = MetaType.fromId(type);
-				switch (metaType) {
-					case BYTE:
+				switch (type) {
+					case MetaParam.TYPE_BYTE:
 						parameters[index] = new MetaParam<Byte>(type, index, input.readByte());
 						break;
-					case SHORT:
+					case MetaParam.TYPE_SHORT:
 						parameters[index] = new MetaParam<Short>(type, index, input.readShort());
 						break;
-					case INT:
+					case MetaParam.TYPE_INT:
 						parameters[index] = new MetaParam<Integer>(type, index, input.readInt());
 						break;
-					case FLOAT:
+					case MetaParam.TYPE_FLOAT:
 						parameters[index] = new MetaParam<Float>(type, index, input.readFloat());
 						break;
-					case STRING:
+					case MetaParam.TYPE_STRING:
 						parameters[index] = new MetaParam<String>(type, index, PacketUtils.readUtf8String(input));
 						break;
-					case ITEM:
+					case MetaParam.TYPE_ITEM:
 						short id = input.readShort();
 						if (id <= 0) {
 							parameters[index] = new MetaParam<ItemStack>(type, index, null);
@@ -193,7 +191,7 @@ public enum Type {
 						}
 						break;
 					default:
-						throw new UnsupportedOperationException("Metadata-type '" + metaType + "' is not implemented!");
+						throw new UnsupportedOperationException("Metadata ID '" + type + "' is not implemented!");
 				}
 			}
 			return parameters;
@@ -279,10 +277,9 @@ public enum Type {
 				out.writeShort(val.getId());
 				out.writeByte(val.getCount());
 				out.writeShort(val.getDamage());
-				out.writeShort(val.getDataLength());
-				if (val.getDataLength() > 0) { // FIXME previous check if its enchantable // TODO is is Id or datalength?
-					out.writeBytes(val.getData());
-				}
+				out.writeShort(val.getData().length);
+				if (val.getData().length > 0) // FIXME previous check if its enchantable // TODO is is Id or datalength?
+					out.writeBytes(val.getData());				
 			}
 		}
 	}),

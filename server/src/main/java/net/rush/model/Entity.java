@@ -7,7 +7,7 @@ import net.rush.ServerProperties;
 import net.rush.chunk.Chunk;
 import net.rush.model.misc.AxisAlignedBB;
 import net.rush.protocol.Packet;
-import net.rush.protocol.packets.EntityMetadataPacket;
+import net.rush.protocol.packets.PacketEntityMetadata;
 import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
@@ -155,7 +155,7 @@ public abstract class Entity {
 		ticksLived++;
 		
 		if(metadataChanged) {
-			EntityMetadataPacket message = new EntityMetadataPacket(id, metadata.clone());
+			PacketEntityMetadata message = new PacketEntityMetadata(id, metadata.clone());
 			for (Player player : world.getPlayers()) {
 				if (player.getId() != this.getId()) {
 					player.getSession().send(message);

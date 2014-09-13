@@ -22,63 +22,69 @@ public class PacketUtils {
 	/**
 	 * @deprecated use {@link PacketUtils#writeItemstack(ItemStack, ByteBuf)}
 	 */
-	public static void writeItemstack(ItemStack item, DataOutput buf, boolean prot18) throws IOException {
-		if (item == null || item.getId() <= 0) { // FIXME less then zero check
-			buf.writeShort(-1);
-		} else {
-			buf.writeShort(item.getId());
-			buf.writeByte(item.getCount());
-			buf.writeShort(item.getDamage());
-			if(prot18)
-				buf.writeByte(item.getDataLength());
-			else
-				buf.writeShort(item.getDataLength());
-			if (item.getDataLength() > 0) // FIXME previous check if its enchantable // TODO is is Id or datalength?
-				buf.write(item.getData());
-
+	public static void writeItemstack(ItemStack item, DataOutput out, boolean prot18) throws IOException {
+		if (item == null || item.getId() == 0) {
+			out.writeShort(prot18 ? 0 : -1);
+			return;
 		}
+
+		out.writeShort(item.getId());
+		out.writeByte(item.getCount());
+		out.writeShort(item.getDamage());
+		
+		boolean hasNbtData = item.getData() != null;
+		
+		if(prot18)
+			out.writeByte(hasNbtData ? item.getData().length : 0);
+		else
+			out.writeShort(hasNbtData ? item.getData().length : -1);
+	
+		if (hasNbtData && item.getData().length > 0)
+			out.write(item.getData());
 	}
 
-	public static void writeItemstack(ItemStack item, ByteBuf buf, boolean prot18) {
-		if (item == null || item.getId() <= 0) { // FIXME less then zero check
-			buf.writeShort(-1);
-		} else {
-			buf.writeShort(item.getId());
-			buf.writeByte(item.getCount());
-			buf.writeShort(item.getDamage());
-			if(prot18)
-				buf.writeByte(item.getDataLength());
-			else
-				buf.writeShort(item.getDataLength());
-			if (item.getDataLength() > 0) // FIXME previous check if its enchantable // TODO is is Id or datalength?
-				buf.writeBytes(item.getData());
-
+	public static void writeItemstack(ItemStack item, ByteBuf out, boolean prot18) {
+		if (item == null || item.getId() == 0) {
+			out.writeShort(prot18 ? 0 : -1);
+			return;
 		}
+
+		out.writeShort(item.getId());
+		out.writeByte(item.getCount());
+		out.writeShort(item.getDamage());
+		
+		boolean hasNbtData = item.getData() != null;
+		
+		if(prot18)
+			out.writeByte(hasNbtData ? item.getData().length : 0);
+		else
+			out.writeShort(hasNbtData ? item.getData().length : -1);
+	
+		if (hasNbtData && item.getData().length > 0)
+			out.writeBytes(item.getData());
 	}
 
-	public static ItemStack readItemstack(ByteBuf buf, boolean prot18) {
-		short id = buf.readShort();
-		if (id <= 0) {
+	public static ItemStack readItemstack(ByteBuf in, boolean prot18) {
+		int id = in.readShort();
+
+		if (id == -1)
 			return null;
-		} else {
-			byte stackSize = buf.readByte();
-			short dataValue = buf.readShort();
-			short dataLenght;
-			if(prot18)
-				dataLenght = buf.readByte();
-			else
-				dataLenght = buf.readShort();
-			byte[] metadata = new byte[0];
-			if (dataLenght >= 0 && id != 0) { // FIXME previous check if its enchantable. Since MC 1.3.2 all items except 0 (empty hand) can send this.
-				metadata = new byte[dataLenght];
-				buf.readBytes(metadata);
-			}
-			return new ItemStack(id, stackSize, dataValue);
+
+		int count = in.readByte();
+		int damage = in.readShort();
+		int dataLength = prot18 ? in.readByte() : in.readShort();
+		byte[] data = null;
+
+		if(dataLength > 0) { // FIXME previous check if its enchantable. Since MC 1.3.2 all items except 0 (empty hand) can send this.
+			data = new byte[dataLength];
+			in.readBytes(data);
 		}
+
+		return new ItemStack(id, count, damage, data);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void writeMetadata(ByteBuf out, MetaParam<?>[] parameters) throws IOException {
+	public static void writeMetadata(ByteBuf out, MetaParam<?>[] parameters, boolean prot18) throws IOException {
 		for (MetaParam<?> parameter : parameters) {
 
 			if (parameter == null)
@@ -86,8 +92,8 @@ public class PacketUtils {
 
 			int type = (parameter.getType() << 5 | parameter.getIndex() & 31) & 255;
 			out.writeByte(type);
-			
-			System.out.println("Writing Meta Of Type: " +parameter.getType());
+
+			System.out.println("Writing Meta Of Type: " + parameter.getType());
 
 			switch (parameter.getType()) {
 			case MetaParam.TYPE_BYTE:
@@ -112,30 +118,21 @@ public class PacketUtils {
 
 			case MetaParam.TYPE_ITEM:
 				ItemStack item = ((MetaParam<ItemStack>) parameter).getValue();
-
-				if (item.getId() <= 0) {
-					out.writeShort(-1);
-				} else {
-					out.writeShort(item.getId());
-					out.writeByte(item.getCount());
-					out.writeShort(item.getDamage());
-					out.writeShort(-1);
-					// TODO implement NBT tag writing
-				}
+				writeItemstack(item, out, prot18);
 				break;
 
 			case MetaParam.TYPE_COORDINATE:
 				Position coord = ((MetaParam<Position>) parameter).getValue();
-
-				out.writeInt((int) coord.x);
-				out.writeInt((int) coord.y);
-				out.writeInt((int) coord.z);
+				if(prot18)
+					writePosition18(out, coord.intX(), coord.intY(), coord.intZ());
+				else
+					writePositionAllIntegers(coord.intX(), coord.intY(), coord.intZ(), out);
 			}
 		}
 		out.writeByte(127);
 	}
 
-	public static MetaParam<?>[] readMetadata(ByteBuf in) throws IOException {
+	public static MetaParam<?>[] readMetadata(ByteBuf in, boolean prot18) throws IOException {
 
 		MetaParam<?>[] parameters = new MetaParam<?>[MetaParam.METADATA_SIZE];
 
@@ -143,50 +140,42 @@ public class PacketUtils {
 			int index = data & 0x1F;
 			int type = data >> 5;
 
-				MetaType metaType = MetaType.fromId(type);
-
-				switch (metaType) {
-				case BYTE:
+				switch (type) {
+				case MetaParam.TYPE_BYTE:
 					parameters[index] = new MetaParam<Byte>(type, index, in.readByte());
 					break;
 
-				case SHORT:
+				case MetaParam.TYPE_SHORT:
 					parameters[index] = new MetaParam<Short>(type, index, in.readShort());
 					break;
 
-				case INT:
+				case MetaParam.TYPE_INT:
 					parameters[index] = new MetaParam<Integer>(type, index, in.readInt());
 					break;
 
-				case FLOAT:
+				case MetaParam.TYPE_FLOAT:
 					parameters[index] = new MetaParam<Float>(type, index, in.readFloat());
 					break;
 
-				case STRING:
+				case MetaParam.TYPE_STRING:
 					parameters[index] = new MetaParam<String>(type, index, readString(in, 9999999, false));
 					break;
 
-				case ITEM:
-					short id = in.readShort();
-					if (id <= 0) {
-						parameters[index] = new MetaParam<ItemStack>(type, index, null);
-					} else {
-						byte stackSize = in.readByte();
-						short dataValue = in.readShort();
-						// TODO Implement NBT tag reading
-						parameters[index] = new MetaParam<ItemStack>(type, index, new ItemStack(id, stackSize, dataValue));
-					}
+				case MetaParam.TYPE_ITEM:
+					parameters[index] = new MetaParam<ItemStack>(type, index, readItemstack(in, prot18));
 					break;
 
-				case POSITION:
-					int x = in.readInt();
-					int y = in.readInt();
-					int z = in.readInt();
+				case MetaParam.TYPE_COORDINATE:
+					Position pos;
+					if(prot18)
+						pos = readPosition18(in);
+					else
+						pos = new Position(in.readInt(), in.readInt(), in.readInt());
 
-					parameters[index] = new MetaParam<Position>(type, index, new Position(x, y, z));
+					parameters[index] = new MetaParam<Position>(type, index, pos);
 
 				default:
-					throw new UnsupportedOperationException("Unknown metadata: " + metaType);
+					throw new UnsupportedOperationException("Unknown metadata ID " + type);
 				}
 		}
 		return parameters;
@@ -194,18 +183,16 @@ public class PacketUtils {
 
 	public static void writeUtf8String(ByteBuf out, String str) {
 		byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
-		if (bytes.length >= 65536) {
+		
+		if (bytes.length >= 65536)
 			throw new IllegalArgumentException("Encoded UTF-8 string too long.");
-		}
-
+		
 		out.writeShort(bytes.length);
 		out.writeBytes(bytes);
 	}
 
 	public static String readUtf8String(ByteBuf in) {
-		int len = in.readUnsignedShort();
-
-		byte[] bytes = new byte[len];
+		byte[] bytes = new byte[in.readUnsignedShort()];
 		in.readBytes(bytes);
 
 		return new String(bytes, StandardCharsets.UTF_8);
@@ -267,23 +254,25 @@ public class PacketUtils {
 	}
 
 	public static String readString(ByteBuf in, int maxLength, boolean compatmode) throws IOException {
-		if(compatmode){
+		if(compatmode) {
 			short length = in.readShort();
-			if (length > maxLength) {
+
+			if (length > maxLength)
 				throw new IOException("Received string length longer than maximum allowed (" + length + " > " + maxLength + ")");
-			} else if (length < 0) {
+			else if (length < 0)
 				throw new IOException("Received string length is less than zero! Weird string!");
-			} else {
-				StringBuilder stringbuilder = new StringBuilder();
-				for (int j = 0; j < length; ++j) {
-					stringbuilder.append(in.readChar());
-				}
-				return stringbuilder.toString();
-			}
+
+			StringBuilder builder = new StringBuilder();
+
+			for (int i = 0; i < length; ++i)
+				builder.append(in.readChar());
+
+			return builder.toString();
+
 		}
-		int len = readVarInt( in);
-		byte[] b = new byte[ len ];
-		in.readBytes( b );
+		int len = readVarInt(in);
+		byte[] b = new byte[len];
+		in.readBytes(b);
 
 		return new String(b);
 	}
@@ -302,7 +291,7 @@ public class PacketUtils {
 			}
 		}
 		byte[] b = str.getBytes();
-		writeVarInt( b.length, out );
+		writeVarInt(b.length, out);
 		out.writeBytes(b);
 	}
 
@@ -408,6 +397,14 @@ public class PacketUtils {
 		out.writeByte(value);
 	}
 
+    public static byte floatToByte(float old) {
+        return (byte) (int) ((old * 256F) / 360F);
+    }
+
+    public static float byteToFloat(byte old) {
+        return (old * 360) / 256F;
+    }
+	
 	protected PacketUtils() {}
 
 }

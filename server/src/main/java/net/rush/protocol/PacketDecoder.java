@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import lombok.Setter;
 import net.rush.PacketLogger;
 import net.rush.Server;
-import net.rush.protocol.packets.HandshakePacket;
+import net.rush.protocol.packets.PacketHandshake;
 
 /**
  * Packet decoding class backed by a reusable {@link DataInputStream} which
@@ -46,8 +46,8 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
 
 			out.add(packet);
 
-			if (packet instanceof HandshakePacket) {
-				HandshakePacket handshake = (HandshakePacket) packet;
+			if (packet instanceof PacketHandshake) {
+				PacketHandshake handshake = (PacketHandshake) packet;
 
 				switch (handshake.getState()) {
 				case 1:

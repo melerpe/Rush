@@ -6,8 +6,8 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.rush.Server;
 import net.rush.protocol.MinecraftHandler;
 import net.rush.protocol.Packet;
 
@@ -17,6 +17,7 @@ import net.rush.protocol.Packet;
  */
 public class LegacyDecoder extends MessageToMessageDecoder<ByteBuf> {
 
+	private final Logger logger = Logger.getLogger("Minecraft");
 	//private int previousOpcode = -1;
 
 	@Override
@@ -24,29 +25,36 @@ public class LegacyDecoder extends MessageToMessageDecoder<ByteBuf> {
 		try {
 			if(in.readableBytes() == 0)
 				return;
-
+			
 			int clientProtocol = ctx.pipeline().get(MinecraftHandler.class).session.getClientVersion().getProtocol();
 			int opCode = in.readUnsignedByte();
 
+			if(clientProtocol == 4)
+				throw new RuntimeException("Invalid protocol " + clientProtocol);
+			
 			Packet packet = Packet.createPacket(opCode);
-			
-			if(!packet.getClass().getSimpleName().contains("OnGround"))
-				System.out.println("<<<< READING PACKET: " + packet);
-			
+
+			String p = packet.getClass().getSimpleName();
+
+			//logger.info("READING PACKET: " + packet);
+
 			packet.setProtocol(clientProtocol);
 			packet.setCompat(true);
 			packet.readCompat(in);
 
-			/*if (previousOpcode != - 1 && in.readableBytes() != 0) {
-				throw new RuntimeException("Did not read all bytes from " + packet + " ID " + opCode + ", previous opcode: " + previousOpcode + ", bytes left: " + in.readableBytes());
-			}
+			if(!p.contains("OnGround") && !p.contains("PlayerLook") && !p.contains("PlayerPosition"))
+				logger.info("<<<< READED PACKET: " + packet);
 
-			previousOpcode = opCode;*/
+			//if (previousOpcode != -1 && in.readableBytes() != 0)
+			//	throw new RuntimeException("Didnt read all bytes from " + packet + " ID " + opCode + ", previous opcode: " + previousOpcode + ", bytes left: " + in.readableBytes() + ", protocol: " + clientProtocol);
+			//previousOpcode = opCode;
 
 			out.add(packet);
+		} catch (IllegalStateException ex) {
+			logger.severe(ex.getMessage());
 		} catch (Throwable t) {
-			Server.getServer().getLogger().log(Level.SEVERE, "Error on legacy packet read", t);
-			System.out.println("-!- CRITICAL PACKET ERROR ! -!- SYSTEM SHUTDOWN -!-");
+			logger.log(Level.SEVERE, "Error on legacy packet read", t);
+			logger.info("-!- CRITICAL PACKET ERROR ! -!- SYSTEM SHUTDOWN -!-");
 			System.exit(0);
 		}
 	}

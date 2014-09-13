@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class ClientVersion {
+	
 	private final int protocol;
 	private final String version;
 

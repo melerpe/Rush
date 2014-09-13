@@ -11,16 +11,16 @@ import org.bukkit.GameMode;
 import net.rush.ServerProperties;
 import net.rush.model.Player;
 import net.rush.protocol.Session;
-import net.rush.protocol.packets.HandshakePacket;
-import net.rush.protocol.packets.LoginPacket;
+import net.rush.protocol.packets.PacketHandshake;
+import net.rush.protocol.packets.PacketLogin;
 import net.rush.util.enums.Dimension;
 
 public class ThreadLoginVerifier extends Thread {
 
-	final HandshakePacket loginPacket;
+	final PacketHandshake loginPacket;
 	final Session session;
 
-	public ThreadLoginVerifier(Session session, HandshakePacket loginPacket) {
+	public ThreadLoginVerifier(Session session, PacketHandshake loginPacket) {
 		this.session = session;
 		this.loginPacket = loginPacket;
 	}
@@ -38,7 +38,7 @@ public class ThreadLoginVerifier extends Thread {
 			
 			if (response.equals("YES")) {
 				ServerProperties prop = session.getServer().getProperties();
-				session.send(new LoginPacket(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, Difficulty.getByValue(prop.difficulty), prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
+				session.send(new PacketLogin(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, Difficulty.getByValue(prop.difficulty), prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
 				session.setPlayer(new Player(session, loginPacket.getUsername()));
 			} else
 				session.disconnect("Failed to verify username!");

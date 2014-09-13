@@ -11,7 +11,7 @@ import net.rush.model.ItemStack;
 import net.rush.model.Player;
 import net.rush.model.misc.Trade;
 import net.rush.model.misc.TradeList;
-import net.rush.protocol.packets.PluginMessagePacket;
+import net.rush.protocol.packets.PacketPluginMessage;
 import net.rush.protocol.utils.MetaParam;
 import net.rush.util.enums.InventoryEnum;
 import net.rush.util.enums.VillagerType;
@@ -44,7 +44,7 @@ public class Villager extends EntityAgeable {
 				output.writeInt(pl.windowId);
 				trades.writeRecipesToStream(output, !pl.getSession().isCompat() && pl.getSession().getClientVersion().getProtocol() > 46);
 				
-				pl.getSession().send(new PluginMessagePacket("MC|TrList", arrayOutput.toByteArray()));
+				pl.getSession().send(new PacketPluginMessage("MC|TrList", arrayOutput.toByteArray()));
 				
 				arrayOutput.flush();
 				arrayOutput.close();

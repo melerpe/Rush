@@ -13,23 +13,23 @@ import net.rush.inventory.PlayerInventory;
 import net.rush.model.entity.ItemEntity;
 import net.rush.protocol.Packet;
 import net.rush.protocol.Session;
-import net.rush.protocol.packets.AnimationPacket;
-import net.rush.protocol.packets.AnimationPacket.AnimType;
-import net.rush.protocol.packets.ChangeGameStatePacket;
-import net.rush.protocol.packets.ChatPacket;
-import net.rush.protocol.packets.DestroyEntityPacket;
-import net.rush.protocol.packets.EntityEquipmentPacket;
-import net.rush.protocol.packets.NamedEntitySpawnPacket;
-import net.rush.protocol.packets.NamedSoundEffectPacket;
-import net.rush.protocol.packets.OpenWindowPacket;
+import net.rush.protocol.packets.PacketAnimation;
+import net.rush.protocol.packets.PacketAnimation.AnimType;
+import net.rush.protocol.packets.PacketChangeGameState;
+import net.rush.protocol.packets.PacketChat;
+import net.rush.protocol.packets.PacketDestroyEntity;
+import net.rush.protocol.packets.PacketEntityEquipment;
+import net.rush.protocol.packets.PacketNamedEntitySpawn;
+import net.rush.protocol.packets.PacketNamedSoundEffect;
+import net.rush.protocol.packets.PacketOpenWindow;
 import net.rush.protocol.packets.Packet18Title;
 import net.rush.protocol.packets.Packet18Title.TitleAction;
-import net.rush.protocol.packets.PlayerListItemPacket;
-import net.rush.protocol.packets.PlayerPositionAndLookPacket;
-import net.rush.protocol.packets.SetSlotPacket;
-import net.rush.protocol.packets.SoundOrParticleEffectPacket;
-import net.rush.protocol.packets.SpawnPositionPacket;
-import net.rush.protocol.packets.UpdateHealthPacket;
+import net.rush.protocol.packets.PacketPlayerListItem;
+import net.rush.protocol.packets.PacketPlayerLookPosition;
+import net.rush.protocol.packets.PacketSetSlot;
+import net.rush.protocol.packets.PacketSoundOrParticleEffect;
+import net.rush.protocol.packets.PacketSpawnPosition;
+import net.rush.protocol.packets.PacketUpdateHealth;
 import net.rush.protocol.utils.MetaParam;
 import net.rush.util.MathHelper;
 import net.rush.util.enums.GameStateReason;
@@ -87,6 +87,7 @@ public final class Player extends LivingEntity implements CommandSender {
 	@Getter
 	private ItemStack itemOnCursor;
 	public int windowId = 0;
+	public int airTicks = 0;
 
 	/**
 	 * Creates a new player and adds it to the world.
@@ -115,8 +116,8 @@ public final class Player extends LivingEntity implements CommandSender {
 		// display player in the TAB list
 		this.updateTabList();
 
-		this.session.send(new SpawnPositionPacket(position));
-		this.session.send(new PlayerPositionAndLookPacket(position.x, position.y, position.z, position.y + NORMAL_EYE_HEIGHT, (float) rotation.getYaw(), (float) rotation.getPitch(), true));
+		this.session.send(new PacketSpawnPosition(position));
+		this.session.send(new PacketPlayerLookPosition(position.x, position.y, position.z, position.y + NORMAL_EYE_HEIGHT, (float) rotation.getYaw(), (float) rotation.getPitch(), true));
 
 		getServer().getLogger().info(name + " [" + session.getIp() + ", prot=" + getSession().getClientVersion().getProtocol() + "] logged in with entity id " + id + " at ([" + world.getName() + "] " + (int)position.x + ", " + (int)position.y + ", " + (int)position.z + ")");
 		getServer().broadcastMessage("&e" + name + " has joined the game.");
@@ -128,7 +129,7 @@ public final class Player extends LivingEntity implements CommandSender {
 	 * @param message The message.
 	 */
 	public void sendMessage(String message) {
-		session.send(new ChatPacket(message));
+		session.send(new PacketChat(message));
 	}
 
 	public void playSound(Sound sound, Position pos) {
@@ -148,26 +149,26 @@ public final class Player extends LivingEntity implements CommandSender {
 	}
 
 	public void playSound(String sound, double x, double y, double z, float volume, float pitch) {
-		session.send(new NamedSoundEffectPacket(sound, x, y, z, volume, pitch));
+		session.send(new PacketNamedSoundEffect(sound, x, y, z, volume, pitch));
 	}
 
 	public void playEffect(int effectId, int x, int y, int z, int data) {
-		session.send(new SoundOrParticleEffectPacket(effectId, x, y, z, data));
+		session.send(new PacketSoundOrParticleEffect(effectId, x, y, z, data));
 	}
 
 	public void playAnimation(AnimType type) {
-		session.send(new AnimationPacket(getId(), type));
+		session.send(new PacketAnimation(getId(), type));
 	}
 	
 	public void playAnimationOf(int entityId, AnimType type) {
-		session.send(new AnimationPacket(entityId, type));
+		session.send(new PacketAnimation(entityId, type));
 	}
 
 	public void updateTabList() {
-		Packet newPlayer = new PlayerListItemPacket(name, gamemode, true, (short)100);
+		Packet newPlayer = new PacketPlayerListItem(name, gamemode, true, (short)100);
 		for(Player pl : getWorld().getPlayers()) {
 			pl.getSession().send(newPlayer);
-			session.send(new PlayerListItemPacket(pl.getName(), pl.getGamemode(), true, (short)100));
+			session.send(new PacketPlayerListItem(pl.getName(), pl.getGamemode(), true, (short)100));
 		}
 	}
 
@@ -193,7 +194,7 @@ public final class Player extends LivingEntity implements CommandSender {
 				}
 
 			} else {
-				session.send(new DestroyEntityPacket(entity.getId()));
+				session.send(new PacketDestroyEntity(entity.getId()));
 				it.remove();
 			}
 		}
@@ -268,7 +269,7 @@ public final class Player extends LivingEntity implements CommandSender {
 		int z = position.getPixelZ();
 		int yaw = rotation.getIntYaw();
 		int pitch = rotation.getIntPitch();
-		return new NamedEntitySpawnPacket(id, name, new Position(x, y, z), (byte)yaw, (byte)pitch, (byte)0, metadata.clone());
+		return new PacketNamedEntitySpawn(id, name, new Position(x, y, z), (byte)yaw, (byte)pitch, (byte)0, metadata.clone());
 	}
 
 	/**
@@ -293,7 +294,7 @@ public final class Player extends LivingEntity implements CommandSender {
 		float oldHealth = health;
 		super.setHealth(newHealth);
 
-		session.send(new UpdateHealthPacket(newHealth, food, saturation));
+		session.send(new PacketUpdateHealth(newHealth, food, saturation));
 
 		if(newHealth < oldHealth)
 			playSound(Sound.HURT_FLESH, position);
@@ -308,7 +309,7 @@ public final class Player extends LivingEntity implements CommandSender {
 
 	public void setGamemode(GameMode gamemode) {
 		this.gamemode = gamemode;
-		this.getSession().send(new ChangeGameStatePacket(GameStateReason.CHANGE_GAMEMODE, gamemode.getValue()));
+		this.getSession().send(new PacketChangeGameState(GameStateReason.CHANGE_GAMEMODE, gamemode.getValue()));
 	}
 
 	public void setRiding(boolean riding) {
@@ -366,7 +367,7 @@ public final class Player extends LivingEntity implements CommandSender {
 
 	public void openInventory(InventoryEnum type, int slots, String name, int horseId) {
 		windowId++;		
-		session.send(new OpenWindowPacket(windowId, type.id, name, slots, name != "", horseId));
+		session.send(new PacketOpenWindow(windowId, type.id, name, slots, name != "", horseId));
 	}
 
 	// Inventory
@@ -381,35 +382,35 @@ public final class Player extends LivingEntity implements CommandSender {
 
 	public void setItemOnCursor(ItemStack item) {
 		itemOnCursor = item;
-		session.send(new SetSlotPacket(1, inventory.getHeldItemSlot(), item));
+		session.send(new PacketSetSlot(1, inventory.getHeldItemSlot(), item));
 	}
 
 	public void onSlotSet(Inventory inv, int index, ItemStack item) {
 		int equipSlot = -1;
 
 		if (index == getInventory().getHeldItemSlot())
-			equipSlot = EntityEquipmentPacket.HELD_ITEM;
+			equipSlot = PacketEntityEquipment.HELD_ITEM;
 
 		else if (index == PlayerInventory.HELMET_SLOT) 
-			equipSlot = EntityEquipmentPacket.HELMET_SLOT;
+			equipSlot = PacketEntityEquipment.HELMET_SLOT;
 
 		else if (index == PlayerInventory.CHESTPLATE_SLOT)
-			equipSlot = EntityEquipmentPacket.CHESTPLATE_SLOT;
+			equipSlot = PacketEntityEquipment.CHESTPLATE_SLOT;
 
 		else if (index == PlayerInventory.LEGGINGS_SLOT)
-			equipSlot = EntityEquipmentPacket.LEGGINGS_SLOT;
+			equipSlot = PacketEntityEquipment.LEGGINGS_SLOT;
 
 		else if (index == PlayerInventory.BOOTS_SLOT)
-			equipSlot = EntityEquipmentPacket.BOOTS_SLOT;
+			equipSlot = PacketEntityEquipment.BOOTS_SLOT;
 
 		if (equipSlot >= 0) {
-			EntityEquipmentPacket message = new EntityEquipmentPacket(getId(), equipSlot, item);
+			PacketEntityEquipment message = new PacketEntityEquipment(getId(), equipSlot, item);
 			for (Player player : getWorld().getPlayers())
 				if (player != this && player.isWithinDistance(this))
 					player.getSession().send(message);
 		}
 
-		session.send(new SetSlotPacket(inventory.getId(), index, item));
+		session.send(new PacketSetSlot(inventory.getId(), index, item));
 	}
 
 	public Server getServer() {
@@ -419,7 +420,7 @@ public final class Player extends LivingEntity implements CommandSender {
 	public void heal() {
 		if(health < maxHealth) {
 			setHealth(health + 1);
-			getSession().send(new UpdateHealthPacket(health, (short)food, saturation));
+			getSession().send(new PacketUpdateHealth(health, (short)food, saturation));
 		}
 	}
 	

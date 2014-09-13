@@ -4,13 +4,13 @@ import net.rush.model.Entity;
 import net.rush.model.ItemStack;
 import net.rush.model.Player;
 import net.rush.protocol.Packet;
-import net.rush.protocol.packets.EntityLookAndRelMovePacket;
-import net.rush.protocol.packets.EntityLookPacket;
-import net.rush.protocol.packets.EntityRelMovePacket;
-import net.rush.protocol.packets.EntityTeleportPacket;
-import net.rush.protocol.packets.ItemCollectPacket;
-import net.rush.protocol.packets.SpawnObjectPacket;
-import net.rush.protocol.packets.SpawnObjectPacket.ObjectType;
+import net.rush.protocol.packets.PacketEntityLookRelMove;
+import net.rush.protocol.packets.PacketEntityLook;
+import net.rush.protocol.packets.PacketEntityRelMove;
+import net.rush.protocol.packets.PacketEntityTeleport;
+import net.rush.protocol.packets.PacketItemCollect;
+import net.rush.protocol.packets.PacketSpawnObject;
+import net.rush.protocol.packets.PacketSpawnObject.ObjectType;
 import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
@@ -105,7 +105,7 @@ public final class ItemEntity extends Entity {
 			if(pickupDelay == 0 && en.getType() == EntityType.PLAYER) {
 				if(getPosition().distance(en.getPosition()) < 1D) {
 					Player pl = (Player) en;
-					pl.getSession().send(new ItemCollectPacket(getId(), pl.getId()));
+					pl.getSession().send(new PacketItemCollect(getId(), pl.getId()));
 					pl.getInventory().addItem(item);
 					pl.playSound(Sound.ITEM_PICKUP, pl.getPosition(), 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 					this.destroy();
@@ -131,7 +131,7 @@ public final class ItemEntity extends Entity {
 
 	public Packet createSpawnMessage() {
 		metadataChanged = true;
-		return new SpawnObjectPacket(this, ObjectType.ITEM, throwerId, motionX, motionY, motionZ);
+		return new PacketSpawnObject(this, ObjectType.ITEM, throwerId, motionX, motionY, motionZ);
 	}
 
 	public Packet createUpdateMessage() {
@@ -159,13 +159,13 @@ public final class ItemEntity extends Entity {
 		int pitch = rotation.getIntPitch();
 		
 		if (moved && teleport)
-			return new EntityTeleportPacket(id, x, y, z, yaw, pitch);
+			return new PacketEntityTeleport(id, x, y, z, yaw, pitch);
 		else if (moved && rotated) 
-			return new EntityLookAndRelMovePacket(id, (byte)dx, (byte)dy, (byte)dz, (byte)yaw, (byte)pitch);
+			return new PacketEntityLookRelMove(id, (byte)dx, (byte)dy, (byte)dz, (byte)yaw, (byte)pitch);
 		else if (moved) 
-			return new EntityRelMovePacket(id, (byte)dx, (byte)dy, (byte)dz);
+			return new PacketEntityRelMove(id, (byte)dx, (byte)dy, (byte)dz);
 		else if (rotated)
-			return new EntityLookPacket(id, (byte)yaw, (byte)pitch);
+			return new PacketEntityLook(id, (byte)yaw, (byte)pitch);
 
 		return null;
 	}

@@ -4,6 +4,7 @@ import net.rush.model.CommandSender;
 import net.rush.model.Entity;
 import net.rush.model.Player;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.EntityType;
 
 /**
@@ -32,7 +33,7 @@ public final class SpawnCommand extends Command {
 		Player pl = (Player) player;
 		try {
 			Entity entity = pl.getWorld().spawnEntity(pl.getPosition(), EntityType.valueOf(args[0].toUpperCase()));
-			pl.sendMessage("&3Rush // &2Spawned test entity ping with entity id " + entity.getId());
+			pl.sendMessage("&3Rush // &2Spawned entity " + StringUtils.capitalize(entity.getType().toString().toLowerCase()) + " with entity id " + entity.getId());
 		} catch (IllegalArgumentException ex) {
 			pl.sendMessage("&cInvalid entity type. Use bukkit entity type names.");
 		}

@@ -30,6 +30,8 @@ import net.rush.model.entity.EntityRegistry;
 import net.rush.model.entity.ItemEntity;
 import net.rush.model.misc.NextTickEntry;
 import net.rush.model.misc.Vec3Pool;
+import net.rush.protocol.packets.PacketBlockChange;
+import net.rush.protocol.packets.PacketTimeUpdate;
 import net.rush.util.nbt.CompoundTag;
 import net.rush.util.nbt.NBTOutputStream;
 
@@ -218,10 +220,9 @@ public class World {
 	public void setTime(long time) {
 		this.time = time % PULSES_PER_DAY;
 
-		boolean fix;
-		// TODO TimeUpdatePacket msg = new TimeUpdatePacket(0, time); // TODO Correct world age?
-		//for (Player player : getPlayers())
-		//	player.getSession().send(msg);
+		PacketTimeUpdate msg = new PacketTimeUpdate(0, time); // TODO Correct world age?
+		for (Player player : getPlayers())
+			player.getSession().send(msg);
 	}
 
 	/**
@@ -326,11 +327,10 @@ public class World {
 	}
 
 	public void sendBlockChangePacket(int x, int y, int z) {
-		boolean fix;
-		//BlockChangePacket packet = new BlockChangePacket(x, y, z, this);
+		PacketBlockChange packet = new PacketBlockChange(x, y, z, this);
 
-		//for(Player pl : getPlayers())
-		//	pl.getSession().send(packet);
+		for(Player pl : getPlayers())
+			pl.getSession().send(packet);
 	}
 
 	public int getType(int x, int y, int z) {

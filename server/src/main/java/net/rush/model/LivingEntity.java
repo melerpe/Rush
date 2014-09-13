@@ -5,8 +5,8 @@ import java.util.HashSet;
 import net.rush.chunk.ChunkCoords;
 import net.rush.model.entity.ai.EntityAI;
 import net.rush.protocol.Packet;
-import net.rush.protocol.packets.AnimationPacket.AnimType;
-import net.rush.protocol.packets.SpawnMobPacket;
+import net.rush.protocol.packets.PacketAnimation.AnimType;
+import net.rush.protocol.packets.PacketSpawnMob;
 import net.rush.protocol.utils.MetaParam;
 import net.rush.world.World;
 
@@ -45,7 +45,7 @@ public class LivingEntity extends Mob {
 		int z = position.getPixelZ();
 		int yaw = rotation.getIntYaw();
 		int pitch = rotation.getIntPitch();	// FIXME byte headYaw?
-		return new SpawnMobPacket(id, (byte)getType().getTypeId(), new Position(x, y, z), (byte)yaw, (byte)pitch, (byte)yaw, Position.ZERO, metadata.clone());
+		return new PacketSpawnMob(id, (byte)getType().getTypeId(), new Position(x, y, z), (byte)yaw, (byte)pitch, (byte)yaw, Position.ZERO, metadata.clone());
 	}
 
 	@Override

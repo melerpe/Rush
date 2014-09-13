@@ -6,12 +6,12 @@ package net.rush.model.entity;
 
 import net.rush.model.Entity;
 import net.rush.protocol.Packet;
-import net.rush.protocol.packets.EntityLookAndRelMovePacket;
-import net.rush.protocol.packets.EntityLookPacket;
-import net.rush.protocol.packets.EntityRelMovePacket;
-import net.rush.protocol.packets.EntityTeleportPacket;
-import net.rush.protocol.packets.SpawnObjectPacket;
-import net.rush.protocol.packets.SpawnObjectPacket.ObjectType;
+import net.rush.protocol.packets.PacketEntityLookRelMove;
+import net.rush.protocol.packets.PacketEntityLook;
+import net.rush.protocol.packets.PacketEntityRelMove;
+import net.rush.protocol.packets.PacketEntityTeleport;
+import net.rush.protocol.packets.PacketSpawnObject;
+import net.rush.protocol.packets.PacketSpawnObject.ObjectType;
 import net.rush.util.MathHelper;
 import net.rush.world.World;
 
@@ -75,7 +75,7 @@ public class EntityFallingBlock extends Entity {
 
 	@Override
 	public Packet createSpawnMessage() {
-		return new SpawnObjectPacket(this, ObjectType.FALLING_BLOCK, blockId, motionX, motionY, motionZ);
+		return new PacketSpawnObject(this, ObjectType.FALLING_BLOCK, blockId, motionX, motionY, motionZ);
 	}
 
 	@Override
@@ -104,13 +104,13 @@ public class EntityFallingBlock extends Entity {
 		int pitch = rotation.getIntPitch();
 
 		if (moved && teleport) {
-			return new EntityTeleportPacket(id, x, y, z, yaw, pitch);
+			return new PacketEntityTeleport(id, x, y, z, yaw, pitch);
 		} else if (moved && rotated) {
-			return new EntityLookAndRelMovePacket(id, (byte)dx, (byte)dy, (byte)dz, (byte)yaw, (byte)pitch);
+			return new PacketEntityLookRelMove(id, (byte)dx, (byte)dy, (byte)dz, (byte)yaw, (byte)pitch);
 		} else if (moved) {
-			return new EntityRelMovePacket(id, (byte)dx, (byte)dy, (byte)dz);
+			return new PacketEntityRelMove(id, (byte)dx, (byte)dy, (byte)dz);
 		} else if (rotated) {
-			return new EntityLookPacket(id, (byte)yaw, (byte)pitch);
+			return new PacketEntityLook(id, (byte)yaw, (byte)pitch);
 		}
 
 		return null;

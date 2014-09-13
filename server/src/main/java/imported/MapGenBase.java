@@ -17,7 +17,7 @@ public class MapGenBase {
 		for (int xPos = chunkX - radius; xPos <= chunkX + radius; ++xPos)
 			for (int zPos = chunkZ - radius; zPos <= chunkZ + radius; ++zPos) {
 				rand.setSeed(xPos * xNoise + zPos * zNoise ^ world.seed);
-				this.decorate(world, xPos, zPos, chunkX, chunkZ, blockArray);
+				decorate(world, xPos, zPos, chunkX, chunkZ, blockArray);
 			}
 	}
 

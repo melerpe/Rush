@@ -1,31 +1,26 @@
 package imported;
 
-import java.util.Random;
-
 import net.rush.model.Block;
 import net.rush.util.MathHelper;
 import net.rush.world.World;
 
 public class MapGenCaves extends MapGenBase {
 
-	public MapGenCaves() {
-	}
-
 	protected void generateCave(int chunkX, int chunkZ, byte[] blockArray, double x, double y, double z) {
 		this.generateCave(chunkX, chunkZ, blockArray, x, y, z, 1.0F + rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
 	}
 
 	protected void generateCave(int chunkX, int chunkZ, byte[] blockArray, double x, double y, double z, float f, float f1, float f2, int k, int l, double d3) {
-		double d4 = chunkX * 16 + 8;
-		double d5 = chunkZ * 16 + 8;
+		double xOffset = chunkX * 16 + 8;
+		double zOffset = chunkZ * 16 + 8;
 		float f3 = 0.0F;
 		float f4 = 0.0F;
-		Random random = new Random(rand.nextLong());
+		rand.setSeed(rand.nextLong());
 
 		if (l <= 0) {
 			int i1 = radius * 16 - 16;
 
-			l = i1 - random.nextInt(i1 / 4);
+			l = i1 - rand.nextInt(i1 / 4);
 		}
 
 		boolean flag = false;
@@ -35,9 +30,9 @@ public class MapGenCaves extends MapGenBase {
 			flag = true;
 		}
 
-		int j1 = random.nextInt(l / 2) + l / 4;
+		int j1 = rand.nextInt(l / 2) + l / 4;
 
-		for (boolean flag1 = random.nextInt(6) == 0; k < l; ++k) {
+		for (boolean flag1 = rand.nextInt(6) == 0; k < l; ++k) {
 			double d6 = 1.5D + MathHelper.floor_double(k * 3.1415927F / l) * f * 1.0F;
 			double d7 = d6 * d3;
 			float f5 = MathHelper.ceiling_float_int(f2);
@@ -55,24 +50,24 @@ public class MapGenCaves extends MapGenBase {
 			f1 += f3 * 0.1F;
 			f4 *= 0.9F;
 			f3 *= 0.75F;
-			f4 += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 2.0F;
-			f3 += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 4.0F;
+			f4 += (rand.nextFloat() - rand.nextFloat()) * rand.nextFloat() * 2.0F;
+			f3 += (rand.nextFloat() - rand.nextFloat()) * rand.nextFloat() * 4.0F;
 			if (!flag && k == j1 && f > 1.0F) {
-				this.generateCave(chunkX, chunkZ, blockArray, x, y, z, random.nextFloat() * 0.5F + 0.5F, f1 - 1.5707964F, f2 / 3.0F, k, l, 1.0D);
-				this.generateCave(chunkX, chunkZ, blockArray, x, y, z, random.nextFloat() * 0.5F + 0.5F, f1 + 1.5707964F, f2 / 3.0F, k, l, 1.0D);
+				this.generateCave(chunkX, chunkZ, blockArray, x, y, z, rand.nextFloat() * 0.5F + 0.5F, f1 - 1.5707964F, f2 / 3.0F, k, l, 1.0D);
+				this.generateCave(chunkX, chunkZ, blockArray, x, y, z, rand.nextFloat() * 0.5F + 0.5F, f1 + 1.5707964F, f2 / 3.0F, k, l, 1.0D);
 				return;
 			}
 
-			if (flag || random.nextInt(4) != 0) {
-				double d8 = x - d4;
-				double d9 = z - d5;
+			if (flag || rand.nextInt(4) != 0) {
+				double d8 = x - xOffset;
+				double d9 = z - zOffset;
 				double d10 = l - k;
 				double d11 = f + 2.0F + 16.0F;
 
 				if (d8 * d8 + d9 * d9 - d10 * d10 > d11 * d11)
 					return;
 
-				if (x >= d4 - 16.0D - d6 * 2.0D && z >= d5 - 16.0D - d6 * 2.0D && x <= d4 + 16.0D + d6 * 2.0D && z <= d5 + 16.0D + d6 * 2.0D) {
+				if (x >= xOffset - 16.0D - d6 * 2.0D && z >= zOffset - 16.0D - d6 * 2.0D && x <= xOffset + 16.0D + d6 * 2.0D && z <= zOffset + 16.0D + d6 * 2.0D) {
 					int k1 = MathHelper.ceiling_double_int(x - d6) - chunkX * 16 - 1;
 					int l1 = MathHelper.ceiling_double_int(x + d6) - chunkX * 16 + 1;
 					int i2 = MathHelper.ceiling_double_int(y - d7) - 1;
@@ -159,23 +154,23 @@ public class MapGenCaves extends MapGenBase {
 
 	@Override
 	protected void decorate(World world, int xPos, int yPos, int chunkX, int chunkZ, byte[] blockArray) {
-		int i1 = rand.nextInt(rand.nextInt(rand.nextInt(40) + 1) + 1);
+		int tries = rand.nextInt(rand.nextInt(rand.nextInt(40) + 1) + 1);
 
 		if (rand.nextInt(15) != 0)
-			i1 = 0;
+			tries = 0;
 
-		for (int j1 = 0; j1 < i1; ++j1) {
+		for (int i = 0; i < tries; ++i) {
 			double x = xPos * 16 + rand.nextInt(16);
 			double y = rand.nextInt(rand.nextInt(120) + 8);
 			double z = yPos * 16 + rand.nextInt(16);
-			int count = 1;
+			int tries2 = 1;
 
 			if (rand.nextInt(4) == 0) {
 				this.generateCave(chunkX, chunkZ, blockArray, x, y, z);
-				count += rand.nextInt(4);
+				tries2 += rand.nextInt(4);
 			}
 
-			for (int i = 0; i < count; ++i) {
+			for (int i2 = 0; i2 < tries2; ++i2) {
 				float f = rand.nextFloat() * 3.1415927F * 2.0F;
 				float f1 = (rand.nextFloat() - 0.5F) * 2.0F / 8.0F;
 				float f2 = rand.nextFloat() * 2.0F + rand.nextFloat();
