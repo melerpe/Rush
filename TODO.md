@@ -4,10 +4,11 @@ Todo
 Following things needs to be done or are planned to be coded. 
 Feel free to post a pull request if you get following things working:
 
-* Proper world save. Since updating to MC 1.2.5, the world save is broken due to the new Anvil format.
-* Configuration.
+* Fix support for 1.8 (mostly map packet and packet that causes errors in console)
+* Fix occasional crashes on 1.6.4 and general packet unstability.
 * Entities - spawning is done (/spawn), metadata partially (/meta). I plan make killing entities possible
   and also some simple AI.
-* Server side inventory.
-* Make it compatible with both Minecraft 1.6.4 and 1.7.9. (Possible, but need additional work).
-* Fix placing bug: Placing a block added in MC 1.3.2 and later causes client to crash.
+* Inventory-related stuff. Survival inventory is messed up, creative works relativly stable.
+* Implement Minecraft Beta 1.7.3 world generator OR fix current Alpha generator.
+* Player and entity movement and position detection.
+* Bukkit API support, including permissions and plugins.
