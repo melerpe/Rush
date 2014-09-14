@@ -28,7 +28,7 @@ public class PacketNamedEntitySpawn extends Packet {
 	private int currentItem;
 	private MetaParam<?>[] metadata;
 
-	public PacketNamedEntitySpawn(int entityId, String playerName, Position pos, byte yaw, byte pitch, short currentItem, MetaParam<?>[] metadata) {
+	public PacketNamedEntitySpawn(int entityId, String playerName, Position pos, int yaw, int pitch, int currentItem, MetaParam<?>[] metadata) {
 		super();
 		this.entityId = entityId;
 		entityName = playerName;

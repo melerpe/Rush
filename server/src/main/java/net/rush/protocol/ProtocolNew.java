@@ -56,7 +56,7 @@ import net.rush.protocol.packets.PacketOpenWindow;
 import net.rush.protocol.packets.PacketPlayerAbilities;
 import net.rush.protocol.packets.PacketPlayerListItem;
 import net.rush.protocol.packets.PacketPlayerLook;
-import net.rush.protocol.packets.PacketPlayerLookPosition;
+import net.rush.protocol.packets.PacketPlayerLookAndPosition;
 import net.rush.protocol.packets.PacketPlayerOnGround;
 import net.rush.protocol.packets.PacketPlayerPosition;
 import net.rush.protocol.packets.PacketPluginMessage;
@@ -101,7 +101,7 @@ public enum ProtocolNew {
 			TO_CLIENT.registerPacket(0x05, PacketSpawnPosition.class);
 			TO_CLIENT.registerPacket(0x06, PacketUpdateHealth.class);
 			TO_CLIENT.registerPacket(0x07, PacketRespawn.class);
-			TO_CLIENT.registerPacket(0x08, PacketPlayerLookPosition.class);
+			TO_CLIENT.registerPacket(0x08, PacketPlayerLookAndPosition.class);
 			TO_CLIENT.registerPacket(0x09, PacketHeldItemChange.class);
 			TO_CLIENT.registerPacket(0x0A, PacketUseBed.class); //Packet17EntityLocationAction
 			TO_CLIENT.registerPacket(0x0B, PacketAnimation.class);
@@ -168,7 +168,7 @@ public enum ProtocolNew {
 			TO_SERVER.registerPacket(0x03, PacketPlayerOnGround.class);
 			TO_SERVER.registerPacket(0x04, PacketPlayerPosition.class);
 			TO_SERVER.registerPacket(0x05, PacketPlayerLook.class);
-			TO_SERVER.registerPacket(0x06, PacketPlayerLookPosition.class);
+			TO_SERVER.registerPacket(0x06, PacketPlayerLookAndPosition.class);
 			TO_SERVER.registerPacket(0x07, PacketDigging.class);
 			TO_SERVER.registerPacket(0x08, PacketBlockPlacement.class);
 			TO_SERVER.registerPacket(0x09, PacketHeldItemChange.class);

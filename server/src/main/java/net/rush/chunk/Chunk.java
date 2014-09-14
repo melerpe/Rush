@@ -19,9 +19,6 @@ public final class Chunk {
 	public static final int WIDTH = 16, HEIGHT = 16, DEPTH = 256;
 	public static final int SIZE = WIDTH * HEIGHT * DEPTH;	
 
-	/**
-	 * The coordinates of this chunk.
-	 */
 	private final ChunkCoords coords;
 
 	/**
@@ -47,21 +44,12 @@ public final class Chunk {
 		this.metaData = new byte[SIZE];
 		this.skyLight = new byte[SIZE];
 		this.blockLight = new byte[SIZE];
-
-		//for (int i = 0; i < entities.length; i++)
-		//	entities[i] = new TreeSet<Entity>();
 	}
 
-	/**
-	 * Gets the X coordinate of this chunk.
-	 */
 	public int getX() {
 		return coords.x;
 	}
 
-	/**
-	 * Gets the Z coordinate of this chunk.
-	 */
 	public int getZ() {
 		return coords.z;
 	}
@@ -170,27 +158,6 @@ public final class Chunk {
 		return y << 8 | z << 4 | x;
 	}	
 
-	/*public void addEntity(Entity en) {
-		int posX = MathHelper.floor_double(en.getPosition().getX() / 16D);
-		int posZ = MathHelper.floor_double(en.getPosition().getZ() / 16D);
-
-		if (posX != getX() || posZ != getZ()) {
-			System.out.println("Wrong location! " + en.getPosition());
-			Thread.dumpStack();
-		}
-
-		int posY = MathHelper.floor_double(en.getPosition().getY() / 16D);
-
-		if (posY < 0)
-			posY = 0;
-
-		if (posY >= entities.length)
-			posY = entities.length - 1;
-
-		en.chunkPosition = new Position(getX(), posY, getZ());
-		entities[posY].add(en);
-	}*/
-
 	public int getTerrainHeight(int x, int z) {
 		for (int y = DEPTH - 1; y > 0; --y) {
 			int blockId = getType(x, y, z);
@@ -253,15 +220,15 @@ public final class Chunk {
 		if(compat || protocol < 24) {
 			// skylight TODO
 			for (int i = 0; i < skyLight.length; i += 2) {
-				byte light1 = 15;//skyLight[i];
-				byte light2 = 15;//skyLight[i + 1];
+				byte light1 = 15; //skyLight[i];
+				byte light2 = 15; //skyLight[i + 1];				
 				data[pos++] = (byte) ((light2 << 4) | light1);
 			}
 
 			// blocklight TODO
 			for (int i = 0; i < blockLight.length; i += 2) {
-				byte light1 = 15;//blockLight[i];
-				byte light2 = 15;//blockLight[i + 1];
+				byte light1 = 15; //blockLight[i];
+				byte light2 = 15; //blockLight[i + 1];
 				data[pos++] = (byte) ((light2 << 4) | light1);
 			}
 

@@ -56,7 +56,7 @@ import net.rush.protocol.packets.PacketOpenWindow;
 import net.rush.protocol.packets.PacketPlayerAbilities;
 import net.rush.protocol.packets.PacketPlayerListItem;
 import net.rush.protocol.packets.PacketPlayerLook;
-import net.rush.protocol.packets.PacketPlayerLookPosition;
+import net.rush.protocol.packets.PacketPlayerLookAndPosition;
 import net.rush.protocol.packets.PacketPlayerOnGround;
 import net.rush.protocol.packets.PacketPlayerPosition;
 import net.rush.protocol.packets.PacketPluginMessage;
@@ -196,7 +196,7 @@ public abstract class Packet extends PacketUtils {
 		register(0x0A, PacketPlayerOnGround.class);
 		register(0x0B, PacketPlayerPosition.class);
 		register(0x0C, PacketPlayerLook.class);
-		register(0x0D, PacketPlayerLookPosition.class);
+		register(0x0D, PacketPlayerLookAndPosition.class);
 		register(0x0E, PacketDigging.class);
 		register(0x0F, PacketBlockPlacement.class);
 		register(0x10, PacketHeldItemChange.class);

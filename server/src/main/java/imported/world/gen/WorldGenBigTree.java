@@ -315,7 +315,7 @@ public class WorldGenBigTree extends WorldGenerator {
 	}
 
 	@Override
-	public void setScale(double d0, double scaleWidth, double leafDensity) {
+	public void setTreeGeneratorScale(double d0, double scaleWidth, double leafDensity) {
 		heightLimitLimit = (int) (d0 * 12.0D);
 		if (d0 > 0.5D)
 			leafDistanceLimit = 5;

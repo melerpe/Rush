@@ -13,6 +13,8 @@ import net.rush.inventory.PlayerInventory;
 import net.rush.model.entity.ItemEntity;
 import net.rush.protocol.Packet;
 import net.rush.protocol.Session;
+import net.rush.protocol.packets.Packet18Title;
+import net.rush.protocol.packets.Packet18Title.TitleAction;
 import net.rush.protocol.packets.PacketAnimation;
 import net.rush.protocol.packets.PacketAnimation.AnimType;
 import net.rush.protocol.packets.PacketChangeGameState;
@@ -22,10 +24,8 @@ import net.rush.protocol.packets.PacketEntityEquipment;
 import net.rush.protocol.packets.PacketNamedEntitySpawn;
 import net.rush.protocol.packets.PacketNamedSoundEffect;
 import net.rush.protocol.packets.PacketOpenWindow;
-import net.rush.protocol.packets.Packet18Title;
-import net.rush.protocol.packets.Packet18Title.TitleAction;
 import net.rush.protocol.packets.PacketPlayerListItem;
-import net.rush.protocol.packets.PacketPlayerLookPosition;
+import net.rush.protocol.packets.PacketPlayerLookAndPosition;
 import net.rush.protocol.packets.PacketSetSlot;
 import net.rush.protocol.packets.PacketSoundOrParticleEffect;
 import net.rush.protocol.packets.PacketSpawnPosition;
@@ -79,9 +79,9 @@ public final class Player extends LivingEntity implements CommandSender {
 	@Getter
 	private final Session session;
 	@Getter
-	private Set<Entity> knownEntities = new HashSet<Entity>();
+	private HashSet<Entity> knownEntities = new HashSet<Entity>();
 	@Getter
-	private Set<ChunkCoords> knownChunks = new HashSet<ChunkCoords>();
+	private HashSet<ChunkCoords> knownChunks = new HashSet<ChunkCoords>();
 	@Getter
 	private boolean crouching = false;
 	@Getter
@@ -117,7 +117,7 @@ public final class Player extends LivingEntity implements CommandSender {
 		this.updateTabList();
 
 		this.session.send(new PacketSpawnPosition(position));
-		this.session.send(new PacketPlayerLookPosition(position.x, position.y, position.z, position.y + NORMAL_EYE_HEIGHT, (float) rotation.getYaw(), (float) rotation.getPitch(), true));
+		this.session.send(new PacketPlayerLookAndPosition(position.x, position.y, position.z, position.y + NORMAL_EYE_HEIGHT, (float) rotation.getYaw(), (float) rotation.getPitch(), true));
 
 		getServer().getLogger().info(name + " [" + session.getIp() + ", prot=" + getSession().getClientVersion().getProtocol() + "] logged in with entity id " + id + " at ([" + world.getName() + "] " + (int)position.x + ", " + (int)position.y + ", " + (int)position.z + ")");
 		getServer().broadcastMessage("&e" + name + " has joined the game.");
@@ -233,16 +233,17 @@ public final class Player extends LivingEntity implements CommandSender {
 	 * Streams chunks to the player's client.
 	 */
 	public void streamBlocks() {
-		Set<ChunkCoords> previousChunks = new HashSet<ChunkCoords>(knownChunks);
+		Set<ChunkCoords> previousChunks = new HashSet<>(knownChunks);
 
 		int centralX = ((int) position.x) / Chunk.WIDTH;
 		int centralZ = ((int) position.z) / Chunk.HEIGHT;
-
+		
 		int viewDistance = Server.getServer().getProperties().viewDistance;
-
+		
 		for (int x = (centralX - viewDistance); x <= (centralX + viewDistance); x++) {
 			for (int z = (centralZ - viewDistance); z <= (centralZ + viewDistance); z++) {
 				ChunkCoords key = new ChunkCoords(x, z);
+				
 				if (!knownChunks.contains(key)) {
 					knownChunks.add(key);
 					//session.send(new PreChunkPacketImpl(x, z, true));
@@ -269,7 +270,7 @@ public final class Player extends LivingEntity implements CommandSender {
 		int z = position.getPixelZ();
 		int yaw = rotation.getIntYaw();
 		int pitch = rotation.getIntPitch();
-		return new PacketNamedEntitySpawn(id, name, new Position(x, y, z), (byte)yaw, (byte)pitch, (byte)0, metadata.clone());
+		return new PacketNamedEntitySpawn(id, name, new Position(x, y, z), yaw, pitch, getItemInHand() == null ? 0 : getItemInHand().getId(), metadata.clone());
 	}
 
 	/**

@@ -15,15 +15,10 @@ import lombok.ToString;
 @ToString(callSuper=true)
 public class PacketPlayerLook extends PacketPlayerOnGround {
 
-	private float yaw;
-	private float pitch;
-	
 	public PacketPlayerLook(float yaw, float pitch, boolean onGround) {
 		super(onGround);
 		this.yaw = yaw;
 		this.pitch = pitch;
-		
-		lookPacket = true;
 	}
 
 	@Override

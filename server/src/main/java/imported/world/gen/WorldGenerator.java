@@ -13,6 +13,6 @@ public abstract class WorldGenerator {
 
 	public abstract boolean generate(World world, Random rand, int x, int y, int z);
 
-	public void setScale(double d0, double d1, double d2) {
+	public void setTreeGeneratorScale(double d0, double d1, double d2) {
 	}
 }

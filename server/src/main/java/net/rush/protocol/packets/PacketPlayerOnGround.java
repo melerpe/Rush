@@ -16,8 +16,12 @@ public class PacketPlayerOnGround extends Packet {
 
 	protected boolean onGround;
 	
-	protected boolean positionPacket = false;
-	protected boolean lookPacket = false;
+	protected double x;
+	protected double yOrStance;
+	protected double stanceOrY;
+	protected double z;
+	protected float yaw;
+	protected float pitch;
 
 	public PacketPlayerOnGround(boolean onGround) {
 		this.onGround = onGround;

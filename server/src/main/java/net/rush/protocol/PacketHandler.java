@@ -16,12 +16,22 @@ import net.rush.model.ItemStack;
 import net.rush.model.LivingEntity;
 import net.rush.model.Player;
 import net.rush.protocol.Session.State;
+import net.rush.protocol.packets.Packet17LoginRequest;
+import net.rush.protocol.packets.Packet17LoginSuccess;
+import net.rush.protocol.packets.Packet17PingTime;
+import net.rush.protocol.packets.Packet17StatusRequest;
+import net.rush.protocol.packets.Packet18LoginCompression;
 import net.rush.protocol.packets.PacketAnimation;
 import net.rush.protocol.packets.PacketBlockChange;
+import net.rush.protocol.packets.PacketBlockPlacement;
 import net.rush.protocol.packets.PacketChat;
 import net.rush.protocol.packets.PacketClickWindow;
 import net.rush.protocol.packets.PacketConfirmTransaction;
 import net.rush.protocol.packets.PacketCreativeInventoryAction;
+import net.rush.protocol.packets.PacketDigging;
+import net.rush.protocol.packets.PacketPlayerLookAndPosition;
+import net.rush.protocol.packets.PacketPlayerPosition;
+import net.rush.protocol.packets.PacketDigging.DiggingStatus;
 import net.rush.protocol.packets.PacketEntityAction;
 import net.rush.protocol.packets.PacketEntityHeadLook;
 import net.rush.protocol.packets.PacketHandshake;
@@ -29,19 +39,9 @@ import net.rush.protocol.packets.PacketHeldItemChange;
 import net.rush.protocol.packets.PacketKeepAlive;
 import net.rush.protocol.packets.PacketKick;
 import net.rush.protocol.packets.PacketLogin;
-import net.rush.protocol.packets.Packet17LoginRequest;
-import net.rush.protocol.packets.Packet17LoginSuccess;
-import net.rush.protocol.packets.Packet17StatusRequest;
-import net.rush.protocol.packets.Packet18LoginCompression;
-import net.rush.protocol.packets.Packet17PingTime;
-import net.rush.protocol.packets.PacketBlockPlacement;
-import net.rush.protocol.packets.PacketDigging;
-import net.rush.protocol.packets.PacketDigging.DiggingStatus;
 import net.rush.protocol.packets.PacketPlayerListItem;
 import net.rush.protocol.packets.PacketPlayerLook;
 import net.rush.protocol.packets.PacketPlayerOnGround;
-import net.rush.protocol.packets.PacketPlayerLookPosition;
-import net.rush.protocol.packets.PacketPlayerPosition;
 import net.rush.protocol.packets.PacketPluginMessage;
 import net.rush.protocol.packets.PacketServerListPing;
 import net.rush.protocol.packets.PacketUseEntity;
@@ -83,7 +83,7 @@ public class PacketHandler {
 		}
 	}
 
-	public <T extends Packet> void handle(Session session, Player player, PacketServerListPing packet) {
+	public void handle(Session session, Player player, PacketServerListPing packet) {
 		/*Object[] infos = { 1, 78, "1.6.4", session.getServer().getProperties().motd, session.getServer().getWorld().getPlayers().size(), session.getServer().getProperties().maxPlayers };
 		StringBuilder builder = new StringBuilder();
 
@@ -309,6 +309,26 @@ public class PacketHandler {
 		if(player == null)
 			return;
 		
+		boolean hasLook = false;
+		boolean hasPosition = false;
+		
+		if (message instanceof PacketPlayerLook)
+			hasLook = true;
+		if (message instanceof PacketPlayerPosition)
+			hasPosition = true;
+		if (message instanceof PacketPlayerLookAndPosition) {
+			hasLook = true;
+			hasPosition = true;
+		}
+		
+		if(hasPosition) 
+			player.setPosition(message.getX(), message.getYOrStance(), message.getZ());
+		
+		if(hasLook) {
+			player.setRotation(message.getYaw(), message.getPitch());
+			session.getServer().broadcastPacketExcept(new PacketEntityHeadLook(player.getId(), (byte) player.getRotation().getIntYaw()), player);
+		}
+		
 		player.setOnGround(message.isOnGround());
 		
 		if(player.getGamemode() != GameMode.SURVIVAL)
@@ -335,23 +355,7 @@ public class PacketHandler {
 		logger.info("pluginMessage channel: " + message.getChannel() + ", data: " + new String(message.getData(), StandardCharsets.UTF_8));
 	}
 
-	public void handle(Session session, Player player, PacketPlayerLookPosition message) {
-		if (player == null)
-			return;
-
-		player.setPosition(message.getX(), message.getYOrStance(), message.getZ());
-		player.setRotation(message.getYaw(), message.getPitch());
-
-		session.getServer().broadcastPacketExcept(new PacketEntityHeadLook(player.getId(), (byte) player.getRotation().getIntYaw()), player);
-	}
-
-	public void handle(Session session, Player player, PacketPlayerPosition message) {
-		if (player == null)
-			return;
-
-		player.setPosition(message.getX(), message.getY(), message.getZ());
-	}
-
+	
 	public void handle(Session session, Player player, PacketUseEntity message) {
 
 		Entity en = player.getWorld().getEntities().getEntity(message.getTargetEntityId());

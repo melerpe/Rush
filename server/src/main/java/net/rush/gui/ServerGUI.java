@@ -26,8 +26,9 @@ public class ServerGUI extends JComponent {
 
 	private static final long serialVersionUID = 1L;
 
-	public static Logger logger = Logger.getLogger("Minecraft");
-
+	private int posX = 0;
+	private int posY = 0;
+	
 	public static void initGui() throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
@@ -70,9 +71,6 @@ public class ServerGUI extends JComponent {
 		});
 	}
 
-	private int posX = 0;
-	private int posY = 0;
-
 	public ServerGUI() {
 
 		setBorder(null);
@@ -81,7 +79,7 @@ public class ServerGUI extends JComponent {
 
 		JTextArea logAndCmd = new JTextArea();
 
-		logger.addHandler(new LogHandler(logAndCmd));
+		Logger.getLogger("Minecraft").addHandler(new LogHandler(logAndCmd));
 
 		JScrollPane log = new JScrollPane(logAndCmd, 22, 30);
 

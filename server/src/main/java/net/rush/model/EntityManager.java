@@ -62,7 +62,6 @@ public final class EntityManager implements Iterable<Entity> {
 	 */
 	@SuppressWarnings("unchecked")
 	public int allocate(Entity entity) {
-		Thread.dumpStack();
 		for (int id = nextId; id < Integer.MAX_VALUE; id++) {
 			if (!entities.containsKey(id)) {
 				entities.put(id, entity);
