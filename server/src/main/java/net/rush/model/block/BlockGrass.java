@@ -35,7 +35,7 @@ public class BlockGrass extends Block {
 	}
 
 	@Override
-	public int idDropped() {
+	public int getDropId() {
 		return Block.DIRT.id;
 	}
 }

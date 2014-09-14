@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.BanList;
+import org.bukkit.BanList.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -142,11 +143,11 @@ public final class CraftServer implements Server {
 		 * this.playerView =
 		 * Collections.unmodifiableList(Lists.transform(playerList.players, new
 		 * Function<EntityPlayer, CraftPlayer>() {
-		 * 
+		 *
 		 * @Override public CraftPlayer apply(EntityPlayer player) { return
 		 * player.getBukkitEntity(); } }));
 		 */
-		this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
+		serverVersion = CraftServer.class.getPackage().getImplementationVersion();
 		online.value = console.getProperties().onlineMode;
 
 		Bukkit.setServer(this);
@@ -221,12 +222,12 @@ public final class CraftServer implements Server {
 
 	private File getConfigFile() {
 		return new File("rush-settings-unused.yml"); // TODO (File)
-														// console.options.valueOf("bukkit-settings");
+		// console.options.valueOf("bukkit-settings");
 	}
 
 	private File getCommandsConfigFile() {
 		return new File("commands-unused.yml"); // TODO (File)
-												// console.options.valueOf("commands-settings");
+		// console.options.valueOf("commands-settings");
 	}
 
 	private void saveConfig() {
@@ -249,7 +250,7 @@ public final class CraftServer implements Server {
 		pluginManager.registerInterface(JavaPluginLoader.class);
 
 		File pluginFolder = new File("plugins"); // TODO (File)
-													// console.options.valueOf("plugins");
+		// console.options.valueOf("plugins");
 
 		if (pluginFolder.exists()) {
 			Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
@@ -276,18 +277,13 @@ public final class CraftServer implements Server {
 		Plugin[] plugins = pluginManager.getPlugins();
 
 		for (Plugin plugin : plugins) {
-			if ((!plugin.isEnabled()) && (plugin.getDescription().getLoad() == type)) {
+			if (!plugin.isEnabled() && plugin.getDescription().getLoad() == type) {
 				loadPlugin(plugin);
 			}
 		}
 
 		if (type == PluginLoadOrder.POSTWORLD) {
-			// Spigot start - Allow vanilla commands to be forced to be the main
-			// command
-			// TODO setVanillaCommands(true);
 			commandMap.setFallbackCommands();
-			// TODO setVanillaCommands(false);
-			// Spigot end
 			commandMap.registerServerAliases();
 			loadCustomPermissions();
 			DefaultPermissions.registerCorePermissions();
@@ -298,65 +294,6 @@ public final class CraftServer implements Server {
 	public void disablePlugins() {
 		pluginManager.disablePlugins();
 	}
-
-	// Spigot start
-	/* TODO private void tryRegister(VanillaCommandWrapper commandWrapper, boolean first) {
-		if (org.spigotmc.SpigotConfig.replaceCommands.contains(commandWrapper.getName())) {
-			if (first) {
-				commandMap.register("minecraft", commandWrapper);
-			}
-		} else if (!first) {
-			commandMap.register("minecraft", commandWrapper);
-		}
-	}*/
-
-	/* TODO private void setVanillaCommands(boolean first) {
-		tryRegister(new VanillaCommandWrapper(new CommandAchievement(), "/achievement give <stat_name> [player]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandBan(), "/ban <playername> [reason]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandBanIp(), "/ban-ip <ip-address|playername>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandBanList(), "/banlist [ips]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandClear(), "/clear <playername> [item] [metadata]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandGamemodeDefault(), "/defaultgamemode <mode>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandDeop(), "/deop <playername>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandDifficulty(), "/difficulty <new difficulty>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandEffect(), "/effect <player> <effect|clear> [seconds] [amplifier]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandEnchant(), "/enchant <playername> <enchantment ID> [enchantment level]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandGamemode(), "/gamemode <mode> [player]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandGamerule(), "/gamerule <rulename> [true|false]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandGive(), "/give <playername> <item> [amount] [metadata] [dataTag]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandHelp(), "/help [page|commandname]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandIdleTimeout(), "/setidletimeout <Minutes until kick>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandKick(), "/kick <playername> [reason]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandKill(), "/kill [playername]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandList(), "/list"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandMe(), "/me <actiontext>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandOp(), "/op <playername>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandPardon(), "/pardon <playername>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandPardonIP(), "/pardon-ip <ip-address>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandPlaySound(), "/playsound <sound> <playername> [x] [y] [z] [volume] [pitch] [minimumVolume]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandSay(), "/say <message>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandScoreboard(), "/scoreboard"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandSeed(), "/seed"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandSetBlock(), "/setblock <x> <y> <z> <tilename> [datavalue] [oldblockHandling] [dataTag]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandSetWorldSpawn(), "/setworldspawn [x] [y] [z]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandSpawnpoint(), "/spawnpoint <playername> [x] [y] [z]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandSpreadPlayers(), "/spreadplayers <x> <z> [spreadDistance] [maxRange] [respectTeams] <playernames>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandSummon(), "/summon <EntityName> [x] [y] [z] [dataTag]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandTp(), "/tp [player] <target>\n/tp [player] <x> <y> <z>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandTell(), "/tell <playername> <message>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandTellRaw(), "/tellraw <playername> <raw message>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandTestFor(), "/testfor <playername | selector> [dataTag]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandTestForBlock(), "/testforblock <x> <y> <z> <tilename> [datavalue] [dataTag]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandTime(), "/time set <value>\n/time add <value>"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandToggleDownfall(), "/toggledownfall"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandWeather(), "/weather <clear/rain/thunder> [duration in seconds]"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandWhitelist(), "/whitelist (add|remove) <player>\n/whitelist (on|off|list|reload)"), first);
-		tryRegister(new VanillaCommandWrapper(new CommandXp(), "/xp <amount> [player]\n/xp <amount>L [player]"), first);
-		// This is what is in the lang file, I swear.
-		tryRegister(new VanillaCommandWrapper(new CommandNetstat(), "/list"), first);
-	} */
-
-	// Spigot end
 
 	private void loadPlugin(Plugin plugin) {
 		try {
@@ -393,7 +330,7 @@ public final class CraftServer implements Server {
 
 	@Override
 	public List<Player> getOnlinePlayers() {
-		return this.playerView;
+		return playerView;
 	}
 
 	@Override
@@ -411,8 +348,9 @@ public final class CraftServer implements Server {
 					found = player;
 					delta = curDelta;
 				}
-				if (curDelta == 0)
+				if (curDelta == 0) {
 					break;
+				}
 			}
 		}
 		return found;
@@ -426,22 +364,18 @@ public final class CraftServer implements Server {
 		String lname = name.toLowerCase();
 
 		for (Player player : getOnlinePlayers()) {
-			if (player.getName().equalsIgnoreCase(lname)) {
+			if (player.getName().equalsIgnoreCase(lname))
 				return player;
-			}
 		}
 
 		return null;
 	}
 
-	// TODO: In 1.8+ this should use the server's UUID->EntityPlayer map
 	@Override
 	public Player getPlayer(UUID id) {
-		for (Player player : getOnlinePlayers()) {
-			if (player.getUniqueId().equals(id)) {
+		for (Player player : getOnlinePlayers())
+			if (player.getUniqueId().equals(id))
 				return player;
-			}
-		}
 
 		return null;
 	}
@@ -452,13 +386,12 @@ public final class CraftServer implements Server {
 	}
 
 	@Override
-	@Deprecated
 	public List<Player> matchPlayer(String partialName) {
 		Validate.notNull(partialName, "PartialName cannot be null");
 
 		List<Player> matchedPlayers = new ArrayList<Player>();
 
-		for (Player iterPlayer : this.getOnlinePlayers()) {
+		for (Player iterPlayer : getOnlinePlayers()) {
 			String iterPlayerName = iterPlayer.getName();
 
 			if (partialName.equalsIgnoreCase(iterPlayerName)) {
@@ -481,84 +414,81 @@ public final class CraftServer implements Server {
 		return console.getProperties().maxPlayers;
 	}
 
-	// NOTE: These are dependent on the corrisponding call in MinecraftServer
-	// so if that changes this will need to as well
 	@Override
 	public int getPort() {
-		return this.getConfigInt("server-port", 25565);
+		return getConfigInt("server-port", 25565);
 	}
 
 	@Override
 	public int getViewDistance() {
-		return this.getConfigInt("view-distance", 10);
+		return getConfigInt("view-distance", 10);
 	}
 
 	@Override
 	public String getIp() {
-		return this.getConfigString("server-ip", "");
+		return getConfigString("server-ip", "");
 	}
 
 	@Override
 	public String getServerName() {
-		return this.getConfigString("server-name", "Unknown Server");
+		return getConfigString("server-name", "Unknown Server");
 	}
 
 	@Override
 	public String getServerId() {
-		return this.getConfigString("server-id", "unnamed");
+		return getConfigString("server-id", "unnamed");
 	}
 
 	@Override
 	public String getWorldType() {
-		return this.getConfigString("level-type", "DEFAULT");
+		return getConfigString("level-type", "DEFAULT");
 	}
 
 	@Override
 	public boolean getGenerateStructures() {
-		return this.getConfigBoolean("generate-structures", true);
+		return getConfigBoolean("generate-structures", true);
 	}
 
 	@Override
 	public boolean getAllowEnd() {
-		return this.configuration.getBoolean("settings.allow-end");
+		return configuration.getBoolean("settings.allow-end");
 	}
 
 	@Override
 	public boolean getAllowNether() {
-		return this.getConfigBoolean("allow-nether", true);
+		return getConfigBoolean("allow-nether", true);
 	}
 
 	public boolean getWarnOnOverload() {
-		return this.configuration.getBoolean("settings.warn-on-overload");
+		return configuration.getBoolean("settings.warn-on-overload");
 	}
 
 	public boolean getQueryPlugins() {
-		return this.configuration.getBoolean("settings.query-plugins");
+		return configuration.getBoolean("settings.query-plugins");
 	}
 
 	@Override
 	public boolean hasWhitelist() {
-		return this.getConfigBoolean("white-list", false);
+		return getConfigBoolean("white-list", false);
 	}
 
-	// NOTE: Temporary calls through to server.properies until its replaced
 	private String getConfigString(String variable, String defaultValue) {
-		return this.console.getProperties().getString(variable, defaultValue);
+		return console.getProperties().getString(variable, defaultValue);
 	}
 
 	private int getConfigInt(String variable, int defaultValue) {
-		return this.console.getProperties().getInt(variable, defaultValue);
+		return console.getProperties().getInt(variable, defaultValue);
 	}
 
 	private boolean getConfigBoolean(String variable, boolean defaultValue) {
-		return this.console.getProperties().getBoolean(variable, defaultValue);
+		return console.getProperties().getBoolean(variable, defaultValue);
 	}
 
 	// End Temporary calls
 
 	@Override
 	public String getUpdateFolder() {
-		return this.configuration.getString("settings.update-folder", "update");
+		return configuration.getString("settings.update-folder", "update");
 	}
 
 	@Override
@@ -567,22 +497,22 @@ public final class CraftServer implements Server {
 	}
 
 	public int getPingPacketLimit() {
-		return this.configuration.getInt("settings.ping-packet-limit", 100);
+		return configuration.getInt("settings.ping-packet-limit", 100);
 	}
 
 	@Override
 	public long getConnectionThrottle() {
-		return this.configuration.getInt("settings.connection-throttle");
+		return configuration.getInt("settings.connection-throttle");
 	}
 
 	@Override
 	public int getTicksPerAnimalSpawns() {
-		return this.configuration.getInt("ticks-per.animal-spawns");
+		return configuration.getInt("ticks-per.animal-spawns");
 	}
 
 	@Override
 	public int getTicksPerMonsterSpawns() {
-		return this.configuration.getInt("ticks-per.monster-spawns");
+		return configuration.getInt("ticks-per.monster-spawns");
 	}
 
 	@Override
@@ -609,7 +539,6 @@ public final class CraftServer implements Server {
 		return console;
 	}
 
-	// NOTE: Should only be called from DedicatedServer.ah()
 	public boolean dispatchServerCommand(CommandSender sender, net.rush.cmd.Command serverCommand) {
 		if (sender instanceof Conversable) {
 			Conversable conversable = (Conversable) sender;
@@ -620,13 +549,13 @@ public final class CraftServer implements Server {
 			}
 		}
 		try {
-			this.playerCommandState = true;
+			playerCommandState = true;
 			return dispatchCommand(sender, serverCommand.getCommand());
 		} catch (Exception ex) {
 			getLogger().log(Level.WARNING, "Unexpected exception while parsing console command \"" + serverCommand.getCommand() + '"', ex);
 			return false;
 		} finally {
-			this.playerCommandState = false;
+			playerCommandState = false;
 		}
 	}
 
@@ -635,9 +564,8 @@ public final class CraftServer implements Server {
 		Validate.notNull(sender, "Sender cannot be null");
 		Validate.notNull(commandLine, "CommandLine cannot be null");
 
-		if (commandMap.dispatch(sender, commandLine)) {
+		if (commandMap.dispatch(sender, commandLine))
 			return true;
-		}
 
 		sender.sendMessage("Unknown command. Type /help for help.");
 
@@ -813,7 +741,7 @@ public final class CraftServer implements Server {
 	}
 
 	public static final int CUSTOM_DIMENSION_OFFSET = 10;
-	
+
 	@Override
 	public World createWorld(WorldCreator creator) {
 		Validate.notNull(creator, "Creator may not be null");
@@ -825,13 +753,11 @@ public final class CraftServer implements Server {
 		org.bukkit.WorldType type = org.bukkit.WorldType.getByName(creator.type().getName());
 		boolean generateStructures = creator.generateStructures();
 
-		if (world != null) {
+		if (world != null)
 			return world;
-		}
 
-		if ((folder.exists()) && (!folder.isDirectory())) {
+		if (folder.exists() && !folder.isDirectory())
 			throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
-		}
 
 		if (generator == null) {
 			generator = getGenerator(name);
@@ -855,7 +781,7 @@ public final class CraftServer implements Server {
 			}
 		} while (used);
 		boolean hardcore = false;
-		
+
 		WorldServer internal = new WorldServer(console, new ServerNBTManager(getWorldContainer(), name, true), name, dimension, new WorldSettings(creator.seed(), EnumGamemode.getById(getDefaultGameMode().getValue()), generateStructures, hardcore, type), console.methodProfiler, creator.environment(), generator);
 
 		if (!(worlds.containsKey(name.toLowerCase()))) {
@@ -903,7 +829,7 @@ public final class CraftServer implements Server {
 		}
 		pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
 		return internal.getWorld();
-		*/
+		 */
 		throw new UnsupportedOperationException("Creating worlds is Not supported in Rush yet");
 	}
 
@@ -978,7 +904,7 @@ public final class CraftServer implements Server {
 				}
 			}
 		}
-		*/
+		 */
 		return true;
 	}
 
@@ -992,9 +918,8 @@ public final class CraftServer implements Server {
 	@Override
 	public World getWorld(UUID uid) {
 		for (World world : worlds.values()) {
-			if (world.getUID().equals(uid)) {
+			if (world.getUID().equals(uid))
 				return world;
-			}
 		}
 		return null;
 	}
@@ -1017,11 +942,10 @@ public final class CraftServer implements Server {
 	public PluginCommand getPluginCommand(String name) {
 		Command command = commandMap.getCommand(name);
 
-		if (command instanceof PluginCommand) {
+		if (command instanceof PluginCommand)
 			return (PluginCommand) command;
-		} else {
+		else
 			return null;
-		}
 	}
 
 	@Override
@@ -1061,9 +985,8 @@ public final class CraftServer implements Server {
 				//toAdd = CraftShapelessRecipe.fromBukkitRecipe((ShapelessRecipe) recipe);
 			} else if (recipe instanceof FurnaceRecipe) {
 				//toAdd = CraftFurnaceRecipe.fromBukkitRecipe((FurnaceRecipe) recipe);
-			} else {
+			} else
 				return false;
-			}
 			return false; // TODO
 		}
 		toAdd.addToCraftingManager();
@@ -1186,9 +1109,9 @@ public final class CraftServer implements Server {
 			if (section != null) {
 				String name = section.getString("generator");
 
-				if ((name != null) && (!name.equals(""))) {
+				if (name != null && !name.equals("")) {
 					String[] split = name.split(":", 2);
-					String id = (split.length > 1) ? split[1] : null;
+					String id = split.length > 1 ? split[1] : null;
 					Plugin plugin = pluginManager.getPlugin(split[0]);
 
 					if (plugin == null) {
@@ -1260,7 +1183,7 @@ public final class CraftServer implements Server {
 	public OfflinePlayer getOfflinePlayer(String name) {
 		Validate.notNull(name, "Name cannot be null");
 		com.google.common.base.Preconditions.checkArgument(!StringUtils.isBlank(name), "Name cannot be blank"); // Spigot
-		
+
 		/* TODO OfflinePlayer result = getPlayerExact(name);
 		if (result == null) {
 			// Spigot Start
@@ -1321,14 +1244,14 @@ public final class CraftServer implements Server {
 	public void banIP(String address) {
 		Validate.notNull(address, "Address cannot be null.");
 
-		this.getBanList(org.bukkit.BanList.Type.IP).addBan(address, null, null, null);
+		getBanList(Type.IP).addBan(address, null, null, null);
 	}
 
 	@Override
 	public void unbanIP(String address) {
 		Validate.notNull(address, "Address cannot be null.");
 
-		this.getBanList(org.bukkit.BanList.Type.IP).pardon(address);
+		getBanList(Type.IP).pardon(address);
 	}
 
 	@Override
@@ -1390,7 +1313,7 @@ public final class CraftServer implements Server {
 
 	@Override
 	public GameMode getDefaultGameMode() {
-		return GameMode.getByValue(console.getProperties().gamemode);
+		return console.getProperties().gamemode;
 	}
 
 	@Override
@@ -1497,7 +1420,7 @@ public final class CraftServer implements Server {
 
 		return result;
 	}
-	
+
 	@Override
 	public Inventory createInventory(InventoryHolder owner, InventoryType type) {
 		// TODO: Create the appropriate type, rather than Custom?
@@ -1645,9 +1568,8 @@ public final class CraftServer implements Server {
 	@Override
 	public CraftIconCache loadServerIcon(File file) throws Exception {
 		Validate.notNull(file, "File cannot be null");
-		if (!file.isFile()) {
+		if (!file.isFile())
 			throw new IllegalArgumentException(file + " is not a file");
-		}
 		return loadServerIcon0(file);
 	}
 

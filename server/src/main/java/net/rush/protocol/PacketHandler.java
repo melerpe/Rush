@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.rush.ServerProperties;
 import net.rush.gui.contentpane.GuiPane;
 import net.rush.inventory.PlayerInventory;
 import net.rush.model.Block;
@@ -17,10 +16,8 @@ import net.rush.model.LivingEntity;
 import net.rush.model.Player;
 import net.rush.protocol.Session.State;
 import net.rush.protocol.packets.Packet17LoginRequest;
-import net.rush.protocol.packets.Packet17LoginSuccess;
 import net.rush.protocol.packets.Packet17PingTime;
 import net.rush.protocol.packets.Packet17StatusRequest;
-import net.rush.protocol.packets.Packet18LoginCompression;
 import net.rush.protocol.packets.PacketAnimation;
 import net.rush.protocol.packets.PacketBlockChange;
 import net.rush.protocol.packets.PacketBlockPlacement;
@@ -29,8 +26,6 @@ import net.rush.protocol.packets.PacketClickWindow;
 import net.rush.protocol.packets.PacketConfirmTransaction;
 import net.rush.protocol.packets.PacketCreativeInventoryAction;
 import net.rush.protocol.packets.PacketDigging;
-import net.rush.protocol.packets.PacketPlayerLookAndPosition;
-import net.rush.protocol.packets.PacketPlayerPosition;
 import net.rush.protocol.packets.PacketDigging.DiggingStatus;
 import net.rush.protocol.packets.PacketEntityAction;
 import net.rush.protocol.packets.PacketEntityHeadLook;
@@ -38,10 +33,11 @@ import net.rush.protocol.packets.PacketHandshake;
 import net.rush.protocol.packets.PacketHeldItemChange;
 import net.rush.protocol.packets.PacketKeepAlive;
 import net.rush.protocol.packets.PacketKick;
-import net.rush.protocol.packets.PacketLogin;
 import net.rush.protocol.packets.PacketPlayerListItem;
 import net.rush.protocol.packets.PacketPlayerLook;
+import net.rush.protocol.packets.PacketPlayerLookAndPosition;
 import net.rush.protocol.packets.PacketPlayerOnGround;
+import net.rush.protocol.packets.PacketPlayerPosition;
 import net.rush.protocol.packets.PacketPluginMessage;
 import net.rush.protocol.packets.PacketServerListPing;
 import net.rush.protocol.packets.PacketUseEntity;
@@ -49,17 +45,15 @@ import net.rush.protocol.utils.ServerPing;
 import net.rush.protocol.utils.ServerPing.Players;
 import net.rush.protocol.utils.ServerPing.Protocol;
 import net.rush.util.MathHelper;
-import net.rush.util.RushException;
 import net.rush.util.StringUtils;
 import net.rush.util.ThreadLoginVerifier;
-import net.rush.util.enums.Dimension;
 import net.rush.world.World;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Difficulty;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 public class PacketHandler {
 
@@ -134,13 +128,10 @@ public class PacketHandler {
 		if (state == Session.State.EXCHANGE_HANDSHAKE) {
 			session.setState(State.EXCHANGE_IDENTIFICATION);
 
-			if(session.getServer().getProperties().onlineMode) {
+			if(session.getServer().getProperties().onlineMode)
 				new ThreadLoginVerifier(session, message).start();
-			} else {
-				ServerProperties prop = session.getServer().getProperties();
-				session.send(new PacketLogin(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, Difficulty.getByValue(prop.difficulty), prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
-				session.setPlayer(new Player(session, message.getUsername()));
-			}
+			else 
+				session.loginPlayer(message.getUsername());			
 
 		} else {
 			session.disconnect("Handshake already exchanged.");
@@ -217,7 +208,7 @@ public class PacketHandler {
 				|| (message.getStatus() == DiggingStatus.START_DIGGING && block.getBlockHardness() == 0F)) {
 
 			block.onBlockPreDestroy(world, x, y, z, metadata);
-			block.onBlockDestroyedByPlayer(world, player, x, y, z, metadata);
+			block.onBlockDestroyed(world, player, x, y, z, metadata);
 
 			if(player.getGamemode() != GameMode.CREATIVE) {
 				block.dropBlock(world, x, y, z, metadata, 0);
@@ -292,17 +283,7 @@ public class PacketHandler {
 	}
 
 	public void handle(Session session, Player player, Packet17LoginRequest message) {
-		if(player != null)
-			throw new RushException("Player must be null! Got " + player.getName());
-
-		if(session.getClientVersion().getProtocol() > 26)
-			session.send(new Packet18LoginCompression(Packet18LoginCompression.COMPRESSION_DISABLED));
-
-		session.send(new Packet17LoginSuccess("0-0-0-0-0", message.name));
-
-		ServerProperties prop = session.getServer().getProperties();
-		session.send(new PacketLogin(0, prop.levelType, GameMode.getByValue(prop.gamemode), Dimension.NORMAL, Difficulty.getByValue(prop.difficulty), prop.maxBuildHeight, prop.maxPlayers, prop.hardcore));
-		session.setPlayer(new Player(session, message.name));
+		session.loginPlayer(message.name);
 	}
 
 	public void handle(Session session, Player player, PacketPlayerOnGround message) {
@@ -340,7 +321,7 @@ public class PacketHandler {
 			if (player.airTicks > 16) {
 				double dmg = (2 * player.airTicks) / 3.8;
 				System.out.println("DMG: " + dmg);
-				player.setHealth(player.getHealth() - MathHelper.floor_double(dmg));
+				player.damage(MathHelper.floor_double(dmg), DamageCause.FALL);
 			}
 				
 			if(player.airTicks > 0)
@@ -517,7 +498,7 @@ public class PacketHandler {
 		if (!player.isCrouching() || stack == null) {
 			int blockId = world.getType(x, y, z);
 
-			if (blockId > 0 && Block.byId[blockId] != null && Block.byId[blockId].onBlockActivated(world, x, y, z, player, direction, xOffset, yOffset, zOffset)) {
+			if (blockId > 0 && Block.byId[blockId] != null && Block.byId[blockId].onBlockInteract(world, x, y, z, player, direction, xOffset, yOffset, zOffset)) {
 				return true;
 			}
 		}		

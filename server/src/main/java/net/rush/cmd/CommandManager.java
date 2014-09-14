@@ -8,9 +8,9 @@ import java.util.Map;
 import net.rush.Server;
 import net.rush.model.CommandSender;
 
+
 /**
  * A class which manages in-game commands.
-
  */
 public final class CommandManager {
 

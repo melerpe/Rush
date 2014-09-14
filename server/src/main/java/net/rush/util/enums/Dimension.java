@@ -12,7 +12,14 @@ public enum Dimension {
 		this.value = value;
 	}
 	
-	public byte getValue() {
-		return (byte)value;
+	public int getValue() {
+		return value;
+	}
+	
+	public static Dimension fromId(int id) {
+		for (Dimension dimension : values())
+			if(dimension.value == id)
+				return dimension;
+		throw new NullPointerException("Unknown dimension ID " + id);
 	}
 }

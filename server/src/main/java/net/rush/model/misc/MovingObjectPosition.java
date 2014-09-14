@@ -43,7 +43,8 @@ public class MovingObjectPosition {
 	}
 
 	public enum HitType {
-		TILE, ENTITY;
+		TILE, 
+		ENTITY;
 	}
 
 }

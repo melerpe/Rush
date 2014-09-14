@@ -13,13 +13,13 @@ public class BlockOre extends Block {
 	}
 
 	@Override
-	public int idDropped() {
+	public int getDropId() {
 		return id == Block.COAL_ORE.id ? Item.COAL.id : id == Block.DIAMOND_ORE.id ? Item.DIAMOND.id : id == Block.LAPIS_ORE.id ? Item.INK_SACK.id 
 				: id == Block.EMERALD_ORE.id ? Item.EMERALD.id: id == Block.QUARTZ_ORE.id ? Item.QUARTZ.id : id;
 	}
 
 	@Override
-	public int quantityDropped() {
+	public int getDropCount() {
 		return id == Block.LAPIS_ORE.id ? 4 + rand.nextInt(5) : 1;
 	}
 }

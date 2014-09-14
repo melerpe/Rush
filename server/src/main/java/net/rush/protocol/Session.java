@@ -10,11 +10,15 @@ import java.util.Random;
 import lombok.Getter;
 import lombok.Setter;
 import net.rush.Server;
+import net.rush.ServerProperties;
 import net.rush.model.Player;
+import net.rush.protocol.packets.Packet17LoginSuccess;
+import net.rush.protocol.packets.Packet18LoginCompression;
 import net.rush.protocol.packets.PacketKeepAlive;
 import net.rush.protocol.packets.PacketKick;
 import net.rush.protocol.packets.PacketLogin;
 import net.rush.protocol.utils.ClientVersion;
+import net.rush.util.enums.Dimension;
 
 /**
  * A single connection to the server, which may or may not be associated with a
@@ -36,23 +40,22 @@ public final class Session {
 	public enum State {
 
 		/**
-		 * In the exchange handshake state, the server is waiting for the client
-		 * to send its initial handshake packet.
+		 * Server is waiting for the client to send its initial handshake packet.
 		 */
 		EXCHANGE_HANDSHAKE,
 
 		/**
-		 * In the exchange identification state, the server is waiting for the
-		 * client to send its identification packet.
+		 * Server is waiting for the client to send its identification packet.
 		 */
 		EXCHANGE_IDENTIFICATION,
 
 		/**
-		 * In the game state the session has an associated player.
+		 * Session has an associated player.
 		 */
 		GAME;
 	}
 
+	@Getter
 	private final Server server;
 	private final Channel channel;
 
@@ -67,14 +70,13 @@ public final class Session {
 	 */
 	private int timeoutCounter = 0;
 
-	@Getter@Setter
+	@Getter
+	@Setter
 	private State state = State.EXCHANGE_HANDSHAKE;
 	@Getter
 	private Player player;
 
-	/**
-	 * True for client older than 1.7x
-	 */
+	/** True for client older than 1.7x */
 	@Getter
 	private final boolean compat;
 
@@ -82,6 +84,7 @@ public final class Session {
 	private ClientVersion clientVersion;
 
 	private boolean pendingRemoval = false;
+	@Getter
 	private int pingMessageId;
 
 	/**
@@ -97,23 +100,31 @@ public final class Session {
 	}
 
 	/**
-	 * Sets the player associated with this session.
-	 * @param player The new player.
-	 * @throws IllegalStateException if there is already a player associated
-	 * with this session.
+	 * Tries to login player, if there is no player associated with this session.
 	 */
-	public void setPlayer(Player player) {
+	public void loginPlayer(String name) {
 		if (this.player != null)
-			throw new IllegalStateException();
-
-		this.player = player;
+			throw new IllegalStateException("Player is already defined: " + player.getName());
+		
+		if(server.getWorld().getPlayer(name) != null)
+			server.getWorld().getPlayer(name).getSession().disconnect("You are logged from another location");
+		
+		if(clientVersion.getProtocol() > 26)
+			send(new Packet18LoginCompression(Packet18LoginCompression.COMPRESSION_DISABLED));
+		
+		if(!compat)
+			send(new Packet17LoginSuccess("0-0-0-0-0", name));
+		
+		ServerProperties p = server.getProperties();
+		send(new PacketLogin(0, p.levelType, p.gamemode, Dimension.NORMAL, p.difficulty, p.maxBuildHeight, p.maxPlayers, p.hardcore));
+		
+		this.player = new Player(this, name);
 		this.server.getWorld().getPlayers().add(player);
 	}
 
 	/**
 	 * Handles any queued messages for this session and increments the timeout
 	 * counter.
-	 * @return 
 	 * @return {@code true} if this session is still active, {@code false} if
 	 * it is pending removal.
 	 */
@@ -142,16 +153,8 @@ public final class Session {
 
 	/**
 	 * Sends a packet to the client.
-	 * @param packet The message.
 	 */
 	public void send(Packet packet) {
-		channel.writeAndFlush(packet);
-	}
-
-	/**
-	 * @deprecated all methods together to addPlayer()
-	 */
-	public void send(PacketLogin packet) {
 		channel.writeAndFlush(packet);
 	}
 	
@@ -159,19 +162,10 @@ public final class Session {
 	 * Disconnects the session with the specified reason. This causes a
 	 * {@link PacketKick} to be sent. When it has been delivered, the channel
 	 * is closed.
-	 * @param reason The reason for disconnection.
 	 */
 	@SuppressWarnings("deprecation")
 	public void disconnect(String reason) {
 		channel.writeAndFlush(new PacketKick(reason)).addListener(ChannelFutureListener.CLOSE);
-	}
-
-	/**
-	 * Gets the server associated with this session.
-	 * @return The server.
-	 */
-	public Server getServer() {
-		return server;
 	}
 
 	@Override
@@ -180,9 +174,8 @@ public final class Session {
 	}
 
 	/**
-	 * Adds a message to the unprocessed queue.
-	 * @param message The message.
-	 * @param <T> The type of message.
+	 * Adds a packet to the unprocessed queue.
+	 * @param <T> The type of packet.
 	 */
 	<T extends Packet> void messageReceived(T message) {
 		messageQueue.add(message);
@@ -197,10 +190,6 @@ public final class Session {
 			player.destroy();
 			player = null; // in case we are disposed twice
 		}
-	}
-
-	public int getPingMessageId() {
-		return pingMessageId;
 	}
 
 	public String getIp() {

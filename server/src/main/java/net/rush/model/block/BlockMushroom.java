@@ -9,8 +9,6 @@ public class BlockMushroom extends BlockFlower {
 
 	public BlockMushroom(int id) {
 		super(id);
-		float f = 0.2F;
-		setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f * 2.0F, 0.5F + f);
 		setTickRandomly(true);
 	}
 

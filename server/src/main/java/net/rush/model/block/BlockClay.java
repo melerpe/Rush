@@ -11,12 +11,12 @@ public class BlockClay extends Block {
 	}
 
 	@Override
-	public int idDropped() {
+	public int getDropId() {
 		return Item.CLAY_BALL.id;
 	}
 
 	@Override
-	public int quantityDropped() {
+	public int getDropCount() {
 		return 4;
 	}
 }

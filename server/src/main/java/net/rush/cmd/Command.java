@@ -2,9 +2,9 @@ package net.rush.cmd;
 
 import net.rush.model.CommandSender;
 
+
 /**
  * Represents a single command.
-
  */
 public abstract class Command {
 	

@@ -260,12 +260,11 @@ public enum ProtocolNew {
 		}
 
 		public int getId(Class<? extends Packet> packet) {
-			int id = -1;
-			id = packetMap.get(packet);
-			if(id == -1)
-				throw new RuntimeException("Cannot get ID for packet" + packet);
-			
-			return id;
+			try {
+				return packetMap.get(packet);
+			} catch (NullPointerException ex) {
+				throw new RuntimeException("Cannot get ID for packet " + packet.getSimpleName());
+			}
 		}
 	}
 }

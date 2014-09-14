@@ -19,8 +19,7 @@ public class LivingEntity extends Mob {
 
 	// TODO Horse, Bat, Sheep
 
-	protected int health;
-	protected int maxHealth;
+	protected float maxHealth;
 	protected HashSet<EntityAI> aiTasks = new HashSet<EntityAI>();
 
 	/**
@@ -32,7 +31,6 @@ public class LivingEntity extends Mob {
 		super(world, type);
 		// Set health to prevent sending null metadata that crash client.
 		setMetadata(new MetaParam<Float>(MetaParam.TYPE_FLOAT, 6, 20F), false);
-		this.health = (int)20;
 	}
 
 	@Override
@@ -80,7 +78,6 @@ public class LivingEntity extends Mob {
 
 	public void setHealth(float health) {
 		setMetadata(new MetaParam<Float>(MetaParam.TYPE_FLOAT, 6, health));
-		this.health = (int)health;
 	}
 
 	public int getPotionEffectColor() {

@@ -85,34 +85,6 @@ public final class ChunkManager {
 		return chunk;
 	}
 
-	/*public Chunk getChunk(int x, int z) {
-		ChunkCoords key = new ChunkCoords(x, z);
-		Chunk chunk = chunks.get(key);
-
-		if (chunk == null) {
-			try {
-				chunk = service.read(x, z);
-			} catch (IOException e) {
-				chunk = null;
-			}
-
-			if (chunk == null)
-				chunk = generator.generate(world, x, z);
-
-			chunks.put(key, chunk);
-
-			if(decorating)
-				return chunk;
-
-			decorating = true;
-			generator.populate(x, z);
-			decorating = false;
-
-		}
-		return chunk;
-
-	}*/
-
 	public boolean chunkExists(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 		if (maxY >= 0 && minY < 256) {
 			minX >>= 4;

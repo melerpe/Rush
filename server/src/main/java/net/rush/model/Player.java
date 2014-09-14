@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.rush.Server;
 import net.rush.chunk.Chunk;
 import net.rush.chunk.ChunkCoords;
@@ -26,12 +27,14 @@ import net.rush.protocol.packets.PacketNamedSoundEffect;
 import net.rush.protocol.packets.PacketOpenWindow;
 import net.rush.protocol.packets.PacketPlayerListItem;
 import net.rush.protocol.packets.PacketPlayerLookAndPosition;
+import net.rush.protocol.packets.PacketRespawn;
 import net.rush.protocol.packets.PacketSetSlot;
 import net.rush.protocol.packets.PacketSoundOrParticleEffect;
 import net.rush.protocol.packets.PacketSpawnPosition;
 import net.rush.protocol.packets.PacketUpdateHealth;
 import net.rush.protocol.utils.MetaParam;
 import net.rush.util.MathHelper;
+import net.rush.util.enums.Dimension;
 import net.rush.util.enums.GameStateReason;
 import net.rush.util.enums.InventoryEnum;
 import net.rush.util.enums.SoundEnum;
@@ -39,6 +42,7 @@ import net.rush.util.enums.SoundEnum;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 /**
  * Represents an in-game player.
@@ -64,6 +68,7 @@ public final class Player extends LivingEntity implements CommandSender {
 	@Getter
 	private boolean riding = false;
 	@Getter
+	@Setter
 	private boolean onGround = true;
 
 	@Getter
@@ -100,14 +105,14 @@ public final class Player extends LivingEntity implements CommandSender {
 		this.maxHealth = 20;
 		this.name = name;
 		this.session = session;
-		this.gamemode = GameMode.getByValue(session.getServer().getProperties().gamemode);
+		this.gamemode = session.getServer().getProperties().gamemode;
 		// TODO Fix and remove msg
 		this.position = !session.isCompat() && session.getClientVersion().getProtocol() > 22 ? 
 				new Position(world.getSpawnPosition().x, world.getSpawnPosition().y * 2, world.getSpawnPosition().z) : world.getSpawnPosition();
 		if(!session.isCompat() && session.getClientVersion().getProtocol() > 22)
 			sendMessage("&cCaution: 1.8 support is currently broken and unfinished!");
 		// TODO END
-				
+		
 		this.inventory.addViewer(this);
 
 		// stream the initial set of blocks and teleport us
@@ -128,10 +133,11 @@ public final class Player extends LivingEntity implements CommandSender {
 	 * A convenience method for sending a message to this player.
 	 * @param message The message.
 	 */
+	@Override
 	public void sendMessage(String message) {
 		session.send(new PacketChat(message));
 	}
-
+	
 	public void playSound(Sound sound, Position pos) {
 		playSound(sound, pos, (0.5F + 0.5F * (float)rand.nextInt(2)), ((float) (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F));
 	}
@@ -292,20 +298,28 @@ public final class Player extends LivingEntity implements CommandSender {
 
 	@Override
 	public void setHealth(float newHealth) {
-		float oldHealth = health;
 		super.setHealth(newHealth);
-
+		
 		session.send(new PacketUpdateHealth(newHealth, food, saturation));
-
-		if(newHealth < oldHealth)
-			playSound(Sound.HURT_FLESH, position);
-
-		if(newHealth <= 0)
+		
+		if(newHealth <= 0) {
 			alive = false;
+			
+			session.send(new PacketRespawn(Dimension.OVERWORLD, getServer().getProperties().difficulty, getServer().getProperties().gamemode, getServer().getProperties().maxBuildHeight, getServer().getProperties().levelType));
+			setHealth(20);
+			setPosition(world.getSpawnPosition());
+			setRotation(new Rotation(0, 0));
+			sendMessage("%Rush Respawned succesfully.");
+			playSound(Sound.ANVIL_LAND, position);
+			
+			alive = true;
+		}
 	}
-
-	public void setOnGround(boolean onGround) {
-		this.onGround = onGround;
+	
+	public void damage(float damage, DamageCause cause) {
+		playSound(Sound.HURT_FLESH, position);
+		
+		setHealth(getHealth() - damage);
 	}
 
 	public void setGamemode(GameMode gamemode) {
@@ -414,14 +428,15 @@ public final class Player extends LivingEntity implements CommandSender {
 		session.send(new PacketSetSlot(inventory.getId(), index, item));
 	}
 
+	@Override
 	public Server getServer() {
 		return session.getServer();
 	}
 
 	public void heal() {
-		if(health < maxHealth) {
-			setHealth(health + 1);
-			getSession().send(new PacketUpdateHealth(health, (short)food, saturation));
+		if(getHealth() < maxHealth) {
+			setHealth(getHealth() + 1);
+			getSession().send(new PacketUpdateHealth(getHealth(), (short)food, saturation));
 		}
 	}
 	

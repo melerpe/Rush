@@ -1,6 +1,5 @@
 package net.rush.model;
 
-import java.util.List;
 import java.util.Random;
 
 import net.rush.model.block.BlockAir;
@@ -24,9 +23,6 @@ import net.rush.model.block.BlockSugarCane;
 import net.rush.model.block.BlockWood;
 import net.rush.model.block.BlockWool;
 import net.rush.model.item.ItemBlock;
-import net.rush.model.misc.AxisAlignedBB;
-import net.rush.model.misc.MovingObjectPosition;
-import net.rush.model.misc.Vec3;
 import net.rush.world.World;
 
 public class Block {
@@ -43,20 +39,6 @@ public class Block {
 		public static final StepSound SNOW = new StepSound("snow", 1.0F, 1.0F);
 		public static final StepSound LADDER = new StepSound.StepSoundLadder("ladder", 1.0F, 1.0F);
 		public static final StepSound ANVIL = new StepSound.StepSoundAnvil("anvil", 0.3F, 1.0F);
-	}
-	
-	public class Bounds {
-		public double minX, minY, minZ, maxX, maxY, maxZ;
-
-		public Bounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-			this.minX = minX;
-			this.minY = minY;
-			this.minZ = minZ;
-			this.maxX = maxX;
-			this.maxY = maxY;
-			this.maxZ = maxZ;
-		}
-
 	}
 
 	public static final Block[] byId = new Block[4096];
@@ -258,54 +240,37 @@ public class Block {
 	public final int id;
 
 	/** Indicates how many hits it takes to break a block. */
-	protected float blockHardness;
-
-	/** Indicates the blocks resistance to explosions. */
-	protected float blockResistance;
-	
-	protected boolean needsRandomTick = false;
-
-	/** true if the Block contains a Tile Entity */
-	protected boolean isBlockContainer;
+	protected float blockHardness = 0F;
+	protected float blockResistance;	
+	protected boolean tickRandomly = false;
+	protected boolean hasTileEntity;	
 	protected Random rand = new Random();
 	
-	public StepSound sound;
-	public float blockParticleGravity;
+	public StepSound sound = Sound.STONE;
+	public float blockParticleGravity = 1.0F;
 	public final Material material;
 
 	/**
 	 * Determines how much velocity is maintained while moving on top of this block
 	 */
-	public float slipperiness;
+	public float slipperiness = 0.6F;
 	private String name;
 	private String[] aliases;
-	public Bounds bounds = new Bounds(1, 1, 1, 1, 1, 1);
 
 	protected Block(int id, Material material) {
-		sound = Sound.STONE;
-		blockParticleGravity = 1.0F;
-		slipperiness = 0.6F;
-		blockHardness = 0.0F;
+		if (byId[id] != null) 
+			throw new IllegalArgumentException("Block ID " + id + " is already set by " + byId[id] + " when adding " + this);
 
-		if (byId[id] != null) {
-			throw new IllegalArgumentException("Slot " + id + " is already occupied by " + byId[id] + " when adding " + this);
-		} else {
-			this.material = material;
-			byId[id] = this;
-			this.id = id;
-			setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-			opaqueCubeLookup[id] = isOpaqueCube();
-			lightOpacity[id] = isOpaqueCube() ? 255 : 0;
-			canBlockGrass[id] = !material.getCanBlockGrass();
-		}
+		this.material = material;
+		this.id = id;
+		
+		byId[id] = this;
+		opaqueCubeLookup[id] = isOpaqueCube();
+		lightOpacity[id] = isOpaqueCube() ? 255 : 0;
+		canBlockGrass[id] = !material.getCanBlockGrass();
+
 	}
 
-	/**
-	 * This method is called on a block after all other blocks gets already created. You can use it to reference and
-	 * configure something on the block that needs the others ones.
-	 */
-	protected void initializeBlock() {
-	}
 
 	/**
 	 * Sets the footstep sound for the block. Returns the object for convenience in constructing.
@@ -342,7 +307,7 @@ public class Block {
 
 	public static boolean isNormalCube(int blockId) {
 		Block id = byId[blockId];
-		return id == null ? false : id.material.isOpaque() && id.renderAsNormalBlock() && !id.canProvidePower();
+		return id == null ? false : id.material.isOpaque() && id.renderAsNormalBlock();
 	}
 
 	/**
@@ -392,7 +357,7 @@ public class Block {
 	 * Sets whether this block type will receive random update ticks
 	 */
 	protected Block setTickRandomly(boolean tickrandomly) {
-		needsRandomTick = tickrandomly;
+		tickRandomly = tickrandomly;
 		return this;
 	}
 
@@ -401,39 +366,11 @@ public class Block {
 	 * ExtendedBlockStorage in order to broadly cull a chunk from the random chunk update list for efficiency's sake.
 	 */
 	public boolean getTickRandomly() {
-		return needsRandomTick;
+		return tickRandomly;
 	}
 
 	public boolean hasTileEntity() {
-		return isBlockContainer;
-	}
-
-	/**
-	 * Sets the bounds of the block.  minX, minY, minZ, maxX, maxY, maxZ
-	 */
-	protected final void setBlockBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-		bounds = new Bounds(minX, minY, minZ, maxX, maxY, maxZ);
-	}
-
-	/**
-	 * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
-	 * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
-	 */
-	public void addCollisionBoxesToList(World world, int y, int x, int z, AxisAlignedBB axis, List<AxisAlignedBB> list, Entity collidingEntity) {
-		AxisAlignedBB mask = getCollisionBoundingBoxFromPool(world, y, x, z);
-
-		if (mask != null && axis.intersectsWith(mask)) {
-			list.add(mask);
-		}
-	}
-
-	/**
-	 * Returns a bounding box from the pool of bounding boxes (this means this box can change after the pool has been
-	 * cleared to be reused)
-	 */
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-		return AxisAlignedBB.getAABBPool().getAABB((double) x + bounds.minX, (double) y + bounds.minY, (double) z + bounds.minZ, 
-				(double) x + bounds.maxX, (double) y + bounds.maxY, (double) z + bounds.maxZ);
+		return hasTileEntity;
 	}
 
 	/**
@@ -452,7 +389,7 @@ public class Block {
 	}
 
 	/**
-	 * Returns if this block is collidable (only used by Fire). Args: x, y, z
+	 * Returns if this block is collidable (only used by Fire).
 	 */
 	public boolean isCollidable() {
 		return true;
@@ -464,51 +401,23 @@ public class Block {
 	public void tick(World world, int x, int y, int z, Random rand) {}
 
 	/**
-	 * Called right before the block is destroyed by a player.  Args: world, x, y, z, metaData
+	 * Called right before the block is destroyed by a player.
 	 */
-	public void onBlockDestroyedByPlayer(World world, Player player, int x, int y, int z, int metaData) {
+	public void onBlockDestroyed(World world, Player player, int x, int y, int z, int metaData) {
 	}
 
 	/**
 	 * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
-	 * their own) Args: x, y, z, neighbor blockID
+	 * their own)
 	 */
 	public void onNeighborBlockChange(World world, int x, int y, int z, int neighborBlockId) {
 	}
 
-	/**
-	 * How many world ticks before ticking
-	 */
-	public int tickRate() {
-		return 10;
-	}
-
-	/**
-	 * Called whenever the block is added into the world. Args: world, x, y, z
-	 */
-	public void onBlockAdded(World world, int x, int y, int z) {
-	}
-
-	/**
-	 * Called on server worlds only when the block has been replaced by a different block ID, or the same block with a
-	 * different metadata value, but before the new metadata value is set. Args: World, x, y, z, old block ID, old
-	 * metadata
-	 */
-	public void breakBlock(World world, int x, int y, int z, int oldId, int oldData) {
-	}
-
-	/**
-	 * Returns the quantity of items to drop on block destruction.
-	 */
-	public int quantityDropped() {
+	public int getDropCount() {
 		return 1;
 	}
 
-	/**
-	 * Returns the ID of the items to drop on destruction.
-	 */
-	//public int idDropped(int id, Random rand, int par3) {
-	public int idDropped() {
+	public int getDropId() {
 		return id;
 	}
 
@@ -537,25 +446,13 @@ public class Block {
 
 		for (int i = 0; i < quantity; ++i) {
 			if (world.rand.nextFloat() <= chance) {
-				int id = idDropped();
+				int id = getDropId();
 
 				if (id > 0) {
 					world.dropItem(x, y, z, id, 1, damageDropped(damage));
 				}
 			}
 		}
-	}
-
-	/**
-	 * called by spawner, ore, redstoneOre blocks
-	 */
-	protected void dropXpOnBlockBreak(World world, int x, int y, int z, int amount) {
-		// TODO
-		/*while (amount > 0) {
-			int xpAmount = ExperienceOrb.getXPSplit(amount);
-			amount -= xpAmount;
-			world.spawnEntityInWorld(new ExperienceOrb(world, (double) x + 0.5D, (double) y + 0.5D, (double) z + 0.5D, xpAmount));
-		}*/
 	}
 
 	/**
@@ -573,138 +470,24 @@ public class Block {
 	}
 
 	/**
-	 * Ray traces through the blocks collision from start vector to end vector returning a ray trace hit. Args: world,
-	 * x, y, z, startVec, endVec
-	 */
-	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 startVector, Vec3 endVector) {
-		// TODO
-		//setBlockBoundsBasedOnState(world, x, y, z);
-		startVector = startVector.addVector((double) (-x), (double) (-y), (double) (-z));
-		endVector = endVector.addVector((double) (-x), (double) (-y), (double) (-z));
-		Vec3 minXVector = startVector.getIntermediateWithXValue(endVector, bounds.minX);
-		Vec3 maxXVector = startVector.getIntermediateWithXValue(endVector, bounds.maxX);
-		Vec3 minYVector = startVector.getIntermediateWithYValue(endVector, bounds.minY);
-		Vec3 maxYVector = startVector.getIntermediateWithYValue(endVector, bounds.maxY);
-		Vec3 minZVector = startVector.getIntermediateWithZValue(endVector, bounds.minZ);
-		Vec3 maxZVector = startVector.getIntermediateWithZValue(endVector, bounds.maxZ);
-
-		if (!this.isVecInsideYZBounds(minXVector)) {
-			minXVector = null;
-		}
-
-		if (!this.isVecInsideYZBounds(maxXVector)) {
-			maxXVector = null;
-		}
-
-		if (!this.isVecInsideXZBounds(minYVector)) {
-			minYVector = null;
-		}
-
-		if (!this.isVecInsideXZBounds(maxYVector)) {
-			maxYVector = null;
-		}
-
-		if (!this.isVecInsideXYBounds(minZVector)) {
-			minZVector = null;
-		}
-
-		if (!this.isVecInsideXYBounds(maxZVector)) {
-			maxZVector = null;
-		}
-
-		Vec3 finalVector = null;
-
-		if (minXVector != null && (finalVector == null || startVector.squareDistanceTo(minXVector) < startVector.squareDistanceTo(finalVector))) {
-			finalVector = minXVector;
-		}
-
-		if (maxXVector != null && (finalVector == null || startVector.squareDistanceTo(maxXVector) < startVector.squareDistanceTo(finalVector))) {
-			finalVector = maxXVector;
-		}
-
-		if (minYVector != null && (finalVector == null || startVector.squareDistanceTo(minYVector) < startVector.squareDistanceTo(finalVector))) {
-			finalVector = minYVector;
-		}
-
-		if (maxYVector != null && (finalVector == null || startVector.squareDistanceTo(maxYVector) < startVector.squareDistanceTo(finalVector))) {
-			finalVector = maxYVector;
-		}
-
-		if (minZVector != null && (finalVector == null || startVector.squareDistanceTo(minZVector) < startVector.squareDistanceTo(finalVector))) {
-			finalVector = minZVector;
-		}
-
-		if (maxZVector != null && (finalVector == null || startVector.squareDistanceTo(maxZVector) < startVector.squareDistanceTo(finalVector))) {
-			finalVector = maxZVector;
-		}
-
-		if (finalVector == null) {
-			return null;
-		} else {
-			byte sideHit = -1;
-
-			if (finalVector == minXVector)
-				sideHit = 4;
-
-			if (finalVector == maxXVector)
-				sideHit = 5;
-
-			if (finalVector == minYVector)
-				sideHit = 0;
-
-			if (finalVector == maxYVector)
-				sideHit = 1;
-
-			if (finalVector == minZVector)
-				sideHit = 2;
-
-			if (finalVector == maxZVector)
-				sideHit = 3;
-
-			return new MovingObjectPosition(x, y, z, sideHit, finalVector.addVector((double) x, (double) y, (double) z));
-		}
-	}
-
-	/**
-	 * Checks if a vector is within the Y and Z bounds of the block.
-	 */
-	private boolean isVecInsideYZBounds(Vec3 vector) {
-		return vector == null ? false : vector.yCoord >= bounds.minY && vector.yCoord <= bounds.maxY && vector.zCoord >=bounds. minZ && vector.zCoord <= bounds.maxZ;
-	}
-
-	/**
-	 * Checks if a vector is within the X and Z bounds of the block.
-	 */
-	private boolean isVecInsideXZBounds(Vec3 vector) {
-		return vector == null ? false : vector.xCoord >= bounds.minX && vector.xCoord <= bounds.maxX && vector.zCoord >= bounds.minZ && vector.zCoord <= bounds.maxZ;
-	}
-
-	/**
-	 * Checks if a vector is within the X and Y bounds of the block.
-	 */
-	private boolean isVecInsideXYBounds(Vec3 vector) {
-		return vector == null ? false : vector.xCoord >= bounds.minX && vector.xCoord <= bounds.maxX && vector.yCoord >= bounds.minY && vector.yCoord <= bounds.maxY;
-	}
-
-	/**
 	 * Called upon the block being destroyed by an explosion
 	 */
 	public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion explosion) {
 	}
 
 	public boolean canPlaceBlockOnSide(World world, int x, int y, int z, ItemStack is) {
-		return canPlaceBlockOnSide(world, x, y, z);
+		return canPlaceBlockOnTop(world, x, y, z);
 	}
 
 	/**
-	 * checks to see if you can place this block can be placed on that side of a block: BlockLever overrides
+	 * Checks to see if you can place this block can be placed on top of the block
 	 */
-	public boolean canPlaceBlockOnSide(World world, int x, int y, int z) {
+	public boolean canPlaceBlockOnTop(World world, int x, int y, int z) {
 		return canPlaceBlockAt(world, x, y + 1, z);
 	}
 
 	/**
-	 * Checks to see if its valid to put this block at the specified coordinates. Args: world, x, y, z
+	 * Checks to see if its valid to put this block at the specified coordinates.
 	 */
 	public boolean canPlaceBlockAt(World world, int x, int y, int z) {
 		int id = world.getType(x, y, z);
@@ -712,16 +495,16 @@ public class Block {
 	}
 
 	/**
-	 * Called upon block activation (right click on the block.)
+	 * Called upon right clicking on the block.
 	 */
-	public boolean onBlockActivated(World world, int x, int y, int z, Player player, int direction, float xOffset, float yOffset, float zOffset) {
+	public boolean onBlockInteract(World world, int x, int y, int z, Player player, int direction, float xOffset, float yOffset, float zOffset) {
 		return false;
 	}
 
 	/**
-	 * Called whenever an entity is walking on top of this block. Args: world, x, y, z, entity
+	 * Called whenever an entity is walking on top of this block.
 	 */
-	public void onEntityWalking(World world, int x, int y, int z, Entity en) {
+	public void onEntityWalking(World world, int x, int y, int z, Entity entity) {
 	}
 
 	/**
@@ -732,73 +515,22 @@ public class Block {
 	}
 
 	/**
-	 * Called when the block is clicked by a player. Args: x, y, z, entityPlayer
-	 */
-	public void onBlockClicked(World world, int x, int y, int z, Player pl) {
-	}
-
-	/**
-	 * Can add to the passed in vector for a movement vector to be applied to the entity. Args: x, y, z, entity, vec3d
-	 */
-	public void velocityToAddToEntity(World world, int x, int y, int z, Entity en, Vec3 vector) {
-	}
-
-	/**
 	 * Used on growing trees, mushrooms, crops etc
 	 * @returns true if the grow was successfully
 	 */
 	public boolean grow(World world, int x, int y, int z, boolean bonemeal) {
 		return true;
 	}
-	
-	/**
-	 * Updates the blocks bounds based on its current state. Args: world, x, y, z
-	 */
-	// TODO
-	/*public void setBlockBoundsBasedOnState(IBlockAccess blockAccess, int x, int y, int z) {
-	}*/
 
 	/**
-	 * Returns true if the block is emitting indirect/weak redstone power on the specified side. If isBlockNormalCube
-	 * returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X,
-	 * Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
-	 */
-	// TODO
-	/*public int isProvidingWeakPower(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		return 0;
-	}*/
-
-	/**
-	 * Can this block provide power. Only wire currently seems to have this change based on its state.
-	 */
-	public boolean canProvidePower() {
-		return false;
-	}
-
-	/**
-	 * Triggered whenever an entity collides with this block (enters into the block). Args: world, x, y, z, entity
+	 * Triggered whenever an entity collides with this block (enters into the block).
 	 */
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity en) {
 	}
 
-	/**
-	 * Returns true if the block is emitting direct/strong redstone power on the specified side. Args: World, X, Y, Z,
-	 * side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
-	 */
-	// TODO
-	/*public int isProvidingStrongPower(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		return 0;
-	}*/
 
 	/**
-	 * Sets the block's bounds for rendering it as an item
-	 */
-	public void setBlockBoundsForItemRender() {
-	}
-
-	/**
-	 * Called when the player destroys a block with an item that can harvest it. (i, j, k) are the coordinates of the
-	 * block and l is the block's subtype/damage.
+	 * Called when the player destroys a block with an item that can harvest it.
 	 */
 	public void harvestBlock(World world, Player pl, int x, int y, int z, int blockData) {
 		pl.addExhaustion(0.025F);
@@ -820,7 +552,7 @@ public class Block {
 	 * Return true if a player with Silk Touch can harvest this block directly, and not its normal drops.
 	 */
 	protected boolean canSilkHarvest() {
-		return renderAsNormalBlock() && !isBlockContainer;
+		return renderAsNormalBlock() && !hasTileEntity;
 	}
 
 	/**
@@ -831,7 +563,7 @@ public class Block {
 		int data = 0;
 
 		// TODO
-		/*if (blockID >= 0 && blockID < Item.itemsList.length && Item.itemsList[blockID].getHasSubtypes()) {
+		/*if (blockID >= 0 && blockID < Item.byId.length && Item.byId[blockID].getHasSubtypes()) {
 			data = blockType;
 		}*/
 
@@ -842,7 +574,7 @@ public class Block {
 	 * Returns the usual quantity dropped by the block plus a bonus of 1 to 'i' (inclusive).
 	 */
 	public int quantityDroppedWithBonus(int bonus) {
-		return quantityDropped();
+		return getDropCount();
 	}
 
 	/**
@@ -875,19 +607,12 @@ public class Block {
 		return aliases == null ? new String[] { name } : aliases;
 	}
 	
-	/**
-	 * Called when the block receives a BlockEvent - see World.addBlockEvent. By default, passes it on to the tile
-	 * entity at this location. Args: world, x, y, z, blockID, EventID, event parameter
-	 */
-	public boolean onBlockEventReceived(World world, int x, int y, int z, int blockId, int eventId) {
-		return false;
-	}
 
 	/**
 	 * Returns the mobility information of the block, 0 = free, 1 = can't push but can move over, 2 = total immobility
 	 * and stop pistons
 	 */
-	public int getMobilityFlag() {
+	public int getMobility() {
 		return material.getMaterialMobility();
 	}
 
@@ -912,7 +637,7 @@ public class Block {
 
 	/**
 	 * Called on server worlds only when the block is about to be replaced by a different block or the same block with a
-	 * different metadata value. Args: world, x, y, z, old metadata
+	 * different metadata value.
 	 */
 	public void onBlockPreDestroy(World world, int x, int y, int z, int oldBlockData) {
 	}
@@ -946,60 +671,47 @@ public class Block {
 	}
 
 	static {
-		/*Item.itemsList[WOOL.blockID] = (new ItemCloth(cloth.blockID - 256)).setName("cloth");
-		Item.itemsList[STAINED_CLAY.blockID] = (new ItemCloth(stainedClay.blockID - 256)).setName("clayHardenedStained");
-		Item.itemsList[CARPET.blockID] = (new ItemCloth(carpet.blockID - 256)).setName("woolCarpet");
-		Item.itemsList[LOG.blockID] = (new ItemMultiTextureTile(wood.blockID - 256, wood, BlockLog.woodType)).setName("log");
-		Item.itemsList[WOOD.blockID] = (new ItemMultiTextureTile(planks.blockID - 256, planks, BlockWood.woodType)).setName("wood");
-		Item.itemsList[MONSTER_EGG_BLOCK.blockID] = (new ItemMultiTextureTile(silverfish.blockID - 256, silverfish, BlockSilverfish.silverfishStoneTypes)).setName("monsterStoneEgg");
-		Item.itemsList[SMOOTH_BRICK.blockID] = (new ItemMultiTextureTile(stoneBrick.blockID - 256, stoneBrick, BlockStoneBrick.STONE_BRICK_TYPES)).setName("stonebricksmooth");
-		Item.itemsList[SANDSTONE.blockID] = (new ItemMultiTextureTile(sandStone.blockID - 256, sandStone, BlockSandStone.SAND_STONE_TYPES)).setName("sandStone");
-		Item.itemsList[QUARTZ_BLOCK.blockID] = (new ItemMultiTextureTile(blockNetherQuartz.blockID - 256, blockNetherQuartz, BlockQuartz.quartzBlockTypes)).setName("quartzBlock");
-		Item.itemsList[STEP.blockID] = (new ItemSlab(stoneSingleSlab.blockID - 256, stoneSingleSlab, stoneDoubleSlab, false)).setName("stoneSlab");
-		Item.itemsList[DOUBLE_STEP.blockID] = (new ItemSlab(stoneDoubleSlab.blockID - 256, stoneSingleSlab, stoneDoubleSlab, true)).setName("stoneSlab");
-		Item.itemsList[WOOD_STEP.blockID] = (new ItemSlab(woodSingleSlab.blockID - 256, woodSingleSlab, woodDoubleSlab, false)).setName("woodSlab");
-		Item.itemsList[DOUBLE_WOOD_STEP.blockID] = (new ItemSlab(woodDoubleSlab.blockID - 256, woodSingleSlab, woodDoubleSlab, true)).setName("woodSlab");
-		Item.itemsList[SAPLING.blockID] = (new ItemMultiTextureTile(sapling.blockID - 256, sapling, BlockSapling.WOOD_TYPES)).setName("sapling");
-		Item.itemsList[LEAVES.blockID] = (new ItemLeaves(leaves.blockID - 256)).setName("leaves");
-		Item.itemsList[VINE.blockID] = new ItemColored(vine.blockID - 256, false);
-		Item.itemsList[TALL_GRASS.blockID] = (new ItemColored(tallGrass.blockID - 256, true)).setBlockNames(new String[] { "shrub", "grass", "fern" });
-		Item.itemsList[SNOW.blockID] = new ItemSnow(snow.blockID - 256, snow);
-		Item.itemsList[WATER_LILY.blockID] = new ItemLilyPad(waterlily.blockID - 256);
-		Item.itemsList[PISTON_BASE.blockID] = new ItemPiston(pistonBase.blockID - 256);
-		Item.itemsList[PISTON_STICKY_BASE.blockID] = new ItemPiston(pistonStickyBase.blockID - 256);
-		Item.itemsList[COBBLE_WALL.blockID] = (new ItemMultiTextureTile(cobblestoneWall.blockID - 256, cobblestoneWall, BlockWall.types)).setName("cobbleWall");
-		Item.itemsList[ANVIL.blockID] = (new ItemAnvilBlock(anvil)).setName("anvil");
+		/*Item.byId[WOOL.blockID] = (new ItemCloth(cloth.blockID - 256)).setName("cloth");
+		Item.byId[STAINED_CLAY.blockID] = (new ItemCloth(stainedClay.blockID - 256)).setName("clayHardenedStained");
+		Item.byId[CARPET.blockID] = (new ItemCloth(carpet.blockID - 256)).setName("woolCarpet");
+		Item.byId[LOG.blockID] = (new ItemMultiTextureTile(wood.blockID - 256, wood, BlockLog.woodType)).setName("log");
+		Item.byId[WOOD.blockID] = (new ItemMultiTextureTile(planks.blockID - 256, planks, BlockWood.woodType)).setName("wood");
+		Item.byId[MONSTER_EGG_BLOCK.blockID] = (new ItemMultiTextureTile(silverfish.blockID - 256, silverfish, BlockSilverfish.silverfishStoneTypes)).setName("monsterStoneEgg");
+		Item.byId[SMOOTH_BRICK.blockID] = (new ItemMultiTextureTile(stoneBrick.blockID - 256, stoneBrick, BlockStoneBrick.STONE_BRICK_TYPES)).setName("stonebricksmooth");
+		Item.byId[SANDSTONE.blockID] = (new ItemMultiTextureTile(sandStone.blockID - 256, sandStone, BlockSandStone.SAND_STONE_TYPES)).setName("sandStone");
+		Item.byId[QUARTZ_BLOCK.blockID] = (new ItemMultiTextureTile(blockNetherQuartz.blockID - 256, blockNetherQuartz, BlockQuartz.quartzBlockTypes)).setName("quartzBlock");
+		Item.byId[STEP.blockID] = (new ItemSlab(stoneSingleSlab.blockID - 256, stoneSingleSlab, stoneDoubleSlab, false)).setName("stoneSlab");
+		Item.byId[DOUBLE_STEP.blockID] = (new ItemSlab(stoneDoubleSlab.blockID - 256, stoneSingleSlab, stoneDoubleSlab, true)).setName("stoneSlab");
+		Item.byId[WOOD_STEP.blockID] = (new ItemSlab(woodSingleSlab.blockID - 256, woodSingleSlab, woodDoubleSlab, false)).setName("woodSlab");
+		Item.byId[DOUBLE_WOOD_STEP.blockID] = (new ItemSlab(woodDoubleSlab.blockID - 256, woodSingleSlab, woodDoubleSlab, true)).setName("woodSlab");
+		Item.byId[SAPLING.blockID] = (new ItemMultiTextureTile(sapling.blockID - 256, sapling, BlockSapling.WOOD_TYPES)).setName("sapling");
+		Item.byId[LEAVES.blockID] = (new ItemLeaves(leaves.blockID - 256)).setName("leaves");
+		Item.byId[VINE.blockID] = new ItemColored(vine.blockID - 256, false);
+		Item.byId[TALL_GRASS.blockID] = (new ItemColored(tallGrass.blockID - 256, true)).setBlockNames(new String[] { "shrub", "grass", "fern" });
+		Item.byId[SNOW.blockID] = new ItemSnow(snow.blockID - 256, snow);
+		Item.byId[WATER_LILY.blockID] = new ItemLilyPad(waterlily.blockID - 256);
+		Item.byId[PISTON_BASE.blockID] = new ItemPiston(pistonBase.blockID - 256);
+		Item.byId[PISTON_STICKY_BASE.blockID] = new ItemPiston(pistonStickyBase.blockID - 256);
+		Item.byId[COBBLE_WALL.blockID] = (new ItemMultiTextureTile(cobblestoneWall.blockID - 256, cobblestoneWall, BlockWall.types)).setName("cobbleWall");
+		Item.byId[ANVIL.blockID] = (new ItemAnvilBlock(anvil)).setName("anvil");
 		 */
-		for (int i = 0; i < 256; ++i) {
-			if (byId[i] != null) {
-				if (Item.byId[i] == null) {
-					Item.byId[i] = new ItemBlock(i - 256);
-					byId[i].initializeBlock();
-				}
+		for (int id = 0; id < 256; ++id) {
+			if (byId[id] != null) {
+				if (Item.byId[id] == null)
+					Item.byId[id] = new ItemBlock(id - 256);
 
 				boolean useNeightborBrightness = false;
 
-				if (i > 0 && byId[i].getRenderType() == 10) {
+				if (id > 0 && byId[id].getRenderType() == 10)
 					useNeightborBrightness = true;
-				}
+				
+				//if (id > 0 && byId[id] instanceof BlockHalfSlab)
+				//	useNeightborBrightness = true; TODO
 
-				/*if (var0 > 0 && byId[var0] instanceof BlockHalfSlab) {
-					var1 = true;
-				}*/ // TODO
-
-				if (i == SOIL.id) {
+				if (id == SOIL.id || canBlockGrass[id] || lightOpacity[id] == 0)
 					useNeightborBrightness = true;
-				}
 
-				if (canBlockGrass[i]) {
-					useNeightborBrightness = true;
-				}
-
-				if (lightOpacity[i] == 0) {
-					useNeightborBrightness = true;
-				}
-
-				useNeighborBrightness[i] = useNeightborBrightness;
+				useNeighborBrightness[id] = useNeightborBrightness;
 			}
 		}
 

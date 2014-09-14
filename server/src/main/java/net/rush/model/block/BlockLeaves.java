@@ -16,7 +16,7 @@ public class BlockLeaves extends Block {
 	}
 	
 	@Override
-	public int idDropped() {
+	public int getDropId() {
 		return Block.SAPLING.id;
 	}
 	

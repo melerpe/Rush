@@ -26,14 +26,14 @@ public class BlockCrops extends BlockFlower {
 		int quantity = world.rand.nextInt(4);
 
 		if(world.getBlockData(x, y, z) > 2)
-			world.dropItem(x, y, z, idDropped(), 1, 0);
+			world.dropItem(x, y, z, getDropId(), 1, 0);
 			
 		if(world.getBlockData(x, y, z) < 7)
 			return;
 
 		for (int i = 0; i < quantity; ++i)
 			if (world.rand.nextFloat() <= .50)
-				world.dropItem(x, y, z, idDropped(), 1, 0);
+				world.dropItem(x, y, z, getDropId(), 1, 0);
 
 		for (int i = 0; i < quantity; ++i)
 			if (world.rand.nextFloat() <= .50)
@@ -69,7 +69,7 @@ public class BlockCrops extends BlockFlower {
 	}
 
 	@Override
-	public int idDropped() {
+	public int getDropId() {
 		return Item.SEEDS.id;
 	}
 }

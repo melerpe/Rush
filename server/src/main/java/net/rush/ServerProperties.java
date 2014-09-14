@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.bukkit.Difficulty;
+import org.bukkit.GameMode;
+
 import net.rush.util.MathHelper;
 import net.rush.util.StringUtils;
 
@@ -40,9 +43,9 @@ public class ServerProperties {
 	public boolean onlineMode;
 	public String resourcePack;
 	public boolean pvp;
-	public int difficulty;
+	public Difficulty difficulty;
 	public boolean enableCmdBlock;
-	public int gamemode;
+	public GameMode gamemode;
 	public int idleTimeout;
 	public int maxPlayers;
 	public boolean spawnMonsters;
@@ -137,16 +140,16 @@ public class ServerProperties {
 		return online;
 	}
 
-	private int getDifficulty(String path) {
+	private Difficulty getDifficulty(String path) {
 		int diff = getInt(path, 1);
 		diff = MathHelper.getValueInBounds(diff, 1, 3);
-		return diff;
+		return Difficulty.getByValue(diff);
 	}
 
-	private int getGamemode(String path) {
+	private GameMode getGamemode(String path) {
 		int gm = getInt(path, 0);
 		gm = MathHelper.getValueInBounds(gm, 0, 2);
-		return gm;
+		return GameMode.getByValue(gm);
 	}
 
 	private void generateNew() {

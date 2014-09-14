@@ -41,7 +41,7 @@ public class BlockSoil extends Block {
 	}
 
 	@Override
-	public int idDropped() {
+	public int getDropId() {
 		return Block.DIRT.id;
 	}
 }

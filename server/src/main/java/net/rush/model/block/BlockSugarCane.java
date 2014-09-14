@@ -42,7 +42,7 @@ public class BlockSugarCane extends Block {
 	}
 
 	@Override
-	public int idDropped() {
+	public int getDropId() {
 		return Item.SUGAR_CANE.id;
 	}
 }

@@ -13,7 +13,7 @@ public class BlockCraftingTable extends Block {
     }
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, Player player, int direction, float xOffset, float yOffset, float zOffset) {
+	public boolean onBlockInteract(World world, int x, int y, int z, Player player, int direction, float xOffset, float yOffset, float zOffset) {
 		player.openInventory(InventoryEnum.WORKBENCH);
 		return true;
 	}

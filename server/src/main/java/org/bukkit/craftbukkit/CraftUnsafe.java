@@ -42,5 +42,4 @@ public final class CraftUnsafe implements UnsafeValues {
 		return new ArrayList<>();
 	}
 
-	
 }
